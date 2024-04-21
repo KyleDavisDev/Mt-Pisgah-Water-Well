@@ -1,0 +1,38 @@
+{
+  "name": "mt_pisgah_water_well_website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "./node_modules/.bin/next dev",
+    "build": "./node_modules/.bin/next build",
+    "start": "./node_modules/.bin/next start",
+    "lint": "./node_modules/.bin/next lint"
+  },
+  "dependencies": {
+    "@mantine/charts": "^7.8.0",
+    "@mantine/core": "^7.8.0",
+    "@mantine/dates": "^7.8.0",
+    "@mantine/dropzone": "^7.8.0",
+    "@mantine/form": "^7.8.0",
+    "@mantine/hooks": "^7.8.0",
+    "@mantine/modals": "^7.8.0",
+    "@mantine/nprogress": "^7.8.0",
+    "@mantine/spotlight": "^7.8.0",
+    "dayjs": "^1.11.10",
+    "next": "14.2.2",
+    "react": "^18",
+    "react-dom": "^18",
+    "recharts": "^2.12.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.2",
+    "postcss": "^8.4.38",
+    "postcss-preset-mantine": "^1.14.4",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5"
+  }
+}
