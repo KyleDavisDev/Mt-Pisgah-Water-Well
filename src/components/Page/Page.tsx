@@ -1,4 +1,5 @@
 import * as React from "react";
+import localFont from 'next/font/local'
 
 import {
     ThemeProvider,
@@ -7,8 +8,13 @@ import {
 } from "../../theme/styled-components";
 import Meta from "../Meta/Meta";
 
-const AvenirNextReg = "/static/AvenirNext-Regular.ttf";
-const FuturaMedium = "/static/Futura-Medium.ttf";
+const AvenirNextReg = localFont({
+  src: '../../theme/fonts/AvenirNext-Regular.ttf',
+  display: 'swap',
+})
+
+// const AvenirNextReg = "../../theme/fonts/AvenirNext-Regular.ttf";
+const FuturaMedium = "../../theme/fonts/Futura-Medium.ttf";
 
 interface IPageProps {
     children?: any;

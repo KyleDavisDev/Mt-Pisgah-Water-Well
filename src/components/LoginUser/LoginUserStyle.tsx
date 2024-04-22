@@ -2,7 +2,6 @@ import styled from "../../theme/styled-components";
 import { Button } from "../../components/Button/Button";
 
 export const StyledFormContainer = styled.div`
-  border: ${props => props.theme.border};
   padding: 1.5rem;
   display: flex;
   flex-direction: row;
