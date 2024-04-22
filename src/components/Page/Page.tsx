@@ -11,10 +11,14 @@ import Meta from "../Meta/Meta";
 const AvenirNextReg = localFont({
   src: '../../theme/fonts/AvenirNext-Regular.ttf',
   display: 'swap',
+});
+const FuturaMedium = localFont({
+  src: "../../theme/fonts/Futura-Medium.ttf",
+  display: 'swap',
 })
 
 // const AvenirNextReg = "../../theme/fonts/AvenirNext-Regular.ttf";
-const FuturaMedium = "../../theme/fonts/Futura-Medium.ttf";
+// const FuturaMedium = "../../theme/fonts/Futura-Medium.ttf";
 
 interface IPageProps {
     children?: any;

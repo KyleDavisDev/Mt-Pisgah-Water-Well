@@ -7,15 +7,13 @@ export interface LoginProps {
 }
 
 const Login = (): React.JSX.Element => {
-    return (
-        <>
-            <Page>
-                <Article size="sm">
-                    <LoginUser/>
-                </Article>
-            </Page>
-        </>
-    );
+  return (
+    <Page>
+      <Article size="sm">
+        <LoginUser/>
+      </Article>
+    </Page>
+  );
 };
 
 export default Login;

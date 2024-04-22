@@ -10,7 +10,8 @@ export default function handler(
   res: NextApiResponse<Data>,
 ) {
   if (req.method === "POST") {
-    // Process a POST request
+    console.log(req.body);
+    res.status(200).json({ name: "John Doe" });
   } else {
     // Handle any other HTTP method
   }

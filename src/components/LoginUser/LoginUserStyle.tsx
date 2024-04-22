@@ -1,11 +1,18 @@
 import styled from "../../theme/styled-components";
 import { Button } from "../../components/Button/Button";
 
+export const StyledContainer = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: center;
+height: 100vh;`
+
 export const StyledFormContainer = styled.div`
   padding: 1.5rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+    
 `;
 
 export const StyledButton = styled(Button)`
