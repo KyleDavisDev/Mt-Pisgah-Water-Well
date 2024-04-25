@@ -3,23 +3,27 @@ import * as React from "react";
 import styled from "../../theme/styled-components";
 
 export interface ArticleProps {
-    children: any;
-    className?: string;
-    size?: "sm" | "md" | "lg";
-    style?: React.CSSProperties;
+  children: any;
+  className?: string;
+  size?: "xs" | "sm" | "md" | "lg";
+  style?: React.CSSProperties;
 }
 
-const Article: React.FunctionComponent<ArticleProps> = props => {
-    return (
-        <article className={props.className} style={props.style}>
-            {props.children}
-        </article>
-    );
+const Article: React.FunctionComponent<ArticleProps> = (props) => {
+  return (
+    <article className={props.className} style={props.style}>
+      {props.children}
+    </article>
+  );
 };
 
 const StyledArticle = styled(Article)`
-  max-width: ${props =>
-    props.size === "sm" ? "600px" : props.size === "lg" ? "1200px" : "900px"};
+  max-width: ${(props) => {
+    if (props.size === "xs") return "450px";
+    if (props.size === "sm") return "600px";
+    if (props.size === "md") return "900px";
+    return "1200px";
+  }};
   width: 100%;
   margin: 0 auto;
   font-family: AvenirNextReg;
@@ -29,7 +33,8 @@ const StyledArticle = styled(Article)`
   > div {
     margin-bottom: 3.5rem;
   }
-  @media (min-width: ${props => props.theme.smToMd}) {
+
+  @media (min-width: ${(props) => props.theme.smToMd}) {
     padding: 0;
 
     > div {
@@ -39,4 +44,3 @@ const StyledArticle = styled(Article)`
 `;
 
 export { StyledArticle as Article };
-export default Article;
