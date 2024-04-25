@@ -8,9 +8,7 @@ export interface LoginProps {}
 const login = (): React.JSX.Element => {
   return (
     <Page>
-      <Article size="sm">
-        <LoginUser />
-      </Article>
+      <LoginUser />
     </Page>
   );
 };
