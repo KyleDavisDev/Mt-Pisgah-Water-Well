@@ -1,39 +1,39 @@
 import * as React from "react";
-import localFont from 'next/font/local'
+import localFont from "next/font/local";
 
 import {
-    ThemeProvider,
-    theme,
-    createGlobalStyle
+  ThemeProvider,
+  theme,
+  createGlobalStyle,
 } from "../../theme/styled-components";
 import Meta from "../Meta/Meta";
 
-const AvenirNextReg = localFont({
-  src: '../../theme/fonts/AvenirNext-Regular.ttf',
-  display: 'swap',
-});
+// const AvenirNextReg = localFont({
+//   src: '../../theme/fonts/AvenirNext-Regular.ttf',
+//   display: 'swap',
+// });
 const FuturaMedium = localFont({
   src: "../../theme/fonts/Futura-Medium.ttf",
-  display: 'swap',
-})
+  display: "swap",
+});
 
-// const AvenirNextReg = "../../theme/fonts/AvenirNext-Regular.ttf";
+const AvenirNextReg = "../../theme/fonts/AvenirNext-Regular.ttf";
 // const FuturaMedium = "../../theme/fonts/Futura-Medium.ttf";
 
 interface IPageProps {
-    children?: any;
+  children?: any;
 }
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: FuturaMedium;
-    src: url('${FuturaMedium}') format('truetype');
+    src: url('/fonts/Futura-Medium.ttf') format('truetype');
     font-weight: normal;
       font-style: normal;
   }
   @font-face {
     font-family: AvenirNextReg;
-    src: url('${AvenirNextReg}') format('truetype');
+      src: url('/fonts/AvenirNext-Regular.ttf') format('truetype');
     font-weight: normal;
       font-style: normal;
   }
@@ -79,14 +79,14 @@ const GlobalStyle = createGlobalStyle`
 
 `;
 
-const Page: React.FunctionComponent<IPageProps> = props => {
-    return (
-        <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <Meta />
-            {props.children}
-        </ThemeProvider>
-    );
+const Page: React.FunctionComponent<IPageProps> = (props) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <Meta />
+      {props.children}
+    </ThemeProvider>
+  );
 };
 
 export default Page;
