@@ -15,7 +15,8 @@ import {
   StyledFooterDivs,
   StyledContainer,
 } from "./LoginUserStyle";
-import Well from "@/components/Well/Well";
+import Well from "../Well/Well";
+import { Article } from "../Article/Article";
 
 export interface LoginProps {}
 
@@ -44,57 +45,59 @@ const LoginUser: React.FC<LoginProps> = () => {
   const router = useRouter();
 
   return (
-    <StyledContainer>
-      <Well>
-        <StyledFormContainer>
-          {/*{flashMessage.isVisible && (*/}
-          {/*    <FlashMessage*/}
-          {/*        type={flashMessage.type}*/}
-          {/*        isVisible*/}
-          {/*        onClose={onFlashClose}*/}
-          {/*    >*/}
-          {/*        {flashMessage.text}*/}
-          {/*    </FlashMessage>*/}
-          {/*)}*/}
+    <Article size="xs">
+      <StyledContainer>
+        <Well>
+          <StyledFormContainer>
+            {/*{flashMessage.isVisible && (*/}
+            {/*    <FlashMessage*/}
+            {/*        type={flashMessage.type}*/}
+            {/*        isVisible*/}
+            {/*        onClose={onFlashClose}*/}
+            {/*    >*/}
+            {/*        {flashMessage.text}*/}
+            {/*    </FlashMessage>*/}
+            {/*)}*/}
 
-          <form onSubmit={(e) => onSubmit(e)} style={{ width: "100%" }}>
-            <TextInput
-              onChange={(e) => setUsername(e.target.value)}
-              value={username}
-              type={"username"}
-              id={"username"}
-              showLabel={true}
-              label={"Username"}
-              name={"username"}
-              required={true}
-            />
-            <TextInput
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              type={"password"}
-              id={"password"}
-              showLabel={true}
-              label={"Password"}
-              name={"password"}
-              required={true}
-            />
-            <StyledFooterDivs>
-              <StyledButton type="submit">{_submitButtonText}</StyledButton>
-            </StyledFooterDivs>
+            <form onSubmit={(e) => onSubmit(e)} style={{ width: "100%" }}>
+              <TextInput
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
+                type={"text"}
+                id={"username"}
+                showLabel={true}
+                label={"Username"}
+                name={"username"}
+                required={true}
+              />
+              <TextInput
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                type={"password"}
+                id={"password"}
+                showLabel={true}
+                label={"Password"}
+                name={"password"}
+                required={true}
+              />
+              <StyledFooterDivs>
+                <StyledButton type="submit">{_submitButtonText}</StyledButton>
+              </StyledFooterDivs>
 
-            <StyledText>
-              <Link href={_forgotPasswordLink.href}>
-                {_forgotPasswordLink.text}
-              </Link>
-            </StyledText>
-            <StyledText>
-              Don't have an account yet?{" "}
-              <Link href={_registerLink.href}>{_registerLink.text}</Link>
-            </StyledText>
-          </form>
-        </StyledFormContainer>
-      </Well>
-    </StyledContainer>
+              <StyledText>
+                <Link href={_forgotPasswordLink.href}>
+                  {_forgotPasswordLink.text}
+                </Link>
+              </StyledText>
+              <StyledText>
+                Don't have an account yet?{" "}
+                <Link href={_registerLink.href}>{_registerLink.text}</Link>
+              </StyledText>
+            </form>
+          </StyledFormContainer>
+        </Well>
+      </StyledContainer>
+    </Article>
   );
 
   function onFlashClose() {
