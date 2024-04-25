@@ -9,16 +9,18 @@ export interface ButtonProps {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   style?: React.CSSProperties;
   disabled?: boolean;
+  fullWidth?: boolean;
 }
 
-const Button: React.FunctionComponent<ButtonProps> = props => {
+const Button: React.FunctionComponent<ButtonProps> = (props) => {
   const {
     className,
     style,
     onClick,
     type = "button",
+    fullWidth = false,
     disabled = false,
-    children
+    children,
   } = props;
 
   return (
@@ -36,82 +38,89 @@ const Button: React.FunctionComponent<ButtonProps> = props => {
 };
 
 const StyledButton = styled(Button)`
-    display: inline-block;
+  display: inline-block;
 
-    button {
-        font-size: 1rem;
-        text-decoration: none;
-        font-family: FuturaMedium, serif;
-        padding: 0.5em 1em;
-        transition: all 0.2s ease;
-        border-radius: 3px;
-        background-color: ${props =>
-                props.displayType === "outline"
-                        ? "transparent"
-                        : props.theme.primaryThemeColor};
-        border: ${props => "2px solid " + props.theme.primaryThemeColor};
-        color: ${props =>
-                props.displayType === "outline" ? props.theme.black : props.theme.white};
+  width: ${(props) => {
+    return props.fullWidth ? "100%" : "default";
+  }};
 
-        &:disabled {
-            color: ${props =>
-                    props.displayType === "outline"
-                            ? props.theme.black
-                            : props.theme.white};
-            background-color: ${props =>
-                    props.displayType === "outline"
-                            ? props.theme.lightGrey
-                            : props.theme.primaryDarkThemeColor};
-            border: ${props =>
-                    props.displayType === "outline"
-                            ? "2px solid " + props.theme.lightGrey
-                            : "2px solid " + props.theme.primaryDarkThemeColor};
+  button {
+    font-size: 1rem;
+    width: ${(props) => {
+      return props.fullWidth ? "100%" : "default";
+    }};
+    text-decoration: none;
+    font-family: FuturaMedium, serif;
+    padding: 0.5em 1em;
+    transition: all 0.2s ease;
+    border-radius: 3px;
+    background-color: ${(props) =>
+      props.displayType === "outline"
+        ? "transparent"
+        : props.theme.primaryThemeColor};
+    border: ${(props) => "2px solid " + props.theme.primaryThemeColor};
+    color: ${(props) =>
+      props.displayType === "outline" ? props.theme.black : props.theme.white};
 
-            &:hover,
-            &:focus {
-                color: ${props =>
-                        props.displayType === "outline"
-                                ? props.theme.black
-                                : props.theme.white};
-                background-color: ${props =>
-                        props.displayType === "outline"
-                                ? props.theme.lightGrey
-                                : props.theme.primaryDarkThemeColor};
-                border: ${props =>
-                        props.displayType === "outline"
-                                ? "2px solid " + props.theme.lightGrey
-                                : "2px solid " + props.theme.primaryDarkThemeColor};
-            }
-        }
+    &:disabled {
+      color: ${(props) =>
+        props.displayType === "outline"
+          ? props.theme.black
+          : props.theme.white};
+      background-color: ${(props) =>
+        props.displayType === "outline"
+          ? props.theme.lightGrey
+          : props.theme.primaryDarkThemeColor};
+      border: ${(props) =>
+        props.displayType === "outline"
+          ? "2px solid " + props.theme.lightGrey
+          : "2px solid " + props.theme.primaryDarkThemeColor};
 
-        &:hover,
-        &:focus {
-            cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
-            background-color: ${props =>
-                    props.displayType === "outline"
-                            ? "transparent"
-                            : props.theme.primaryDarkThemeColor};
-            border: ${props => "2px solid " + props.theme.primaryDarkThemeColor};
-            color: ${props =>
-                    props.displayType === "outline"
-                            ? props.theme.primaryDarkThemeColor
-                            : props.theme.white};
-
-            svg {
-                fill: ${props =>
-                        props.displayType === "outline"
-                                ? props.theme.primaryDarkThemeColor
-                                : props.theme.white};
-            }
-        }
-
-        svg {
-            width: 20px;
-            padding-left: 10px;
-            transition: all 0.2s ease;
-        }
+      &:hover,
+      &:focus {
+        color: ${(props) =>
+          props.displayType === "outline"
+            ? props.theme.black
+            : props.theme.white};
+        background-color: ${(props) =>
+          props.displayType === "outline"
+            ? props.theme.lightGrey
+            : props.theme.primaryDarkThemeColor};
+        border: ${(props) =>
+          props.displayType === "outline"
+            ? "2px solid " + props.theme.lightGrey
+            : "2px solid " + props.theme.primaryDarkThemeColor};
+      }
     }
+
+    &:hover,
+    &:focus {
+      cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+      background-color: ${(props) =>
+        props.displayType === "outline"
+          ? "transparent"
+          : props.theme.primaryDarkThemeColor};
+      border: ${(props) => "2px solid " + props.theme.primaryDarkThemeColor};
+      color: ${(props) =>
+        props.displayType === "outline"
+          ? props.theme.primaryDarkThemeColor
+          : props.theme.white};
+
+      svg {
+        fill: ${(props) =>
+          props.displayType === "outline"
+            ? props.theme.primaryDarkThemeColor
+            : props.theme.white};
+      }
+    }
+
+    svg {
+      width: 20px;
+      padding-left: 10px;
+      transition: all 0.2s ease;
+    }
+  }
 `;
 StyledButton.displayName = "Button";
 
-export {StyledButton as Button};
+export { StyledButton as Button };
