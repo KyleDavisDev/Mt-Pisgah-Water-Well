@@ -1,19 +1,18 @@
 import * as React from "react";
 import LoginUser from "../../components/LoginUser/LoginUser";
-import {Article} from "../../components/Article/Article";
+import { Article } from "../../components/Article/Article";
 import Page from "@/components/Page/Page";
 
-export interface LoginProps {
-}
+export interface LoginProps {}
 
-const Login = (): React.JSX.Element => {
+const login = (): React.JSX.Element => {
   return (
     <Page>
       <Article size="sm">
-        <LoginUser/>
+        <LoginUser />
       </Article>
     </Page>
   );
 };
 
-export default Login;
+export default login;
