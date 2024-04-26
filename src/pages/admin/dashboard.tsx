@@ -1,5 +1,12 @@
+import Page from "../../components/Page/Page";
+import AdminDashboard from "../../components/pages/AdminDashboard/AdminDashboard";
+
 const dashboard = () => {
-  return <p>Hello World!</p>;
+  return (
+    <Page>
+      <AdminDashboard />
+    </Page>
+  );
 };
 
 export default dashboard;
