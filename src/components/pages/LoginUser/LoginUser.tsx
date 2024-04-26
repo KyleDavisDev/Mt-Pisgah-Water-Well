@@ -1,16 +1,19 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-import { TextInput } from "../../components/TextInput/TextInput";
-import { FlashMessageProps, FlashMessage } from "../FlashMessage/FlashMessage";
+import { TextInput } from "../../TextInput/TextInput";
+import {
+  FlashMessageProps,
+  FlashMessage,
+} from "../../FlashMessage/FlashMessage";
 import {
   StyledFormContainer,
   StyledFooterDivs,
   StyledContainer,
 } from "./LoginUserStyle";
-import Well from "../Well/Well";
-import { Article } from "../Article/Article";
-import { Button } from "../Button/Button";
+import Well from "../../Well/Well";
+import { Article } from "../../Article/Article";
+import { Button } from "../../Button/Button";
 
 export interface LoginProps {}
 
