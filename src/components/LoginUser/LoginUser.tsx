@@ -1,6 +1,5 @@
 import React from "react";
 import { useRouter } from "next/router";
-// import validator from "validator";
 
 import { TextInput } from "../../components/TextInput/TextInput";
 import { FlashMessageProps, FlashMessage } from "../FlashMessage/FlashMessage";
@@ -16,8 +15,6 @@ import { Button } from "../Button/Button";
 export interface LoginProps {}
 
 const LoginUser: React.FC<LoginProps> = () => {
-  const _submitButtonText = "Login";
-  const _registerLink = { href: "/account/register", text: "Sign up!" };
   const _defaultErrorMessage =
     "There was a problem logging into your account. Please refresh your page and try again!";
 
@@ -55,14 +52,24 @@ const LoginUser: React.FC<LoginProps> = () => {
     }
 
     try {
-      const tmp = await fetch("/api/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         body: JSON.stringify({ username, password }),
       });
 
-      console.log(tmp);
-      // TODO: Redirect user admin page
+      if (response.ok) {
+        const data = await response.json();
+
+        setFlashMessage({
+          isVisible: true,
+          text: data.message,
+          type: "success",
+        });
+
+        router.push("/admin/dashboard");
+      }
     } catch (err: any) {
+      console.log(err);
       // Create warning flash
       setFlashMessage({
         isVisible: true,
@@ -112,7 +119,7 @@ const LoginUser: React.FC<LoginProps> = () => {
               />
               <StyledFooterDivs>
                 <Button type="submit" fullWidth>
-                  {_submitButtonText}
+                  Login
                 </Button>
               </StyledFooterDivs>
             </form>
