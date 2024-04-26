@@ -5,7 +5,7 @@ const {
   css,
   createGlobalStyle,
   keyframes,
-  ThemeProvider
+  ThemeProvider,
 } = styledComponents;
 
 export interface ThemeInterface {
@@ -29,6 +29,7 @@ export interface ThemeInterface {
   radioButtonInActiveTextColor: string;
 
   siteBackgroundColor: string;
+  siteFontColor: string;
 
   userCubeBackgroundColor: string;
   userCubeTextColor: string;
@@ -62,10 +63,12 @@ export interface ThemeInterface {
 
 enum colors {
   purple = "#3B4DA8",
-  white = "#fff",
+  white = "#ddd",
+  white2 = "rgb(230, 237, 243)",
   grey = "#676767",
   lightGrey = "#CCCCCC",
   darkGrey = "#555",
+  darkGrey2 = "rgb(27, 27, 27)",
   mustard = "#FFA816",
   darkMustard = "#c97e00",
   lightMustard = "#fff4e3",
@@ -80,7 +83,7 @@ enum colors {
   blue6 = "#0969ff",
   blue7 = "#0058e4",
   blue8 = "#004ecc",
-  blue9 = "#0043b5"
+  blue9 = "#0043b5",
 }
 
 enum scale {
@@ -96,7 +99,7 @@ enum scale {
   scaleH6 = "1rem",
   exToSm = "560px",
   smToMd = "768px",
-  mdToLg = "1024px"
+  mdToLg = "1024px",
 }
 
 export const theme = {
@@ -120,6 +123,9 @@ export const theme = {
   radioButtonInActiveTextColor: colors.black,
 
   siteBackgroundColor: colors.smoke,
+  siteBackgroundColorDark: colors.darkGrey2,
+
+  siteFontColor: colors.white2,
 
   userCubeBackgroundColor: colors.white,
   userCubeTextColor: colors.blue6,
@@ -148,8 +154,8 @@ export const theme = {
   grey: colors.grey,
   lightGrey: colors.lightGrey,
   darkGrey: colors.darkGrey,
-  black: colors.black
+  black: colors.black,
 };
 
-export {css, createGlobalStyle, keyframes, ThemeProvider};
+export { css, createGlobalStyle, keyframes, ThemeProvider };
 export default styled;
