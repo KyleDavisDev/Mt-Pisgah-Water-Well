@@ -1,5 +1,5 @@
 import * as React from "react";
-import LoginUser from "../../components/LoginUser/LoginUser";
+import LoginUser from "../../components/pages/LoginUser/LoginUser";
 import Page from "@/components/Page/Page";
 
 export interface LoginProps {}
