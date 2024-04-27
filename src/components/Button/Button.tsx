@@ -60,7 +60,9 @@ const StyledButton = styled(Button)`
         : props.theme.primaryThemeColor};
     border: ${(props) => "2px solid " + props.theme.primaryThemeColor};
     color: ${(props) =>
-      props.displayType === "outline" ? props.theme.black : props.theme.white};
+      props.displayType === "outline"
+        ? props.theme.black
+        : props.theme.buttonFontColor};
 
     &:disabled {
       color: ${(props) =>
@@ -104,7 +106,7 @@ const StyledButton = styled(Button)`
       color: ${(props) =>
         props.displayType === "outline"
           ? props.theme.primaryDarkThemeColor
-          : props.theme.white};
+          : props.theme.buttonFontColor};
 
       svg {
         fill: ${(props) =>
