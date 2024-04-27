@@ -15,7 +15,6 @@ export interface ThemeInterface {
   secondaryThemeColor: string;
   navigationTextColor: string;
   navigationIconColor: string;
-  landingHeroTextColor: string;
   cardBackgroundColor: string;
 
   checkBoxActiveBackgroundColor: string;
@@ -30,9 +29,6 @@ export interface ThemeInterface {
 
   siteBackgroundColor: string;
   siteFontColor: string;
-
-  userCubeBackgroundColor: string;
-  userCubeTextColor: string;
 
   formContainerBackgroundColor: string;
   maxPageWidth: string;
@@ -63,8 +59,8 @@ export interface ThemeInterface {
 
 enum colors {
   purple = "#3B4DA8",
-  white = "#ddd",
-  white2 = "rgb(230, 237, 243)",
+  white = "#fff",
+  white2 = "rgb(237, 241, 247)",
   grey = "#676767",
   lightGrey = "#CCCCCC",
   darkGrey = "#555",
@@ -74,6 +70,7 @@ enum colors {
   lightMustard = "#fff4e3",
   smoke = "#f5f5f5",
   black = "#333333",
+  black2 = "rgb(34, 43, 69)",
   blue0 = "#e5f4ff",
   blue1 = "#cde2ff",
   blue2 = "#9bc2ff",
@@ -109,7 +106,6 @@ export const theme = {
   secondaryThemeColor: colors.purple,
   navigationTextColor: colors.white,
   navigationIconColor: colors.white,
-  landingHeroTextColor: colors.white,
   cardBackgroundColor: colors.white,
 
   checkBoxActiveBackgroundColor: colors.blue6,
@@ -122,13 +118,10 @@ export const theme = {
   radioButtonActiveTextColor: colors.black,
   radioButtonInActiveTextColor: colors.black,
 
-  siteBackgroundColor: colors.smoke,
+  siteBackgroundColor: colors.white2,
   siteBackgroundColorDark: colors.darkGrey2,
 
-  siteFontColor: colors.white2,
-
-  userCubeBackgroundColor: colors.white,
-  userCubeTextColor: colors.blue6,
+  siteFontColor: colors.black2,
 
   formContainerBackgroundColor: colors.white,
   maxPageWidth: scale.maxPageWidth,
