@@ -13,9 +13,6 @@ export interface ThemeInterface {
   primaryDarkThemeColor: string;
   primaryLightThemeColor: string;
   secondaryThemeColor: string;
-  navigationTextColor: string;
-  navigationIconColor: string;
-  cardBackgroundColor: string;
 
   checkBoxActiveBackgroundColor: string;
   checkBoxInActiveBackgroundColor: string;
@@ -51,6 +48,7 @@ export interface ThemeInterface {
   inputBorder: string;
 
   white: string;
+  white2: string;
   grey: string;
   lightGrey: string;
   darkGrey: string;
@@ -104,9 +102,6 @@ export const theme = {
   primaryDarkThemeColor: colors.blue9,
   primaryLightThemeColor: colors.blue2,
   secondaryThemeColor: colors.purple,
-  navigationTextColor: colors.white,
-  navigationIconColor: colors.white,
-  cardBackgroundColor: colors.white,
 
   checkBoxActiveBackgroundColor: colors.blue6,
   checkBoxInActiveBackgroundColor: colors.lightGrey,
@@ -144,6 +139,7 @@ export const theme = {
   inputBorder: "1px solid #ababab",
 
   white: colors.white,
+  white2: colors.white2,
   grey: colors.grey,
   lightGrey: colors.lightGrey,
   darkGrey: colors.darkGrey,
