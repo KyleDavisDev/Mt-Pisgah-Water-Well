@@ -60,9 +60,7 @@ const StyledButton = styled(Button)`
         : props.theme.primaryThemeColor};
     border: ${(props) => "2px solid " + props.theme.primaryThemeColor};
     color: ${(props) =>
-      props.displayType === "outline"
-        ? props.theme.black
-        : props.theme.buttonFontColor};
+      props.displayType === "outline" ? props.theme.black : props.theme.white2};
 
     &:disabled {
       color: ${(props) =>
