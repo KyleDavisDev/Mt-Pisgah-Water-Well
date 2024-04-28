@@ -1,6 +1,7 @@
 import SidebarMenu from "../../SidebarMenu/SidebarMenu";
 import {
   StyledContainer,
+  StyledDiv,
   StyledFooterDivs,
   StyledFormContainer,
 } from "./HomeownersAddStyle";
@@ -65,6 +66,11 @@ const HomeownersAdd = () => {
           text: data.message,
           type: "success",
         });
+
+        setUsername("");
+        setPhone("");
+        setEmail("");
+        setMailingAddress("");
       }
     } catch (err: any) {
       console.log(err);
@@ -74,13 +80,11 @@ const HomeownersAdd = () => {
         text: err.response?.data?.msg || _defaultErrorMessage,
         type: "warning",
       });
-      setUsername("");
-      setPhone("");
     }
   };
 
   return (
-    <div>
+    <StyledDiv>
       <SidebarMenu />
       <Article size="md">
         <StyledContainer>
@@ -145,7 +149,7 @@ const HomeownersAdd = () => {
           </Well>
         </StyledContainer>
       </Article>
-    </div>
+    </StyledDiv>
   );
 };
 
