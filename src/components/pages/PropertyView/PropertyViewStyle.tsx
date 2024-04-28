@@ -1,0 +1,50 @@
+import styled from "../../../theme/styled-components";
+
+export const StyledDiv = styled.div`
+  background-color: ${(props) => props.theme.siteBackgroundColor};
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+  color: ${(props) => props.theme.siteFontColor};
+`;
+
+export const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+`;
+
+export const StyledFormContainer = styled.div`
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`;
+
+export const StyledTable = styled.table`
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+
+  thead {
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    display: table-cell;
+    border-collapse: collapse;
+  }
+
+  tr {
+    border-bottom: 1px solid #ddd;
+  }
+  tr:nth-child(2n) {
+    background-color: #e7e9eb;
+  }
+`;
