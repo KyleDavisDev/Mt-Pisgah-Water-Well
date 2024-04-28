@@ -42,6 +42,7 @@ export interface ThemeInterface {
   smToMd: string;
   mdToLg: string;
   defaultFontSize: string;
+  borderRadiusSize: string;
 
   border: string;
 
@@ -95,6 +96,7 @@ enum scale {
   exToSm = "560px",
   smToMd = "768px",
   mdToLg = "1024px",
+  borderRadiusSize = "5px",
 }
 
 export const theme = {
@@ -133,6 +135,7 @@ export const theme = {
   smToMd: scale.smToMd,
   mdToLg: scale.mdToLg,
   defaultFontSize: scale.defaultFontSize,
+  borderRadiusSize: scale.borderRadiusSize,
 
   border: "1px solid #ddd",
 
