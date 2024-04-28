@@ -50,6 +50,11 @@ const SidebarMenu = () => {
         {showProperties && (
           <>
             <StyledSubMenuItemContainer>
+              <Link href={"/properties/view"} inverseColors={true}>
+                <StyledMenuItem>View All</StyledMenuItem>
+              </Link>
+            </StyledSubMenuItemContainer>
+            <StyledSubMenuItemContainer>
               <Link href={"/properties/add"} inverseColors={true}>
                 <StyledMenuItem>Add Property</StyledMenuItem>
               </Link>
