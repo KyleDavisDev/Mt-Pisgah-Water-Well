@@ -1,13 +1,4 @@
-import styled from "../../../theme/styled-components";
-
-export const StyledDiv = styled.div`
-  background-color: ${(props) => props.theme.siteBackgroundColor};
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100vh;
-  color: ${(props) => props.theme.siteFontColor};
-`;
+import styled from "../../../../../theme/styled-components";
 
 export const StyledContainer = styled.div`
   display: flex;

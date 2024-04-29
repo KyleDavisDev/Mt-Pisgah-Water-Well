@@ -8,7 +8,11 @@ import {
 } from "./SidebarMenuStyle";
 import { useState } from "react";
 
-const SidebarMenu = () => {
+interface SidebarMenuProps {
+  onMenuItemClick: (item: string) => void;
+}
+
+const SidebarMenu = (props: SidebarMenuProps) => {
   const [showHomeowners, setShowHomeowners] = useState<boolean>(false);
   const [showProperties, setShowProperties] = useState<boolean>(false);
 
@@ -30,9 +34,11 @@ const SidebarMenu = () => {
         {showHomeowners && (
           <>
             <StyledSubMenuItemContainer>
-              <Link href={"/homeowners/add"} inverseColors={true}>
-                <StyledMenuItem>Add Homeowner</StyledMenuItem>
-              </Link>
+              <StyledMenuItem
+                onClick={() => props.onMenuItemClick("add_homeowner")}
+              >
+                Add Homeowner
+              </StyledMenuItem>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
               <Link href={"/homeowners/remove"} inverseColors={true}>
@@ -50,19 +56,18 @@ const SidebarMenu = () => {
         {showProperties && (
           <>
             <StyledSubMenuItemContainer>
-              <Link href={"/properties/view"} inverseColors={true}>
-                <StyledMenuItem>View All</StyledMenuItem>
-              </Link>
+              <StyledMenuItem
+                onClick={() => props.onMenuItemClick("view_property")}
+              >
+                View All
+              </StyledMenuItem>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <Link href={"/properties/add"} inverseColors={true}>
-                <StyledMenuItem>Add Property</StyledMenuItem>
-              </Link>
-            </StyledSubMenuItemContainer>
-            <StyledSubMenuItemContainer>
-              <Link href={"/properties/remove"} inverseColors={true}>
-                <StyledMenuItem>Remove Property</StyledMenuItem>
-              </Link>
+              <StyledMenuItem
+                onClick={() => props.onMenuItemClick("add_property")}
+              >
+                Add Property
+              </StyledMenuItem>
             </StyledSubMenuItemContainer>
           </>
         )}

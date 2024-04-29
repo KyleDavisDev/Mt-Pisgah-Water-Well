@@ -1,17 +1,14 @@
 import React from "react";
-import SidebarMenu from "../../SidebarMenu/SidebarMenu";
 import {
   StyledContainer,
-  StyledDiv,
   StyledFormContainer,
   StyledTable,
 } from "./PropertyViewStyle";
-import Well from "../../Well/Well";
+import Well from "../../../../Well/Well";
 import {
   FlashMessage,
   FlashMessageProps,
-} from "../../FlashMessage/FlashMessage";
-import { Article } from "../../Article/Article";
+} from "../../../../FlashMessage/FlashMessage";
 
 const PropertyView = () => {
   const _defaultErrorMessage =
@@ -104,47 +101,42 @@ const PropertyView = () => {
   // };
 
   return (
-    <StyledDiv>
-      <SidebarMenu />
-      <Article size="md">
-        <StyledContainer>
-          <Well>
-            <StyledFormContainer>
-              {flashMessage.isVisible && (
-                <FlashMessage
-                  type={flashMessage.type}
-                  isVisible
-                  onClose={onFlashClose}
-                >
-                  {flashMessage.text}
-                </FlashMessage>
-              )}
+    <StyledContainer>
+      <Well>
+        <StyledFormContainer>
+          {flashMessage.isVisible && (
+            <FlashMessage
+              type={flashMessage.type}
+              isVisible
+              onClose={onFlashClose}
+            >
+              {flashMessage.text}
+            </FlashMessage>
+          )}
 
-              <StyledTable>
-                <thead>
+          <StyledTable>
+            <thead>
+              <tr>
+                <th>Address</th>
+                <th>Description</th>
+                <th>Active</th>
+              </tr>
+            </thead>
+            <tbody>
+              {properties.map((property) => {
+                return (
                   <tr>
-                    <th>Address</th>
-                    <th>Description</th>
-                    <th>Active</th>
+                    <td>{property.address}</td>
+                    <td>{property.description}</td>
+                    <td>{property.isActive}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {properties.map((property) => {
-                    return (
-                      <tr>
-                        <td>{property.address}</td>
-                        <td>{property.description}</td>
-                        <td>{property.isActive}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </StyledTable>
-            </StyledFormContainer>
-          </Well>
-        </StyledContainer>
-      </Article>
-    </StyledDiv>
+                );
+              })}
+            </tbody>
+          </StyledTable>
+        </StyledFormContainer>
+      </Well>
+    </StyledContainer>
   );
 };
 
