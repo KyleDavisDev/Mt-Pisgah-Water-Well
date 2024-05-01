@@ -1,9 +1,9 @@
 export default interface Homeowners {
-    id: string
-    name: string
-    email: string
-    phoneNumber: string
-    mailingAddress: string
-    createdAt: string
-    isActive?: boolean
+  id: string;
+  name: string;
+  email?: string;
+  phone_number?: string;
+  mailing_address: string;
+  createdAt: string;
+  is_active: boolean;
 }
