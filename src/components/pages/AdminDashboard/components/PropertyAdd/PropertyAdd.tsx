@@ -42,9 +42,17 @@ const PropertyAdd = () => {
         return response.json();
       })
       .then((data) => {
+        const tmp = data.homeowners
+          .filter((x: any) => x.isActive === "true")
+          .map((x: any) => {
+            return {
+              name: x.name,
+              id: x.id,
+            };
+          });
         // Update state with the fetched data
-        setHomeowners(data.homeowners);
-        setHomeowner(data.homeowners[0].id);
+        setHomeowners(tmp);
+        setHomeowner(tmp[0].id);
       })
       .catch((error) => {
         // Handle fetch errors
@@ -163,7 +171,6 @@ const PropertyAdd = () => {
                   value: h.id,
                 }))}
                 onSelect={(e) => {
-                  console.log(e.target.value);
                   return setHomeowner(e.target.value);
                 }}
                 selectedValue={homeowner}
