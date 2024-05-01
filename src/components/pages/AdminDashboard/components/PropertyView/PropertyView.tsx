@@ -15,7 +15,7 @@ const PropertyView = () => {
     "There was a problem saving the property. Please refresh your page and try again!";
 
   // assign state
-  const [properties, setHomeowners] = React.useState<
+  const [properties, setProperties] = React.useState<
     { address: string; description: string; isActive: boolean }[]
   >([]);
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
@@ -37,7 +37,7 @@ const PropertyView = () => {
       })
       .then((data) => {
         // Update state with the fetched data
-        setHomeowners(data.properties);
+        setProperties(data.properties);
       })
       .catch((error) => {
         // Handle fetch errors
