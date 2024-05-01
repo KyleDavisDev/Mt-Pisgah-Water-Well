@@ -10,6 +10,8 @@ type Data = {
   homeowners?: {
     id: string;
     name: string;
+    mailingAddress: string;
+    isActive: string;
   }[];
   error?: string;
 };
@@ -95,7 +97,7 @@ export default async function handler(
     // TODO: Finish this out.
     // validatePermission(username, "VIEW_HOMEOWNERS");
 
-    const result = await db.from("homeowners").select().eq("is_active", true);
+    const result = await db.from("homeowners").select();
     const homeowners = result.data as Homeowners[];
 
     return res.status(200).json({
@@ -103,6 +105,8 @@ export default async function handler(
         return {
           name: h.name,
           id: h.id,
+          mailingAddress: h.mailing_address,
+          isActive: h.is_active ? "true" : "false",
         };
       }),
     });
