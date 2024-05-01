@@ -45,7 +45,6 @@ const Select: React.FC<SelectProps> = (props) => {
           name={name}
         >
           {options.map((opt, ind) => {
-            console.log(opt);
             return (
               <option
                 key={ind + "-" + opt.name}
