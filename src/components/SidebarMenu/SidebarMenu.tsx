@@ -15,6 +15,7 @@ interface SidebarMenuProps {
 const SidebarMenu = (props: SidebarMenuProps) => {
   const [showHomeowners, setShowHomeowners] = useState<boolean>(false);
   const [showProperties, setShowProperties] = useState<boolean>(false);
+  const [showUsage, setShowUsage] = useState<boolean>(false);
 
   return (
     <StyledSideBarContainer>
@@ -35,15 +36,17 @@ const SidebarMenu = (props: SidebarMenuProps) => {
           <>
             <StyledSubMenuItemContainer>
               <StyledMenuItem
+                onClick={() => props.onMenuItemClick("view_homeowner")}
+              >
+                View All
+              </StyledMenuItem>
+            </StyledSubMenuItemContainer>
+            <StyledSubMenuItemContainer>
+              <StyledMenuItem
                 onClick={() => props.onMenuItemClick("add_homeowner")}
               >
                 Add Homeowner
               </StyledMenuItem>
-            </StyledSubMenuItemContainer>
-            <StyledSubMenuItemContainer>
-              <Link href={"/homeowners/remove"} inverseColors={true}>
-                <StyledMenuItem>Remove Homeowner</StyledMenuItem>
-              </Link>
             </StyledSubMenuItemContainer>
           </>
         )}
@@ -67,6 +70,30 @@ const SidebarMenu = (props: SidebarMenuProps) => {
                 onClick={() => props.onMenuItemClick("add_property")}
               >
                 Add Property
+              </StyledMenuItem>
+            </StyledSubMenuItemContainer>
+          </>
+        )}
+      </StyledMenuItemContainer>
+
+      <StyledMenuItemContainer>
+        <StyledMenuItem onClick={() => setShowUsage(!showUsage)}>
+          Usage
+        </StyledMenuItem>
+        {showUsage && (
+          <>
+            <StyledSubMenuItemContainer>
+              <StyledMenuItem
+                onClick={() => props.onMenuItemClick("view_usage")}
+              >
+                View All
+              </StyledMenuItem>
+            </StyledSubMenuItemContainer>
+            <StyledSubMenuItemContainer>
+              <StyledMenuItem
+                onClick={() => props.onMenuItemClick("add_usage")}
+              >
+                Add Usage
               </StyledMenuItem>
             </StyledSubMenuItemContainer>
           </>
