@@ -8,6 +8,8 @@ import {
   FlashMessage,
   FlashMessageProps,
 } from "../../../../../../FlashMessage/FlashMessage";
+import { RadioButton } from "../../../../../../RadioButton/RadioButton";
+import Label from "../../../../../../Label/Label";
 
 export interface HomeownerEditModalProps {
   showModal: boolean;
@@ -16,10 +18,12 @@ export interface HomeownerEditModalProps {
 }
 
 const HomeownerEditModal = (props: HomeownerEditModalProps) => {
+  console.log(props.homeowner);
+  const [id, setId] = React.useState(props.homeowner.id);
   const [name, setName] = React.useState(props.homeowner.name);
   const [email, setEmail] = React.useState(props.homeowner.email);
   const [phone, setPhone] = React.useState(props.homeowner.phone);
-  const [id, setId] = React.useState(props.homeowner.id);
+  const [isActive, setIsActive] = React.useState(props.homeowner.isActive);
   const [mailingAddress, setMailingAddress] = React.useState(
     props.homeowner.mailingAddress,
   );
@@ -54,12 +58,17 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
     try {
       const response = await fetch("/api/homeowners/update", {
         method: "POST",
-        body: JSON.stringify({ name, email, phone, mailingAddress, id }),
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          mailingAddress,
+          id,
+          isActive,
+        }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-
         setFlashMessage({
           isVisible: false,
           text: "",
@@ -135,6 +144,25 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
             name={"mailingAddress"}
             required={true}
           />
+
+          <Label>Active</Label>
+          <RadioButton
+            onClick={() => setIsActive("true")}
+            name={"is_active"}
+            checked={props.homeowner.isActive.toLowerCase() === "true"}
+            id={"RBisActiveYes"}
+            label={"Yes"}
+            value={"Yes"}
+          />
+          <RadioButton
+            onClick={() => setIsActive("false")}
+            name={"is_active"}
+            checked={props.homeowner.isActive.toLowerCase() === "false"}
+            id={"RBisActiveNo"}
+            label={"No"}
+            value={"No"}
+          />
+
           <StyledFooterDivs>
             <Button type="submit" fullWidth>
               Save
