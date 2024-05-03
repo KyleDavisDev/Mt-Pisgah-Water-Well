@@ -53,19 +53,19 @@ const HomeownersView = () => {
       });
   };
 
-  React.useEffect(() => {
-    if (!loading && homeowner.length === 0) {
-      setLoading(true);
-      getHomeowners();
-    }
-  }, [loading]);
-
   const onModalClose = () => {
     setShowModal(false);
     setActiveHomeowner(null);
 
     getHomeowners();
   };
+
+  React.useEffect(() => {
+    if (!loading && homeowner.length === 0) {
+      setLoading(true);
+      getHomeowners();
+    }
+  }, [loading]);
 
   return (
     <StyledContainer>
