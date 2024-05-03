@@ -18,7 +18,6 @@ export interface HomeownerEditModalProps {
 }
 
 const HomeownerEditModal = (props: HomeownerEditModalProps) => {
-  console.log(props.homeowner);
   const [id, setId] = React.useState(props.homeowner.id);
   const [name, setName] = React.useState(props.homeowner.name);
   const [email, setEmail] = React.useState(props.homeowner.email);
