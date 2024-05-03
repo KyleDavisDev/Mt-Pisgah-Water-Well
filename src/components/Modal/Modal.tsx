@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import * as React from "react";
 import { Button } from "../Button/Button";
+import { findDOMNode } from "react-dom";
 
 export interface ModalProps {
   children: string | React.JSX.Element | Array<string | React.JSX.Element>;
@@ -18,19 +19,43 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
     const mouseX = e.pageX;
     const mouseY = e.pageY;
 
-    // Log coordinates to the console
-    console.log(`Mouse down at: ${mouseX}, ${mouseY}`);
+    // Find the DOM element that was dragged on
+    const elementAtMouse = document.elementFromPoint(mouseX, mouseY);
+    const clickedOnElement = findDOMNode(elementAtMouse);
+    if (!clickedOnElement) return;
+
+    const label = (clickedOnElement as Element).attributes.getNamedItem(
+      "aria-labelledby",
+    )?.value;
+    if (label === "Close Modal") {
+      props.onClose();
+    }
 
     return;
-
-    props.onClose();
   };
+
+  // Add listener to body
+  React.useEffect(() => {
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code.toLowerCase() === "escape") {
+        props.onClose();
+      }
+    };
+
+    document.body.addEventListener("keyup", handleKeyUp);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      document.body.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
 
   return (
     <div
       className={props.className}
       style={props.style}
       onClick={(e: React.MouseEvent<HTMLDivElement>) => onOutsideClick(e)}
+      aria-labelledby={`Close Modal`}
     >
       <div>
         <div>
