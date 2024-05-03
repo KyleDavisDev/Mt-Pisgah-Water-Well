@@ -67,8 +67,6 @@ const HomeownersView = () => {
     getHomeowners();
   };
 
-  console.log("homeowner", activeHomeowner);
-
   return (
     <StyledContainer>
       <Well>
@@ -93,7 +91,6 @@ const HomeownersView = () => {
                       <td style={{ textAlign: "center" }}>
                         <Button
                           onClick={() => {
-                            console.log(homeowner);
                             setActiveHomeowner({ ...homeowner });
                             setShowModal(true);
                           }}
