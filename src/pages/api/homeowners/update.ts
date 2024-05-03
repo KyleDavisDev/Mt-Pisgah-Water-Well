@@ -90,7 +90,9 @@ export default async function handler(
       // TODO: Finish this out.
       // validatePermission(username, "UPDATE_HOMEOWNER");
 
-      const { name, email, phone, mailingAddress, id } = JSON.parse(req.body);
+      const { name, email, phone, mailingAddress, id, isActive } = JSON.parse(
+        req.body,
+      );
       console.log(req.body);
 
       const tmp = await db
@@ -100,7 +102,7 @@ export default async function handler(
           email,
           phone_number: phone,
           mailing_address: mailingAddress,
-          is_active: true,
+          is_active: isActive,
         })
         .eq("id", id);
 
