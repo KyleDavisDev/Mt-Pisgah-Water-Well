@@ -118,6 +118,7 @@ const PropertyAdd = () => {
   return (
     <StyledContainer>
       <Well>
+        <h3>Add Property</h3>
         <StyledFormContainer>
           {flashMessage.isVisible && (
             <FlashMessage

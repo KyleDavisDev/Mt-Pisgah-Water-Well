@@ -54,55 +54,10 @@ const PropertyView = () => {
     });
   };
 
-  // const onSubmit = async (event: React.FormEvent): Promise<any> => {
-  //   event.preventDefault();
-  //
-  //   if (!address) {
-  //     setFlashMessage({
-  //       isVisible: true,
-  //       text: "Missing address",
-  //       type: "alert",
-  //     });
-  //     return;
-  //   }
-  //
-  //   try {
-  //     const response = await fetch("/api/properties/add", {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         address,
-  //         description,
-  //         homeowner,
-  //       }),
-  //     });
-  //
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //
-  //       setFlashMessage({
-  //         isVisible: true,
-  //         text: data.message,
-  //         type: "success",
-  //       });
-  //
-  //       setAddress("");
-  //       setDescription("");
-  //       setHomeowner(properties[0].id);
-  //     }
-  //   } catch (err: any) {
-  //     console.log(err);
-  //     // Create warning flash
-  //     setFlashMessage({
-  //       isVisible: true,
-  //       text: err.response?.data?.msg || _defaultErrorMessage,
-  //       type: "warning",
-  //     });
-  //   }
-  // };
-
   return (
     <StyledContainer>
       <Well>
+        <h3>All Properties</h3>
         <StyledFormContainer>
           {flashMessage.isVisible && (
             <FlashMessage
