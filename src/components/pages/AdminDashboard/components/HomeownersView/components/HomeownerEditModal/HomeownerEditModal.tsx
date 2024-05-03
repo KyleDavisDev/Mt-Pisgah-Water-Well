@@ -4,10 +4,7 @@ import { Button } from "../../../../../../Button/Button";
 import { Modal } from "../../../../../../Modal/Modal";
 import React from "react";
 import { homeownerVM } from "../../HomeownersView";
-import {
-  FlashMessage,
-  FlashMessageProps,
-} from "../../../../../../FlashMessage/FlashMessage";
+import { FlashMessage, FlashMessageProps } from "../../../../../../FlashMessage/FlashMessage";
 import { RadioButton } from "../../../../../../RadioButton/RadioButton";
 import Label from "../../../../../../Label/Label";
 
@@ -23,14 +20,12 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
   const [email, setEmail] = React.useState(props.homeowner.email);
   const [phone, setPhone] = React.useState(props.homeowner.phone);
   const [isActive, setIsActive] = React.useState(props.homeowner.isActive);
-  const [mailingAddress, setMailingAddress] = React.useState(
-    props.homeowner.mailingAddress,
-  );
+  const [mailingAddress, setMailingAddress] = React.useState(props.homeowner.mailingAddress);
 
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
     text: "",
-    type: undefined,
+    type: undefined
   });
 
   const onFlashClose = () => {
@@ -38,7 +33,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
     setFlashMessage({
       isVisible: false,
       text: "",
-      type: undefined,
+      type: undefined
     });
   };
 
@@ -49,7 +44,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
       setFlashMessage({
         isVisible: true,
         text: "Missing name or mailing address",
-        type: "alert",
+        type: "alert"
       });
       return;
     }
@@ -63,15 +58,15 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
           phone,
           mailingAddress,
           id,
-          isActive,
-        }),
+          isActive
+        })
       });
 
       if (response.ok) {
         setFlashMessage({
           isVisible: false,
           text: "",
-          type: undefined,
+          type: undefined
         });
         setName("");
         setPhone("");
@@ -86,7 +81,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
       setFlashMessage({
         isVisible: true,
         text: err.response?.data?.msg || "Error",
-        type: "warning",
+        type: "warning"
       });
     }
   };
@@ -95,18 +90,14 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
     <Modal isActive={props.showModal} onClose={props.onModalClose}>
       <>
         {flashMessage.isVisible && (
-          <FlashMessage
-            type={flashMessage.type}
-            isVisible
-            onClose={onFlashClose}
-          >
+          <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
             {flashMessage.text}
           </FlashMessage>
         )}
 
-        <form onSubmit={(e) => onSubmit(e)} style={{ width: "100%" }}>
+        <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
           <TextInput
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             value={name}
             type={"text"}
             id={"name"}
@@ -116,7 +107,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
             required={true}
           />
           <TextInput
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             value={email}
             type={"text"}
             id={"email"}
@@ -125,7 +116,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
             name={"email"}
           />
           <TextInput
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={e => setPhone(e.target.value)}
             value={phone}
             type={"text"}
             id={"phone"}
@@ -134,7 +125,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
             name={"phone"}
           />
           <TextInput
-            onChange={(e) => setMailingAddress(e.target.value)}
+            onChange={e => setMailingAddress(e.target.value)}
             value={mailingAddress}
             type={"text"}
             id={"mailingAddress"}
