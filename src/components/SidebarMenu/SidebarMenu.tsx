@@ -22,8 +22,8 @@ const SidebarMenu = (props: SidebarMenuProps) => {
       <StyledIconContainer>
         <Link href={"/admin/dashboard"}>
           <img
-            src={"https://mtpisgahwell.com/well_icon.png"}
-            style={{ height: "75px", backgroundColor: "black" }}
+            src={"/water-well.png"}
+            style={{ height: "75px" }}
             alt={"Well Icon"}
           />
         </Link>
