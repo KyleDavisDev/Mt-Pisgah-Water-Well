@@ -97,7 +97,10 @@ export default async function handler(
     // TODO: Finish this out.
     // validatePermission(username, "VIEW_HOMEOWNERS");
 
-    const result = await db.from("homeowners").select();
+    const result = await db
+      .from("homeowners")
+      .select()
+      .order("id", { ascending: true });
     const homeowners = result.data as Homeowners[];
 
     return res.status(200).json({
