@@ -5,10 +5,6 @@ import {
   StyledTable,
 } from "./HomeownersViewStyle";
 import Well from "../../../../Well/Well";
-import {
-  FlashMessage,
-  FlashMessageProps,
-} from "../../../../FlashMessage/FlashMessage";
 import { Button } from "../../../../Button/Button";
 
 import HomeownerEditModal from "./components/HomeownerEditModal/HomeownerEditModal";
@@ -18,7 +14,7 @@ export interface homeownerVM {
   email: string;
   phone: string;
   mailingAddress: string;
-  isActive: boolean;
+  isActive: string;
   id: number;
 }
 
