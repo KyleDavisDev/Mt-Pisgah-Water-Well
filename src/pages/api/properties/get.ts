@@ -17,11 +17,7 @@ type Data = {
 };
 
 const getUser = async (username: string): Promise<Users> => {
-  const results = await db
-    .from("users")
-    .select()
-    .eq("username", username)
-    .limit(1);
+  const results = await db.from("users").select().eq("username", username).limit(1);
   const data = results.data as Users[];
 
   if (data.length !== 1) {
@@ -50,10 +46,7 @@ const validateToken = async (token: string): Promise<string> => {
   return username;
 };
 
-const validatePermission = async (
-  username: string,
-  permission: string,
-): Promise<void> => {
+const validatePermission = async (username: string, permission: string): Promise<void> => {
   // TODO: Lookup user permissions
   const userPermissions = await db
     .from("users")
@@ -64,7 +57,7 @@ const validatePermission = async (
         value
       )
     )
-  `,
+  `
     )
     .eq("users.username", username)
     .eq("users.isActive", true)
@@ -75,10 +68,7 @@ const validatePermission = async (
   return;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -97,17 +87,18 @@ export default async function handler(
     // TODO: Finish this out.
     // validatePermission(username, "VIEW_PROPERTIES");
 
-    const result = await db.from("properties").select();
+    const result = await db.from("properties").select().order("id", { ascending: true });
     const properties = result.data as Properties[];
 
     return res.status(200).json({
-      properties: properties.map((h) => {
+      properties: properties.map(prop => {
         return {
-          address: h.address,
-          description: h.description,
-          isActive: h.is_active ? "true" : "false",
+          address: prop.address,
+          description: prop.description,
+          isActive: prop.is_active ? "true" : "false",
+          id: prop.id as string
         };
-      }),
+      })
     });
   } catch (error) {
     console.log(error);
