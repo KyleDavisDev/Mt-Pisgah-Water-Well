@@ -113,7 +113,7 @@ export const theme = {
   radioButtonActiveBackgroundColor: colors.blue6,
   radioButtonInActiveBackgroundColor: colors.lightGrey,
   radioButtonActiveTextColor: colors.black,
-  radioButtonInActiveTextColor: colors.black,
+  radioButtonInActiveTextColor: colors.darkGrey,
 
   siteBackgroundColor: colors.white2,
   siteBackgroundColorDark: colors.darkGrey2,
