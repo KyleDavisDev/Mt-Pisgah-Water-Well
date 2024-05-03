@@ -61,15 +61,16 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
         const data = await response.json();
 
         setFlashMessage({
-          isVisible: true,
-          text: data.message,
-          type: "success",
+          isVisible: false,
+          text: "",
+          type: undefined,
         });
-
         setName("");
         setPhone("");
         setEmail("");
         setMailingAddress("");
+
+        props.onModalClose();
       }
     } catch (err: any) {
       console.log(err);
