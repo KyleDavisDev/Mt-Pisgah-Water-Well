@@ -28,70 +28,55 @@ const HomeownersView = () => {
 
   // assign state
   const [homeowner, setHomeowner] = React.useState<homeownerVM[]>([]);
-  const [activeHomeowner, setActiveHomeowner] = React.useState<homeownerVM>();
+  const [activeHomeowner, setActiveHomeowner] =
+    React.useState<homeownerVM | null>();
   const [showModal, setShowModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
-    isVisible: false,
-    text: "",
-    type: undefined,
-  });
+
+  const getHomeowners = () => {
+    // Fetch data from the API using a GET request
+    fetch(`/api/homeowners/get`, { method: "GET" })
+      .then((response) => {
+        // Check if the response is successful
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        // Parse the JSON response
+        return response.json();
+      })
+      .then((data) => {
+        // Update state with the fetched data
+        setHomeowner(data.homeowners);
+      })
+      .catch((error) => {
+        // Handle fetch errors
+        console.error("Error fetching data:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   React.useEffect(() => {
     if (!loading && homeowner.length === 0) {
       setLoading(true);
-      // Fetch data from the API using a GET request
-      fetch(`/api/homeowners/get?id=${1}`, { method: "GET" })
-        .then((response) => {
-          console.log("hi");
-          // Check if the response is successful
-          if (!response.ok) {
-            throw new Error("Failed to fetch data");
-          }
-          // Parse the JSON response
-          return response.json();
-        })
-        .then((data) => {
-          // Update state with the fetched data
-          setHomeowner(data.homeowners);
-        })
-        .catch((error) => {
-          // Handle fetch errors
-          console.error("Error fetching data:", error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      getHomeowners();
     }
   }, [loading]);
 
-  const onFlashClose = () => {
-    // clear flash message if was shown
-    setFlashMessage({
-      isVisible: false,
-      text: "",
-      type: undefined,
-    });
-  };
-
   const onModalClose = () => {
     setShowModal(false);
+    setActiveHomeowner(null);
+
+    getHomeowners();
   };
+
+  console.log("homeowner", activeHomeowner);
 
   return (
     <StyledContainer>
       <Well>
         <StyledFormContainer>
-          {flashMessage.isVisible && (
-            <FlashMessage
-              type={flashMessage.type}
-              isVisible
-              onClose={onFlashClose}
-            >
-              {flashMessage.text}
-            </FlashMessage>
-          )}
-
           <StyledTable>
             <thead>
               <tr>
@@ -104,18 +89,17 @@ const HomeownersView = () => {
             <tbody>
               {homeowner &&
                 homeowner.map((homeowner, ind) => {
-                  if (ind > 0) return null;
-
                   return (
-                    <tr key={`tr__${ind}__${homeowner.isActive}`}>
+                    <tr key={`tr__${ind}__${homeowner.id}`}>
                       <td>{homeowner.name}</td>
                       <td>{homeowner.mailingAddress}</td>
                       <td>{homeowner.isActive}</td>
                       <td style={{ textAlign: "center" }}>
                         <Button
                           onClick={() => {
-                            setShowModal(!showModal);
-                            setActiveHomeowner(homeowner);
+                            console.log(homeowner);
+                            setActiveHomeowner({ ...homeowner });
+                            setShowModal(true);
                           }}
                         >
                           Edit
