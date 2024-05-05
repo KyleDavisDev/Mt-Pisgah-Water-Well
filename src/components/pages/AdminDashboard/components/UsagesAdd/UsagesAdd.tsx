@@ -5,7 +5,7 @@ import {
   StyledTable,
   StyledTd,
   StyledWellContainer
-} from "./UsageAddStyle";
+} from "./UsagesAddStyle";
 import Well from "../../../../Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../FlashMessage/FlashMessage";
 import { Button } from "../../../../Button/Button";
@@ -27,7 +27,7 @@ interface UsageVM {
   }[];
 }
 
-const UsageAdd = () => {
+const UsagesAdd = () => {
   const _defaultErrorMessage = "There was a problem saving the usage. Please refresh your page and try again!";
 
   // assign state
@@ -293,4 +293,4 @@ const UsageAdd = () => {
   );
 };
 
-export default UsageAdd;
+export default UsagesAdd;
