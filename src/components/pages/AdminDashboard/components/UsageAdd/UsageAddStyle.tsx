@@ -55,3 +55,28 @@ export const StyledTable = styled.table`
     border-bottom: 1px solid #ddd;
   }
 `;
+
+export const StyledTd = styled.td`
+  padding: 0 !important;
+  border-bottom: 0 !important;
+
+  div input {
+    width: 50%;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 55px;
+    padding: 8px;
+    border-bottom: 1px solid #dddddd;
+  }
+
+  > div:last-child {
+    padding: 8px;
+    border-bottom: 0;
+  }
+`;
