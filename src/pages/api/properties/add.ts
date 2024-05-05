@@ -12,11 +12,7 @@ type Data = {
 };
 
 const getUser = async (username: string): Promise<Users> => {
-  const results = await db
-    .from("users")
-    .select()
-    .eq("username", username)
-    .limit(1);
+  const results = await db.from("users").select().eq("username", username).limit(1);
   const data = results.data as Users[];
 
   if (data.length !== 1) {
@@ -45,10 +41,7 @@ const validateToken = async (token: string): Promise<string> => {
   return username;
 };
 
-const validatePermission = async (
-  username: string,
-  permission: string,
-): Promise<void> => {
+const validatePermission = async (username: string, permission: string): Promise<void> => {
   // TODO: Lookup user permissions
   const userPermissions = await db
     .from("users")
@@ -59,7 +52,7 @@ const validatePermission = async (
         value
       )
     )
-  `,
+  `
     )
     .eq("users.username", username)
     .eq("users.isActive", true)
@@ -70,10 +63,7 @@ const validatePermission = async (
   return;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === "POST") {
     try {
       const jwtCookie = req.cookies["jwt"];
@@ -96,10 +86,8 @@ export default async function handler(
         address: address,
         description,
         homeowner_id: homeowner,
-        is_active: true,
+        is_active: true
       });
-
-      console.log(couldInsert);
 
       return res.status(200).json({ message: "Success!" });
     } catch (error) {
