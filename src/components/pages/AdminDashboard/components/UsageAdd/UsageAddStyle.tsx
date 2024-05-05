@@ -32,3 +32,26 @@ export const StyledFooterDivs = styled.div`
     text-transform: inherit;
   }
 `;
+
+export const StyledTable = styled.table`
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+
+  thead {
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    display: table-cell;
+    border-collapse: collapse;
+  }
+
+  tr {
+    border-bottom: 1px solid #ddd;
+  }
+`;
