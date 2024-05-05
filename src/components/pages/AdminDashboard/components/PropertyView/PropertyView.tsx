@@ -76,7 +76,6 @@ const PropertyView = () => {
                 </thead>
                 <tbody>
                   {properties.map(property => {
-                    console.log(property);
                     return (
                       <tr>
                         <td>{property.address}</td>
