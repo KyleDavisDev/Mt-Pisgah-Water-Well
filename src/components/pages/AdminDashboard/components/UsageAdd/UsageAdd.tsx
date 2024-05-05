@@ -34,7 +34,7 @@ const UsageAdd = () => {
   const [homeowners, setHomeowners] = React.useState<UsageVM[]>([]);
   const [usages, setUsages] = React.useState<{ [key: string]: { previous: string; new: string } }>({});
   const [deltas, setDeltas] = React.useState<{ [key: string]: number }>({});
-  const [dateCollected, setDateCollected] = React.useState("2024-05-22");
+  const [dateCollected, setDateCollected] = React.useState("");
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
     text: "",
@@ -153,7 +153,8 @@ const UsageAdd = () => {
             .map(key => {
               return {
                 id: key,
-                usage: usages[key].new
+                gallons: usages[key].new,
+                dateCollected: dateCollected
               };
             })
         })
