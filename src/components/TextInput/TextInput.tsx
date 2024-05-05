@@ -11,7 +11,7 @@ export interface TextInputProps {
   required?: boolean;
   label?: string;
   showLabel?: boolean;
-  type?: "text" | "password" | "email";
+  type?: "text" | "password" | "email" | "date";
   className?: string;
   disabled?: boolean;
   requirementText?: string;
