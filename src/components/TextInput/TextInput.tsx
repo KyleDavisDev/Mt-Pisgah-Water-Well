@@ -17,9 +17,10 @@ export interface TextInputProps {
   requirementText?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string | number;
+  style?: React.CSSProperties;
 }
 
-const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
+const TextInput: React.FunctionComponent<TextInputProps> = props => {
   // grab info from props and assign defaults if needed
   const {
     id,
@@ -34,10 +35,11 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
     onChange,
     value,
     name,
+    style
   } = props;
 
   return (
-    <StyledDiv className={className}>
+    <StyledDiv className={className} style={style}>
       {showLabel && label && (
         <Label htmlFor={id}>
           {label}
@@ -65,14 +67,13 @@ const TextInput: React.FunctionComponent<TextInputProps> = (props) => {
 
 const StyledTextInput = styled(TextInput)`
   input {
-    background-color: ${(props) =>
-      props.disabled ? "#eee" : props.theme.white};
+    background-color: ${props => (props.disabled ? "#eee" : props.theme.white)};
     box-shadow: none;
-    margin-bottom: ${(props) => props.requirementText && "0px"};
+    margin-bottom: ${props => props.requirementText && "0px"};
 
     :hover,
     :focus {
-      cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+      cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
     }
   }
 `;
