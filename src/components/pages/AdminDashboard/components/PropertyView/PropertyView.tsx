@@ -1,33 +1,28 @@
 import React from "react";
-import {
-  StyledContainer,
-  StyledFormContainer,
-  StyledTable,
-} from "./PropertyViewStyle";
+import { StyledWellContainer, StyledFormContainer, StyledTable, StyledContainer } from "./PropertyViewStyle";
 import Well from "../../../../Well/Well";
-import {
-  FlashMessage,
-  FlashMessageProps,
-} from "../../../../FlashMessage/FlashMessage";
+import { Button } from "../../../../Button/Button";
+import PropertyEditModal from "./components/PropertyEditModal/PropertyEditModal";
+import { Article } from "../../../../Article/Article";
+
+export interface propertyVM {
+  address: string;
+  description: string;
+  isActive: string;
+  id: string;
+}
 
 const PropertyView = () => {
-  const _defaultErrorMessage =
-    "There was a problem saving the property. Please refresh your page and try again!";
-
   // assign state
-  const [properties, setProperties] = React.useState<
-    { address: string; description: string; isActive: boolean }[]
-  >([]);
-  const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
-    isVisible: false,
-    text: "",
-    type: undefined,
-  });
+  const [properties, setProperties] = React.useState<propertyVM[]>([]);
+  const [activeProperty, setActiveProperty] = React.useState<propertyVM | null>();
+  const [showModal, setShowModal] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
+  function getProperties() {
     // Fetch data from the API using a GET request
     fetch("/api/properties/get", { method: "GET" })
-      .then((response) => {
+      .then(response => {
         // Check if the response is successful
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -35,62 +30,78 @@ const PropertyView = () => {
         // Parse the JSON response
         return response.json();
       })
-      .then((data) => {
+      .then(data => {
         // Update state with the fetched data
         setProperties(data.properties);
       })
-      .catch((error) => {
+      .catch(error => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-  }, []);
+  }
 
-  const onFlashClose = () => {
-    // clear flash message if was shown
-    setFlashMessage({
-      isVisible: false,
-      text: "",
-      type: undefined,
-    });
+  React.useEffect(() => {
+    if (!loading && properties.length === 0) {
+      setLoading(true);
+      getProperties();
+    }
+  }, [loading]);
+
+  const onModalClose = () => {
+    setShowModal(false);
+    setActiveProperty(null);
+
+    getProperties();
   };
 
   return (
     <StyledContainer>
-      <Well>
-        <h3>All Properties</h3>
-        <StyledFormContainer>
-          {flashMessage.isVisible && (
-            <FlashMessage
-              type={flashMessage.type}
-              isVisible
-              onClose={onFlashClose}
-            >
-              {flashMessage.text}
-            </FlashMessage>
-          )}
-
-          <StyledTable>
-            <thead>
-              <tr>
-                <th>Address</th>
-                <th>Description</th>
-                <th>Active</th>
-              </tr>
-            </thead>
-            <tbody>
-              {properties.map((property) => {
-                return (
+      <Article size="md">
+        <StyledWellContainer>
+          <Well>
+            <h3>All Properties</h3>
+            <StyledFormContainer>
+              <StyledTable>
+                <thead>
                   <tr>
-                    <td>{property.address}</td>
-                    <td>{property.description}</td>
-                    <td>{property.isActive}</td>
+                    <th>Address</th>
+                    <th>Description</th>
+                    <th>Active</th>
+                    <th></th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </StyledTable>
-        </StyledFormContainer>
-      </Well>
+                </thead>
+                <tbody>
+                  {properties.map(property => {
+                    return (
+                      <tr>
+                        <td>{property.address}</td>
+                        <td>{property.description}</td>
+                        <td>{property.isActive}</td>
+                        <td style={{ textAlign: "center" }}>
+                          <Button
+                            onClick={() => {
+                              setActiveProperty({ ...property });
+                              setShowModal(true);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </StyledTable>
+              {activeProperty && (
+                <PropertyEditModal showModal={showModal} property={{ ...activeProperty }} onModalClose={onModalClose} />
+              )}
+            </StyledFormContainer>
+          </Well>
+        </StyledWellContainer>
+      </Article>
     </StyledContainer>
   );
 };

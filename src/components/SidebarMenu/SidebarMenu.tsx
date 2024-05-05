@@ -4,7 +4,7 @@ import {
   StyledMenuItem,
   StyledMenuItemContainer,
   StyledSideBarContainer,
-  StyledSubMenuItemContainer,
+  StyledSubMenuItemContainer
 } from "./SidebarMenuStyle";
 import { useState } from "react";
 
@@ -20,81 +20,50 @@ const SidebarMenu = (props: SidebarMenuProps) => {
   return (
     <StyledSideBarContainer>
       <StyledIconContainer>
-        <Link href={"/admin/dashboard"}>
-          <img
-            src={"/water-well.png"}
-            style={{ height: "75px" }}
-            alt={"Well Icon"}
-          />
-        </Link>
+        <img
+          src={"/water-well.png"}
+          style={{ height: "75px" }}
+          alt={"Well Icon"}
+          onClick={() => props.onMenuItemClick("home")}
+        />
       </StyledIconContainer>
       <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowHomeowners(!showHomeowners)}>
-          Homeowners
-        </StyledMenuItem>
+        <StyledMenuItem onClick={() => setShowHomeowners(!showHomeowners)}>Homeowners</StyledMenuItem>
         {showHomeowners && (
           <>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem
-                onClick={() => props.onMenuItemClick("view_homeowner")}
-              >
-                View All
-              </StyledMenuItem>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("view_homeowner")}>View All</StyledMenuItem>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem
-                onClick={() => props.onMenuItemClick("add_homeowner")}
-              >
-                Add Homeowner
-              </StyledMenuItem>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("add_homeowner")}>Add Homeowner</StyledMenuItem>
             </StyledSubMenuItemContainer>
           </>
         )}
       </StyledMenuItemContainer>
 
       <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowProperties(!showProperties)}>
-          Properties
-        </StyledMenuItem>
+        <StyledMenuItem onClick={() => setShowProperties(!showProperties)}>Properties</StyledMenuItem>
         {showProperties && (
           <>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem
-                onClick={() => props.onMenuItemClick("view_property")}
-              >
-                View All
-              </StyledMenuItem>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("view_property")}>View All</StyledMenuItem>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem
-                onClick={() => props.onMenuItemClick("add_property")}
-              >
-                Add Property
-              </StyledMenuItem>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("add_property")}>Add Property</StyledMenuItem>
             </StyledSubMenuItemContainer>
           </>
         )}
       </StyledMenuItemContainer>
 
       <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowUsage(!showUsage)}>
-          Usage
-        </StyledMenuItem>
+        <StyledMenuItem onClick={() => setShowUsage(!showUsage)}>Usage</StyledMenuItem>
         {showUsage && (
           <>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem
-                onClick={() => props.onMenuItemClick("view_usage")}
-              >
-                View All
-              </StyledMenuItem>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("view_usage")}>View All</StyledMenuItem>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem
-                onClick={() => props.onMenuItemClick("add_usage")}
-              >
-                Add Usage
-              </StyledMenuItem>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("add_usage")}>Add Usage</StyledMenuItem>
             </StyledSubMenuItemContainer>
           </>
         )}

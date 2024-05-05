@@ -7,17 +7,19 @@ import PropertyAdd from "./components/PropertyAdd/PropertyAdd";
 import PropertyView from "./components/PropertyView/PropertyView";
 import HomeownersView from "./components/HomeownersView/HomeownersView";
 import UsageAdd from "./components/UsageAdd/UsageAdd";
+import Home from "./components/Home/Home";
 
 const StyledDiv = styled.div`
-  background-color: ${(props) => props.theme.siteBackgroundColor};
+  background-color: ${props => props.theme.siteBackgroundColor};
   display: flex;
   flex-direction: row;
   width: 100%;
   height: 100vh;
-  color: ${(props) => props.theme.siteFontColor};
+  color: ${props => props.theme.siteFontColor};
 `;
 
 const AdminDashboard = () => {
+  const [showHome, setShowHome] = useState(true);
   const [showAddHomeowner, setShowAddHomeowner] = useState(false);
   const [showViewHomeowner, setShowViewHomeowner] = useState(false);
   const [showAddProperty, setShowAddProperty] = useState(false);
@@ -34,6 +36,7 @@ const AdminDashboard = () => {
       setShowViewHomeowner(false);
       setShowAddUsage(false);
       setShowViewUsage(false);
+      setShowHome(false);
       return;
     }
 
@@ -45,6 +48,7 @@ const AdminDashboard = () => {
       setShowViewProperty(false);
       setShowAddUsage(false);
       setShowViewUsage(false);
+      setShowHome(false);
       return;
     }
 
@@ -56,6 +60,7 @@ const AdminDashboard = () => {
       setShowViewHomeowner(false);
       setShowAddUsage(false);
       setShowViewUsage(false);
+      setShowHome(false);
       return;
     }
 
@@ -67,6 +72,7 @@ const AdminDashboard = () => {
       setShowViewHomeowner(false);
       setShowAddUsage(false);
       setShowViewUsage(false);
+      setShowHome(false);
       return;
     }
 
@@ -78,12 +84,26 @@ const AdminDashboard = () => {
       setShowViewProperty(false);
       setShowViewHomeowner(false);
       setShowViewUsage(false);
+      setShowHome(false);
       return;
     }
 
     if (item === "view_usage") {
       setShowViewUsage(true);
 
+      setShowViewProperty(false);
+      setShowAddProperty(false);
+      setShowAddHomeowner(false);
+      setShowViewHomeowner(false);
+      setShowAddUsage(false);
+      setShowHome(false);
+      return;
+    }
+
+    if (item === "home") {
+      setShowHome(true);
+
+      setShowViewUsage(false);
       setShowViewProperty(false);
       setShowAddProperty(false);
       setShowAddHomeowner(false);
@@ -97,14 +117,13 @@ const AdminDashboard = () => {
     <StyledDiv>
       <SidebarMenu onMenuItemClick={onMenuItemClick} />
 
-      <Article size="md">
-        {showAddHomeowner && <HomeownersAdd />}
-        {showViewHomeowner && <HomeownersView />}
-        {showAddProperty && <PropertyAdd />}
-        {showViewProperty && <PropertyView />}
-        {showAddUsage && <UsageAdd />}
-        {showViewUsage && <PropertyView />}
-      </Article>
+      {showHome && <Home />}
+      {showAddHomeowner && <HomeownersAdd />}
+      {showViewHomeowner && <HomeownersView />}
+      {showAddProperty && <PropertyAdd />}
+      {showViewProperty && <PropertyView />}
+      {showAddUsage && <UsageAdd />}
+      {showViewUsage && <PropertyView />}
     </StyledDiv>
   );
 };

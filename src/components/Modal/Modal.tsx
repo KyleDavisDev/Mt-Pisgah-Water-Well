@@ -11,7 +11,7 @@ export interface ModalProps {
   onClose: () => void;
 }
 
-const Modal: React.FunctionComponent<ModalProps> = (props) => {
+const Modal: React.FunctionComponent<ModalProps> = props => {
   const onOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
 
@@ -24,10 +24,9 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
     const clickedOnElement = findDOMNode(elementAtMouse);
     if (!clickedOnElement) return;
 
-    const label = (clickedOnElement as Element).attributes.getNamedItem(
-      "aria-labelledby",
-    )?.value;
+    const label = (clickedOnElement as Element).attributes.getNamedItem("aria-labelledby")?.value;
     if (label === "Close Modal") {
+      console.log("I MASDF ASDFNAKSDFA");
       props.onClose();
     }
 
@@ -69,7 +68,7 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
 
 const StyledModal = styled(Modal)`
     z-index: auto;
-    display: ${(props) => {
+    display: ${props => {
       return props.isActive ? "block" : "none";
     }};
     position: fixed;
@@ -81,16 +80,16 @@ const StyledModal = styled(Modal)`
 
     > div {
         position: fixed;
-        display: ${(props) => {
+        display: ${props => {
           return props.isActive ? "block" : "none";
         }};
-        background: ${(props) => props.theme.white};
+        background: ${props => props.theme.white};
         width: 33%;
         height: auto;
         top: 20%;
         left: 50%;
         transform: translate(-50%, 0);
-        border-radius: ${(props) => props.theme.borderRadiusSize};
+        border-radius: ${props => props.theme.borderRadiusSize};
         padding: 20px;
         color: rgba(0, 0, 139, 0.7);
 
@@ -110,13 +109,13 @@ const StyledModal = styled(Modal)`
 
                     background-color: transparent;
                     border: 0;
-                    color: ${(props) => props.theme.black};
+                    color: ${props => props.theme.black};
                     padding: 0;
 
                     &:hover,
                     &:focus {
                         border: 0;
-                        color: ${(props) => props.theme.black};
+                        color: ${props => props.theme.black};
                         background-color: transparent;
                     }
                 

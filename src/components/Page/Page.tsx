@@ -1,11 +1,7 @@
 import * as React from "react";
 import localFont from "next/font/local";
 
-import {
-  ThemeProvider,
-  theme,
-  createGlobalStyle,
-} from "../../theme/styled-components";
+import { ThemeProvider, theme, createGlobalStyle } from "../../theme/styled-components";
 import Meta from "../Meta/Meta";
 
 interface IPageProps {
@@ -45,7 +41,7 @@ const GlobalStyle = createGlobalStyle`
     }
 
     html {
-        background-color: #fbfbfb;
+        background-color: rgb(237, 241, 247);
         font-family: AvenirNextReg;
         font-size: 16px;
     }
@@ -69,7 +65,7 @@ const GlobalStyle = createGlobalStyle`
 
 `;
 
-const Page: React.FunctionComponent<IPageProps> = (props) => {
+const Page: React.FunctionComponent<IPageProps> = props => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
