@@ -102,8 +102,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       .order("id", { ascending: true });
     const properties = result.data;
 
-    console.log(result);
-
     return res.status(200).json({
       properties: properties
         ? properties.map(prop => {
