@@ -6,7 +6,7 @@ import HomeownersAdd from "./components/HomeownersAdd/HomeownersAdd";
 import PropertyAdd from "./components/PropertyAdd/PropertyAdd";
 import PropertyView from "./components/PropertyView/PropertyView";
 import HomeownersView from "./components/HomeownersView/HomeownersView";
-import UsageAdd from "./components/UsageAdd/UsageAdd";
+import UsagesAdd from "./components/UsagesAdd/UsagesAdd";
 import Home from "./components/Home/Home";
 
 const StyledDiv = styled.div`
@@ -122,7 +122,7 @@ const AdminDashboard = () => {
       {showViewHomeowner && <HomeownersView />}
       {showAddProperty && <PropertyAdd />}
       {showViewProperty && <PropertyView />}
-      {showAddUsage && <UsageAdd />}
+      {showAddUsage && <UsagesAdd />}
       {showViewUsage && <PropertyView />}
     </StyledDiv>
   );
