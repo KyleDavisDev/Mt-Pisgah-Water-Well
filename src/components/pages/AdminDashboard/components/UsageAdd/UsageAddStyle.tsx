@@ -45,10 +45,10 @@ export const StyledTable = styled.table`
   th,
   td {
     border: 1px solid #dddddd;
-    text-align: left;
     padding: 8px;
     display: table-cell;
     border-collapse: collapse;
+    text-align: center;
   }
 
   tr {
