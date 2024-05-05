@@ -3,46 +3,15 @@ import {
   StyledFooterDivs,
   StyledFormContainer,
   StyledContainer,
-  StyledTable
+  StyledTable,
+  StyledTd
 } from "./UsageAddStyle";
 import Well from "../../../../Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../FlashMessage/FlashMessage";
 import { Button } from "../../../../Button/Button";
 import React from "react";
 import { Article } from "../../../../Article/Article";
-import styled from "../../../../../theme/styled-components";
 import { TextInput } from "../../../../TextInput/TextInput";
-
-const StyledTd = styled.td`
-  padding: 0 !important;
-  border-bottom: 0 !important;
-
-  div input {
-    width: 50%;
-    margin-bottom: 0;
-    margin-top: 0;
-  }
-
-  > div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 55px;
-    padding: 8px;
-    border-bottom: 1px solid #dddddd;
-  }
-
-  > div:last-child {
-    padding: 8px;
-    border-bottom: 0;
-  }
-`;
-
-const StyledFakeTd = styled.div``;
-const StyledLastFakeTd = styled.td`
-  padding: 0 !important;
-  border-bottom: 0 !important;
-`;
 
 interface UsageVM {
   id: string;
@@ -71,7 +40,7 @@ const UsageAdd = () => {
 
   React.useEffect(() => {
     // Fetch data from the API using a GET request
-    fetch("/api/usages/getForAdding", { method: "GET" })
+    fetch("/api/usages/getByHomeowner", { method: "GET" })
       .then(response => {
         // Check if the response is successful
         if (!response.ok) {
