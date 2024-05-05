@@ -2,8 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
 import Users from "../models/Users";
 import jwt from "jsonwebtoken";
-import Homeowners from "../models/Homeowners";
-import Properties from "../models/Properties";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -12,6 +10,7 @@ type Data = {
     address: string;
     description?: string;
     isActive: string;
+    homeowner: string;
   }[];
   error?: string;
 };
@@ -87,18 +86,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     // TODO: Finish this out.
     // validatePermission(username, "VIEW_PROPERTIES");
 
-    const result = await db.from("properties").select().order("id", { ascending: true });
-    const properties = result.data as Properties[];
+    const result = await db
+      .from("properties")
+      .select(
+        `
+        address,
+        description,
+        is_active,
+        id,
+        homeowners (
+          name
+        )
+      `
+      )
+      .order("id", { ascending: true });
+    const properties = result.data;
+
+    console.log(result);
 
     return res.status(200).json({
-      properties: properties.map(prop => {
-        return {
-          address: prop.address,
-          description: prop.description,
-          isActive: prop.is_active ? "true" : "false",
-          id: prop.id as string
-        };
-      })
+      properties: properties
+        ? properties.map(prop => {
+            return {
+              address: prop.address,
+              description: prop.description,
+              isActive: prop.is_active ? "true" : "false",
+              id: prop.id as string,
+              // @ts-ignore
+              homeowner: prop.homeowners.name
+            };
+          })
+        : []
     });
   } catch (error) {
     console.log(error);

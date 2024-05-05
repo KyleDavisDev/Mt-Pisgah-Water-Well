@@ -91,24 +91,6 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
         )}
 
         <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-          {/*<TextInput*/}
-          {/*  onChange={e => setEmail(e.target.value)}*/}
-          {/*  value={email}*/}
-          {/*  type={"text"}*/}
-          {/*  id={"email"}*/}
-          {/*  showLabel={true}*/}
-          {/*  label={"Email"}*/}
-          {/*  name={"email"}*/}
-          {/*/>*/}
-          {/*<TextInput*/}
-          {/*  onChange={e => setPhone(e.target.value)}*/}
-          {/*  value={phone}*/}
-          {/*  type={"text"}*/}
-          {/*  id={"phone"}*/}
-          {/*  showLabel={true}*/}
-          {/*  label={"Phone number"}*/}
-          {/*  name={"phone"}*/}
-          {/*/>*/}
           <TextInput
             onChange={e => setAddress(e.target.value)}
             value={address}

@@ -1,3 +1,5 @@
+import Homeowners from "./Homeowners";
+
 export default interface Properties {
   id: string;
   address: string;
@@ -5,4 +7,5 @@ export default interface Properties {
   homeownerId: number;
   createdAt: string;
   is_active: boolean;
+  homeowner?: Homeowners;
 }

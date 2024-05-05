@@ -10,6 +10,7 @@ export interface propertyVM {
   description: string;
   isActive: string;
   id: string;
+  homeowner: string;
 }
 
 const PropertyView = () => {
@@ -69,17 +70,18 @@ const PropertyView = () => {
                   <tr>
                     <th>Address</th>
                     <th>Description</th>
-                    <th>Active</th>
+                    <th>Homeowner</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {properties.map(property => {
+                    console.log(property);
                     return (
                       <tr>
                         <td>{property.address}</td>
                         <td>{property.description}</td>
-                        <td>{property.isActive}</td>
+                        <td>{property.homeowner}</td>
                         <td style={{ textAlign: "center" }}>
                           <Button
                             onClick={() => {
