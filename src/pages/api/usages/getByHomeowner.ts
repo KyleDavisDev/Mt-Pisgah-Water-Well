@@ -122,39 +122,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const homeowners = result.data;
 
-    // console.log(result);
     console.log(JSON.stringify(result, null, 4));
 
-    // if (result) {
-    //   if (result.data) {
-    //     for (let i = 0; i < result.data.length; i++) {
-    //       if (result.data[i]) {
-    //         if (result.data[i].properties) {
-    //           console.log(result.data[i].properties);
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+    const returnData = [];
+    if (homeowners) {
+      for (let i = 0; i < homeowners.length; i++) {
+        const homeowner = homeowners[i];
+
+        if (homeowner.properties.length === 0) continue;
+
+        returnData.push({
+          id: homeowner.id,
+          name: homeowner.name,
+          properties: homeowner.properties.map(p => {
+            return {
+              id: p.id,
+              address: p.address,
+              description: p.description,
+              usages: p.usages.map(u => ({
+                id: u.id,
+                gallons: u.gallons
+              }))
+            };
+          })
+        });
+      }
+    }
 
     return res.status(200).json({
-      homeowners: homeowners
-        ? homeowners.map(h => ({
-            id: h.id,
-            name: h.name,
-            properties: h.properties.map(p => {
-              return {
-                id: p.id,
-                address: p.address,
-                description: p.description,
-                usages: p.usages.map(u => ({
-                  id: u.id,
-                  gallons: u.gallons
-                }))
-              };
-            })
-          }))
-        : []
+      homeowners: returnData
     });
 
     // return res.status(200).json({
