@@ -8,16 +8,14 @@ import { Article } from "../../../../Article/Article";
 
 export interface homeownerVM {
   name: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   mailingAddress: string;
   isActive: string;
   id: number;
 }
 
 const HomeownersView = () => {
-  const _defaultErrorMessage = "There was a problem saving the property. Please refresh your page and try again!";
-
   // assign state
   const [homeowner, setHomeowner] = React.useState<homeownerVM[]>([]);
   const [activeHomeowner, setActiveHomeowner] = React.useState<homeownerVM | null>();
