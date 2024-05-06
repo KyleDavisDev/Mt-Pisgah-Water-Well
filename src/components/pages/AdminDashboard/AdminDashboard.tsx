@@ -8,6 +8,7 @@ import PropertyView from "./components/PropertyView/PropertyView";
 import HomeownersView from "./components/HomeownersView/HomeownersView";
 import UsagesAdd from "./components/UsagesAdd/UsagesAdd";
 import Home from "./components/Home/Home";
+import UsagesView from "./components/UsagesView/UsagesView";
 
 const StyledDiv = styled.div`
   background-color: ${props => props.theme.siteBackgroundColor};
@@ -123,7 +124,7 @@ const AdminDashboard = () => {
       {showAddProperty && <PropertyAdd />}
       {showViewProperty && <PropertyView />}
       {showAddUsage && <UsagesAdd />}
-      {showViewUsage && <PropertyView />}
+      {showViewUsage && <UsagesView />}
     </StyledDiv>
   );
 };
