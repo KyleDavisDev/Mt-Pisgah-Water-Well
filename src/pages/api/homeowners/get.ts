@@ -9,6 +9,8 @@ const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 type Data = {
   homeowners?: {
     id: string;
+    email?: string;
+    phone?: string;
     name: string;
     mailingAddress: string;
     isActive: string;
@@ -17,11 +19,7 @@ type Data = {
 };
 
 const getUser = async (username: string): Promise<Users> => {
-  const results = await db
-    .from("users")
-    .select()
-    .eq("username", username)
-    .limit(1);
+  const results = await db.from("users").select().eq("username", username).limit(1);
   const data = results.data as Users[];
 
   if (data.length !== 1) {
@@ -50,10 +48,7 @@ const validateToken = async (token: string): Promise<string> => {
   return username;
 };
 
-const validatePermission = async (
-  username: string,
-  permission: string,
-): Promise<void> => {
+const validatePermission = async (username: string, permission: string): Promise<void> => {
   // TODO: Lookup user permissions
   const userPermissions = await db
     .from("users")
@@ -64,7 +59,7 @@ const validatePermission = async (
         value
       )
     )
-  `,
+  `
     )
     .eq("users.username", username)
     .eq("users.isActive", true)
@@ -75,10 +70,7 @@ const validatePermission = async (
   return;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -97,21 +89,22 @@ export default async function handler(
     // TODO: Finish this out.
     // validatePermission(username, "VIEW_HOMEOWNERS");
 
-    const result = await db
-      .from("homeowners")
-      .select()
-      .order("id", { ascending: true });
+    // TODO: data validation
+
+    const result = await db.from("homeowners").select().order("id", { ascending: true });
     const homeowners = result.data as Homeowners[];
 
     return res.status(200).json({
-      homeowners: homeowners.map((h) => {
+      homeowners: homeowners.map(h => {
         return {
           name: h.name,
           id: h.id,
+          email: h.email,
+          phone: h.phone_number,
           mailingAddress: h.mailing_address,
-          isActive: h.is_active ? "true" : "false",
+          isActive: h.is_active ? "true" : "false"
         };
-      }),
+      })
     });
   } catch (error) {
     console.log(error);
