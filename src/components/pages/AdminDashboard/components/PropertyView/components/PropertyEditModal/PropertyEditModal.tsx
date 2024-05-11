@@ -36,8 +36,8 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
     });
   };
 
-  const onSubmit = async (event: React.FormEvent): Promise<any> => {
-    event.preventDefault();
+  const onSubmit = async (event?: React.FormEvent): Promise<any> => {
+    event?.preventDefault();
 
     if (!address || !id) {
       setFlashMessage({
@@ -81,6 +81,12 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
     }
   };
 
+  const onKeyUpEvent = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter") {
+      onSubmit();
+    }
+  };
+
   return (
     <Modal isActive={props.showModal} onClose={props.onModalClose}>
       <>
@@ -90,7 +96,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
           </FlashMessage>
         )}
 
-        <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
+        <form onKeyUp={e => onKeyUpEvent(e)} onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
           <TextInput
             onChange={e => setAddress(e.target.value)}
             value={address}
@@ -117,7 +123,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
           <RadioButton
             onClick={() => setIsActive("true")}
             name={"is_active"}
-            checked={props.property.isActive.toLowerCase() === "true"}
+            isChecked={props.property.isActive.toLowerCase() === "true"}
             id={"RBisActiveYes"}
             label={"Yes"}
             value={"Yes"}
@@ -125,7 +131,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
           <RadioButton
             onClick={() => setIsActive("false")}
             name={"is_active"}
-            checked={props.property.isActive.toLowerCase() === "false"}
+            isChecked={props.property.isActive.toLowerCase() === "false"}
             id={"RBisActiveNo"}
             label={"No"}
             value={"No"}
