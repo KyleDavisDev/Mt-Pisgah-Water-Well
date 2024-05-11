@@ -14,19 +14,24 @@ export interface ModalProps {
 const Modal: React.FunctionComponent<ModalProps> = props => {
   const onOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+    e.preventDefault();
+
+    if (e.detail === 0) {
+      // a 'enter' keypress occurred
+      return;
+    }
 
     // Grab the x and y coordinates of the event
     const mouseX = e.pageX;
     const mouseY = e.pageY;
 
-    // Find the DOM element that was dragged on
+    // Find the DOM element that was clicked on
     const elementAtMouse = document.elementFromPoint(mouseX, mouseY);
     const clickedOnElement = findDOMNode(elementAtMouse);
     if (!clickedOnElement) return;
 
     const label = (clickedOnElement as Element).attributes.getNamedItem("aria-labelledby")?.value;
     if (label === "Close Modal") {
-      console.log("I MASDF ASDFNAKSDFA");
       props.onClose();
     }
 
