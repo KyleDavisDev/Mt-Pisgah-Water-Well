@@ -3,26 +3,27 @@ import styled from "styled-components";
 import Label from "../Label/Label";
 
 export interface RadioButtonProps {
-  checked: boolean;
+  isChecked: boolean;
   id: string;
   value: string;
   label: string | React.JSX.Element;
-  onClick: (event: React.MouseEvent<HTMLInputElement>) => void;
-  name: string;
+  onClick: (event: string) => void;
+  name?: string;
   className?: string;
 }
 
-const RadioButton: React.FC<RadioButtonProps> = (props) => {
+const RadioButton: React.FC<RadioButtonProps> = props => {
   return (
     <div className={props.className}>
-      <Label htmlFor={props.id}>
+      <Label htmlFor={props.id} onClick={() => props.onClick(props.id)}>
         <input
-          defaultChecked={props.checked}
+          checked={props.isChecked}
           type="radio"
           name={props.name}
           value={props.value}
           id={props.id}
-          onClick={props.onClick}
+          onChange={() => {}}
+          onClick={() => {}}
         />
         {props.label}
       </Label>
@@ -42,7 +43,7 @@ const StyledRadioButton = styled(RadioButton)`
   label {
     padding: 10px 10px 10px 0;
 
-    color: ${(props) => props.theme.siteFontColor};
+    color: ${props => props.theme.siteFontColor};
   }
 `;
 
