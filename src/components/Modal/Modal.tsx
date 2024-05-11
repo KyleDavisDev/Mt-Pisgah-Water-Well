@@ -13,9 +13,6 @@ export interface ModalProps {
 
 const Modal: React.FunctionComponent<ModalProps> = props => {
   const onOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-
     if (e.detail === 0) {
       // a 'enter' keypress occurred
       return;
