@@ -6,6 +6,7 @@ export interface LabelProps {
   children: string | React.JSX.Element | Array<string | React.JSX.Element>;
   className?: string;
   htmlFor?: string;
+  onClick?: () => void;
 }
 
 const StyledLabel = styled.label`
@@ -15,11 +16,11 @@ const StyledLabel = styled.label`
   font-family: FuturaMedium;
 `;
 
-const Label: React.FC<LabelProps> = (props) => {
-  const { htmlFor, className, children } = props;
+const Label: React.FC<LabelProps> = props => {
+  const { htmlFor, className, children, onClick } = props;
 
   return (
-    <StyledLabel htmlFor={htmlFor} className={className}>
+    <StyledLabel htmlFor={htmlFor} className={className} onClick={onClick}>
       {children}
     </StyledLabel>
   );
