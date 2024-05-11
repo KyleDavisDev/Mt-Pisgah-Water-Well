@@ -37,8 +37,8 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
     });
   };
 
-  const onSubmit = async (event: React.FormEvent): Promise<any> => {
-    event.preventDefault();
+  const onSubmit = async (event?: React.FormEvent): Promise<any> => {
+    event?.preventDefault();
 
     if (!name || !mailingAddress || !id) {
       setFlashMessage({
@@ -86,6 +86,12 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
     }
   };
 
+  const onKeyUpEvent = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter") {
+      onSubmit();
+    }
+  };
+
   return (
     <Modal isActive={props.showModal} onClose={props.onModalClose}>
       <>
@@ -95,7 +101,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
           </FlashMessage>
         )}
 
-        <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
+        <form onKeyUp={e => onKeyUpEvent(e)} onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
           <TextInput
             onChange={e => setName(e.target.value)}
             value={name}
