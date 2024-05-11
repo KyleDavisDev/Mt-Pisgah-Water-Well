@@ -117,7 +117,7 @@ const UsageEditModal = (props: PropertyEditModalProps) => {
           <RadioButton
             onClick={() => setIsActive("true")}
             name={"is_active"}
-            checked={props.property.isActive.toLowerCase() === "true"}
+            isChecked={props.property.isActive.toLowerCase() === "true"}
             id={"RBisActiveYes"}
             label={"Yes"}
             value={"Yes"}
@@ -125,7 +125,7 @@ const UsageEditModal = (props: PropertyEditModalProps) => {
           <RadioButton
             onClick={() => setIsActive("false")}
             name={"is_active"}
-            checked={props.property.isActive.toLowerCase() === "false"}
+            isChecked={props.property.isActive.toLowerCase() === "false"}
             id={"RBisActiveNo"}
             label={"No"}
             value={"No"}
