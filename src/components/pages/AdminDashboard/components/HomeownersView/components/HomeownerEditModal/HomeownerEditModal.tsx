@@ -58,7 +58,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
           phone,
           mailingAddress,
           id,
-          isActive
+          isActive: isActive
         })
       });
 
@@ -140,12 +140,11 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
             name={"mailingAddress"}
             required={true}
           />
-
           <Label>Active</Label>
           <RadioButton
             onClick={() => setIsActive("true")}
             name={"is_active"}
-            checked={props.homeowner.isActive.toLowerCase() === "true"}
+            isChecked={isActive.toLowerCase() === "true"}
             id={"RBisActiveYes"}
             label={"Yes"}
             value={"Yes"}
@@ -153,7 +152,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
           <RadioButton
             onClick={() => setIsActive("false")}
             name={"is_active"}
-            checked={props.homeowner.isActive.toLowerCase() === "false"}
+            isChecked={isActive.toLowerCase() === "false"}
             id={"RBisActiveNo"}
             label={"No"}
             value={"No"}
