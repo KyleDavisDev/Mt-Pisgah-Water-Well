@@ -14,14 +14,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const username = await validateCookie(jwtCookie);
       await validatePermission(username, "UPDATE_PROPERTY");
 
-      const { address, description, id, isActive } = JSON.parse(req.body);
+      const { address, description, id, isActive, homeownerId } = JSON.parse(req.body);
+
+      // TODO: data validation
 
       await db
         .from("properties")
         .update({
           address: address,
           description: description,
-          is_active: isActive
+          is_active: isActive,
+          homeowner_id: homeownerId
         })
         .eq("id", id);
 
