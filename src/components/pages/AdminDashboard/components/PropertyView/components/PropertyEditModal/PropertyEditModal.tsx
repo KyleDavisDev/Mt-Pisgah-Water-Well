@@ -7,19 +7,24 @@ import { propertyVM } from "../../PropertyView";
 import { FlashMessage, FlashMessageProps } from "../../../../../../FlashMessage/FlashMessage";
 import { RadioButton } from "../../../../../../RadioButton/RadioButton";
 import Label from "../../../../../../Label/Label";
+import { homeownerVM } from "../../../HomeownersView/HomeownersView";
+import Select from "../../../../../../Select/Select";
 
 export interface PropertyEditModalProps {
   showModal: boolean;
   property: propertyVM;
+  homeowners: homeownerVM[];
   onModalClose: () => void;
 }
 
 const PropertyEditModal = (props: PropertyEditModalProps) => {
-  console.log(props);
   const [id, setId] = React.useState(props.property.id);
   const [description, setDescription] = React.useState(props.property.description);
   const [isActive, setIsActive] = React.useState(props.property.isActive);
   const [address, setAddress] = React.useState(props.property.address);
+  const homeowner = props.homeowners.find(h => h.name === props.property.homeowner);
+  const activeId = homeowner?.id ? homeowner.id.toString() : "";
+  const [activeHomeownerId, setActiveHomeownerId] = React.useState(activeId);
 
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
@@ -39,7 +44,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
   const onSubmit = async (event?: React.FormEvent): Promise<any> => {
     event?.preventDefault();
 
-    if (!address || !id) {
+    if (!address || !id || !activeHomeownerId) {
       setFlashMessage({
         isVisible: true,
         text: "Missing address",
@@ -55,7 +60,8 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
           description,
           address,
           id,
-          isActive
+          isActive,
+          homeownerId: activeHomeownerId
         })
       });
 
@@ -87,6 +93,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
     }
   };
 
+  console.log(activeHomeownerId);
   return (
     <Modal isActive={props.showModal} onClose={props.onModalClose}>
       <>
@@ -119,11 +126,27 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
             required={false}
           />
 
+          <Select
+            id="homeowner"
+            showLabel={true}
+            label={"Property belongs to"}
+            name={"homeowner"}
+            options={props.homeowners.map(h => ({
+              name: h.name,
+              value: h.id.toString()
+            }))}
+            onSelect={e => {
+              return setActiveHomeownerId(e.target.value);
+            }}
+            selectedValue={activeHomeownerId}
+            required={true}
+          />
+
           <Label>Active</Label>
           <RadioButton
             onClick={() => setIsActive("true")}
             name={"is_active"}
-            isChecked={props.property.isActive.toLowerCase() === "true"}
+            isChecked={isActive.toLowerCase() === "true"}
             id={"RBisActiveYes"}
             label={"Yes"}
             value={"Yes"}
@@ -131,7 +154,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
           <RadioButton
             onClick={() => setIsActive("false")}
             name={"is_active"}
-            isChecked={props.property.isActive.toLowerCase() === "false"}
+            isChecked={isActive.toLowerCase() === "false"}
             id={"RBisActiveNo"}
             label={"No"}
             value={"No"}
