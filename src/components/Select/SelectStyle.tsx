@@ -5,6 +5,7 @@ export const SelectContainer = styled.div`
   width: 100%;
   background-color: #f5f5f5;
   margin-top: 5px;
+  margin-bottom: 15px;
 
   &:after {
     position: absolute;
@@ -20,7 +21,7 @@ SelectContainer.displayName = "div";
 export const StyledSelect = styled.select`
   width: 100%;
   background-color: white;
-  border: ${(props) => props.theme.inputBorder};
+  border: ${props => props.theme.inputBorder};
   cursor: pointer;
   display: inline-block;
   position: relative;
