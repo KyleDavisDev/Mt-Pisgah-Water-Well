@@ -4,6 +4,7 @@ import Well from "../../../../Well/Well";
 import { Button } from "../../../../Button/Button";
 import PropertyEditModal from "./components/PropertyEditModal/PropertyEditModal";
 import { Article } from "../../../../Article/Article";
+import { homeownerVM } from "../HomeownersView/HomeownersView";
 
 export interface propertyVM {
   address: string;
@@ -16,6 +17,7 @@ export interface propertyVM {
 const PropertyView = () => {
   // assign state
   const [properties, setProperties] = React.useState<propertyVM[]>([]);
+  const [homeowners, setHomeowners] = React.useState<homeownerVM[]>([]);
   const [activeProperty, setActiveProperty] = React.useState<propertyVM | null>();
   const [showModal, setShowModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -44,10 +46,35 @@ const PropertyView = () => {
       });
   }
 
+  const getHomeowners = () => {
+    // Fetch data from the API using a GET request
+    fetch(`/api/homeowners/get`, { method: "GET" })
+      .then(response => {
+        // Check if the response is successful
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        // Parse the JSON response
+        return response.json();
+      })
+      .then(data => {
+        // Update state with the fetched data
+        setHomeowners(data.homeowners);
+      })
+      .catch(error => {
+        // Handle fetch errors
+        console.error("Error fetching data:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   React.useEffect(() => {
     if (!loading && properties.length === 0) {
       setLoading(true);
       getProperties();
+      getHomeowners();
     }
   }, [loading]);
 
@@ -77,7 +104,7 @@ const PropertyView = () => {
                 <tbody>
                   {properties.map(property => {
                     return (
-                      <tr>
+                      <tr key={property.id}>
                         <td>{property.address}</td>
                         <td>{property.description}</td>
                         <td>{property.homeowner}</td>
@@ -97,7 +124,12 @@ const PropertyView = () => {
                 </tbody>
               </StyledTable>
               {activeProperty && (
-                <PropertyEditModal showModal={showModal} property={{ ...activeProperty }} onModalClose={onModalClose} />
+                <PropertyEditModal
+                  showModal={showModal}
+                  property={{ ...activeProperty }}
+                  onModalClose={onModalClose}
+                  homeowners={homeowners}
+                />
               )}
             </StyledFormContainer>
           </Well>
