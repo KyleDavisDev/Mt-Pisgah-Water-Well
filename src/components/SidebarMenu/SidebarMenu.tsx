@@ -16,6 +16,7 @@ const SidebarMenu = (props: SidebarMenuProps) => {
   const [showHomeowners, setShowHomeowners] = useState<boolean>(false);
   const [showProperties, setShowProperties] = useState<boolean>(false);
   const [showUsage, setShowUsage] = useState<boolean>(false);
+  const [showPayments, setShowPayments] = useState<boolean>(false);
 
   return (
     <StyledSideBarContainer>
@@ -70,6 +71,22 @@ const SidebarMenu = (props: SidebarMenuProps) => {
             <StyledSubMenuItemContainer>
               <StyledMenuItem onClick={() => props.onMenuItemClick("add_usage_by_order")}>
                 Add Usage By Order (WIP)
+              </StyledMenuItem>
+            </StyledSubMenuItemContainer>
+          </>
+        )}
+      </StyledMenuItemContainer>
+
+      <StyledMenuItemContainer>
+        <StyledMenuItem onClick={() => setShowPayments(!showPayments)}>Payments</StyledMenuItem>
+        {showPayments && (
+          <>
+            <StyledSubMenuItemContainer>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("view_payments")}>View All</StyledMenuItem>
+            </StyledSubMenuItemContainer>
+            <StyledSubMenuItemContainer>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("add_payment")}>
+                Add Payment By Homeowner
               </StyledMenuItem>
             </StyledSubMenuItemContainer>
           </>

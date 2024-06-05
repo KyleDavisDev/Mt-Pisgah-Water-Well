@@ -129,55 +129,58 @@ const UsagesView = () => {
                   getUsagesByPropertyId(e.target.value);
                 }}
               />
-              <StyledTable>
-                <thead>
-                  <tr>
-                    <th>Date Collected</th>
-                    <th>Gallons</th>
-                    <th>Difference</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {usages &&
-                    usages.map((usage, ind) => {
-                      return (
-                        <tr>
-                          <td>
-                            {" "}
-                            <span
-                              style={{
-                                height: 10,
-                                width: 10,
-                                backgroundColor: usage.isActive === "true" ? "green" : "red",
-                                borderRadius: 50,
-                                display: "inline-block",
-                                marginRight: 8
-                              }}
-                            ></span>
-                            {usage.dateCollected}
-                          </td>
-                          <td>{usage.gallons}</td>
-                          <td>
-                            {ind < usages.length - 1
-                              ? renderDifference(parseInt(usage.gallons, 10), parseInt(usages[ind + 1].gallons, 10))
-                              : ""}
-                          </td>
-                          <td style={{ textAlign: "center" }}>
-                            <Button
-                              onClick={() => {
-                                setActiveUsage({ ...usage });
-                                setShowModal(true);
-                              }}
-                            >
-                              Edit
-                            </Button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </StyledTable>
+              {activeProperty && (
+                <StyledTable>
+                  <thead>
+                    <tr>
+                      <th>Date Collected</th>
+                      <th>Gallons</th>
+                      <th>Difference</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {usages &&
+                      usages.map((usage, ind) => {
+                        return (
+                          <tr>
+                            <td>
+                              {" "}
+                              <span
+                                style={{
+                                  height: 10,
+                                  width: 10,
+                                  backgroundColor: usage.isActive === "true" ? "green" : "red",
+                                  borderRadius: 50,
+                                  display: "inline-block",
+                                  marginRight: 8
+                                }}
+                              ></span>
+                              {usage.dateCollected}
+                            </td>
+                            <td>{usage.gallons}</td>
+                            <td>
+                              {ind < usages.length - 1
+                                ? renderDifference(parseInt(usage.gallons, 10), parseInt(usages[ind + 1].gallons, 10))
+                                : ""}
+                            </td>
+                            <td style={{ textAlign: "center" }}>
+                              <Button
+                                onClick={() => {
+                                  setActiveUsage({ ...usage });
+                                  setShowModal(true);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </StyledTable>
+              )}
+
               {showModal && activeUsage && (
                 <UsageEditModal showModal={showModal} usage={{ ...activeUsage }} onModalClose={onModalClose} />
               )}

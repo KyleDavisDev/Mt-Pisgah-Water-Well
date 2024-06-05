@@ -19,125 +19,72 @@ const StyledDiv = styled.div`
   color: ${props => props.theme.siteFontColor};
 `;
 
+interface page {
+  id: string;
+  component: any;
+  isActive: boolean;
+}
+
 const AdminDashboard = () => {
-  const [showHome, setShowHome] = useState(true);
-  const [showAddHomeowner, setShowAddHomeowner] = useState(false);
-  const [showViewHomeowner, setShowViewHomeowner] = useState(false);
-  const [showAddProperty, setShowAddProperty] = useState(false);
-  const [showViewProperty, setShowViewProperty] = useState(false);
-  const [showAddUsageByHomeowner, setShowAddUsageByHomeowner] = useState(false);
-  const [showAddUsageByOrder, setShowAddUsageByOrder] = useState(false);
-  const [showViewUsage, setShowViewUsage] = useState(false);
+  const [pages, setPages] = useState<page[]>([
+    {
+      id: "home",
+      component: <Home />,
+      isActive: false
+    },
+    {
+      id: "add_homeowner",
+      component: <HomeownersAdd />,
+      isActive: false
+    },
+    {
+      id: "view_homeowner",
+      component: <HomeownersView />,
+      isActive: false
+    },
+    {
+      id: "add_property",
+      component: <PropertyAdd />,
+      isActive: false
+    },
+    {
+      id: "view_property",
+      component: <PropertyView />,
+      isActive: false
+    },
+    {
+      id: "add_usage_by_homeowner",
+      component: <UsagesAdd />,
+      isActive: false
+    },
+    {
+      id: "add_usage_by_order",
+      component: <UsagesAdd />,
+      isActive: false
+    },
+    {
+      id: "view_usage",
+      component: <UsagesView />,
+      isActive: false
+    }
+  ]);
 
   const onMenuItemClick = (item: string): void => {
-    if (item === "add_homeowner") {
-      setShowAddHomeowner(true);
+    const tmpPages = pages.map(page => {
+      return { ...page, isActive: item === page.id };
+    });
 
-      setShowAddProperty(false);
-      setShowViewProperty(false);
-      setShowViewHomeowner(false);
-      setShowAddUsageByHomeowner(false);
-      setShowViewUsage(false);
-      setShowHome(false);
-      return;
-    }
-
-    if (item === "view_homeowner") {
-      setShowViewHomeowner(true);
-
-      setShowAddHomeowner(false);
-      setShowAddProperty(false);
-      setShowViewProperty(false);
-      setShowAddUsageByHomeowner(false);
-      setShowViewUsage(false);
-      setShowHome(false);
-      return;
-    }
-
-    if (item === "add_property") {
-      setShowAddProperty(true);
-
-      setShowAddHomeowner(false);
-      setShowViewProperty(false);
-      setShowViewHomeowner(false);
-      setShowAddUsageByHomeowner(false);
-      setShowViewUsage(false);
-      setShowHome(false);
-      return;
-    }
-
-    if (item === "view_property") {
-      setShowViewProperty(true);
-
-      setShowAddProperty(false);
-      setShowAddHomeowner(false);
-      setShowViewHomeowner(false);
-      setShowAddUsageByHomeowner(false);
-      setShowViewUsage(false);
-      setShowHome(false);
-      return;
-    }
-
-    if (item === "add_usage_by_homeowner") {
-      setShowAddUsageByHomeowner(true);
-
-      setShowAddProperty(false);
-      setShowAddHomeowner(false);
-      setShowViewProperty(false);
-      setShowViewHomeowner(false);
-      setShowViewUsage(false);
-      setShowHome(false);
-      return;
-    }
-
-    if (item === "add_usage_by_order") {
-      setShowAddUsageByHomeowner(true);
-
-      setShowAddProperty(false);
-      setShowAddHomeowner(false);
-      setShowViewProperty(false);
-      setShowViewHomeowner(false);
-      setShowViewUsage(false);
-      setShowHome(false);
-      return;
-    }
-
-    if (item === "view_usage") {
-      setShowViewUsage(true);
-
-      setShowViewProperty(false);
-      setShowAddProperty(false);
-      setShowAddHomeowner(false);
-      setShowViewHomeowner(false);
-      setShowAddUsageByHomeowner(false);
-      setShowHome(false);
-      return;
-    }
-
-    if (item === "home") {
-      setShowHome(true);
-
-      setShowViewUsage(false);
-      setShowViewProperty(false);
-      setShowAddProperty(false);
-      setShowAddHomeowner(false);
-      setShowViewHomeowner(false);
-      setShowAddUsageByHomeowner(false);
-      return;
-    }
+    setPages(tmpPages);
   };
 
   return (
     <StyledDiv>
       <SidebarMenu onMenuItemClick={onMenuItemClick} />
+      {pages.map(page => {
+        if (!page.isActive) return null;
 
-      {showHome && <Home />}
-      {showAddHomeowner && <HomeownersAdd />}
-      {showViewHomeowner && <HomeownersView />}
-      {showAddProperty && <PropertyAdd />}
-      {showViewProperty && <PropertyView />}
-      {showAddUsageByHomeowner && <UsagesAdd />}
-      {showViewUsage && <UsagesView />}
+        return page.component;
+      })}
     </StyledDiv>
   );
 };

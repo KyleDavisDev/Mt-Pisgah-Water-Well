@@ -15,7 +15,6 @@ export interface UsageEditModalProps {
 }
 
 const UsageEditModal = (props: UsageEditModalProps) => {
-  console.log(props.usage);
   const [id, setId] = React.useState(props.usage.id);
   const [gallons, setGallons] = React.useState(props.usage.gallons);
   const [isActive, setIsActive] = React.useState(props.usage.isActive);
