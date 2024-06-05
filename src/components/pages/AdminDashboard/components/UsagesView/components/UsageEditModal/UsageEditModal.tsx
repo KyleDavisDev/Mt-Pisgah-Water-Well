@@ -3,23 +3,22 @@ import { StyledFooterDivs } from "../../../HomeownersAdd/HomeownersAddStyle";
 import { Button } from "../../../../../../Button/Button";
 import { Modal } from "../../../../../../Modal/Modal";
 import React from "react";
-import { propertyVM } from "../../UsagesView";
+import { usagesVM } from "../../UsagesView";
 import { FlashMessage, FlashMessageProps } from "../../../../../../FlashMessage/FlashMessage";
 import { RadioButton } from "../../../../../../RadioButton/RadioButton";
 import Label from "../../../../../../Label/Label";
 
-export interface PropertyEditModalProps {
+export interface UsageEditModalProps {
   showModal: boolean;
-  property: propertyVM;
+  usage: usagesVM;
   onModalClose: () => void;
 }
 
-const UsageEditModal = (props: PropertyEditModalProps) => {
-  console.log(props);
-  const [id, setId] = React.useState(props.property.id);
-  const [description, setDescription] = React.useState(props.property.description);
-  const [isActive, setIsActive] = React.useState(props.property.isActive);
-  const [address, setAddress] = React.useState(props.property.address);
+const UsageEditModal = (props: UsageEditModalProps) => {
+  console.log(props.usage);
+  const [id, setId] = React.useState(props.usage.id);
+  const [gallons, setGallons] = React.useState(props.usage.gallons);
+  const [isActive, setIsActive] = React.useState(props.usage.isActive);
 
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
@@ -39,21 +38,20 @@ const UsageEditModal = (props: PropertyEditModalProps) => {
   const onSubmit = async (event: React.FormEvent): Promise<any> => {
     event.preventDefault();
 
-    if (!address || !id) {
+    if (!gallons || !id) {
       setFlashMessage({
         isVisible: true,
-        text: "Missing address",
+        text: "Missing Gallons",
         type: "alert"
       });
       return;
     }
 
     try {
-      const response = await fetch("/api/properties/update", {
+      const response = await fetch("/api/usages/update", {
         method: "POST",
         body: JSON.stringify({
-          description,
-          address,
+          gallons: gallons,
           id,
           isActive
         })
@@ -65,8 +63,7 @@ const UsageEditModal = (props: PropertyEditModalProps) => {
           text: "",
           type: undefined
         });
-        setDescription("");
-        setAddress("");
+        setGallons("");
 
         props.onModalClose();
       }
@@ -92,24 +89,13 @@ const UsageEditModal = (props: PropertyEditModalProps) => {
 
         <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
           <TextInput
-            onChange={e => setAddress(e.target.value)}
-            value={address}
+            onChange={e => setGallons(e.target.value)}
+            value={gallons}
             type={"text"}
-            id={"address"}
+            id={"gallons"}
             showLabel={true}
-            label={"Mailing Address"}
-            name={"address"}
-            required={true}
-          />
-
-          <TextInput
-            onChange={e => setDescription(e.target.value)}
-            value={description}
-            type={"text"}
-            id={"description"}
-            showLabel={true}
-            label={"Description"}
-            name={"description"}
+            label={"Gallons"}
+            name={"gallons"}
             required={false}
           />
 
@@ -117,7 +103,7 @@ const UsageEditModal = (props: PropertyEditModalProps) => {
           <RadioButton
             onClick={() => setIsActive("true")}
             name={"is_active"}
-            isChecked={props.property.isActive.toLowerCase() === "true"}
+            isChecked={isActive.toLowerCase() === "true"}
             id={"RBisActiveYes"}
             label={"Yes"}
             value={"Yes"}
@@ -125,7 +111,7 @@ const UsageEditModal = (props: PropertyEditModalProps) => {
           <RadioButton
             onClick={() => setIsActive("false")}
             name={"is_active"}
-            isChecked={props.property.isActive.toLowerCase() === "false"}
+            isChecked={isActive.toLowerCase() === "false"}
             id={"RBisActiveNo"}
             label={"No"}
             value={"No"}

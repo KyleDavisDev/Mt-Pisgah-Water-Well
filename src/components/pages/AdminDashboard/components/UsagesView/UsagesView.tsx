@@ -3,6 +3,8 @@ import { StyledWellContainer, StyledFormContainer, StyledTable, StyledContainer 
 import Well from "../../../../Well/Well";
 import { Article } from "../../../../Article/Article";
 import Select from "../../../../Select/Select";
+import { Button } from "../../../../Button/Button";
+import UsageEditModal from "./components/UsageEditModal/UsageEditModal";
 
 export interface propertyVM {
   address: string;
@@ -24,7 +26,8 @@ const UsagesView = () => {
   const [properties, setProperties] = React.useState<propertyVM[]>([]);
   const [property, setProperty] = React.useState("");
   const [usages, setUsages] = React.useState<usagesVM[]>([]);
-  const [activeUsage, setActiveUsage] = React.useState<propertyVM | null>(null);
+  const [activeProperty, setActiveProperty] = React.useState<string | null>(null);
+  const [activeUsage, setActiveUsage] = React.useState<usagesVM | null>(null);
   const [showModal, setShowModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -40,7 +43,6 @@ const UsagesView = () => {
         return response.json();
       })
       .then(data => {
-        console.log(data);
         // Update state with the fetched data
         setProperties(data.properties);
       })
@@ -54,7 +56,6 @@ const UsagesView = () => {
   };
 
   const getUsagesByPropertyId = (id: string) => {
-    console.log(id);
     // Fetch data from the API using a GET request
     fetch(`/api/usages/get?id=${id}`, { method: "GET" })
       .then(response => {
@@ -66,9 +67,9 @@ const UsagesView = () => {
         return response.json();
       })
       .then(data => {
-        console.log(data.usages);
         // Update state with the fetched data
-        setUsages(data.usages);
+
+        setUsages(data.usages.map((usage: any) => ({ ...usage, gallons: usage.gallons.toString() })));
       })
       .catch(error => {
         // Handle fetch errors
@@ -89,7 +90,17 @@ const UsagesView = () => {
   const onModalClose = () => {
     setShowModal(false);
 
-    getProperties();
+    if (activeProperty) getUsagesByPropertyId(activeProperty);
+  };
+
+  const renderDifference = (usage1: number, usage2: number) => {
+    const difference = usage1 - usage2;
+
+    if (difference >= 0) {
+      return <span style={{ color: "green" }}>{`+${difference}`}</span>;
+    }
+
+    return <span style={{ color: "red" }}>{`${difference}`}</span>;
   };
 
   return (
@@ -114,6 +125,7 @@ const UsagesView = () => {
                   setProperty(e.target.value);
 
                   if (e.target.value === "0") return;
+                  setActiveProperty(e.target.value);
                   getUsagesByPropertyId(e.target.value);
                 }}
               />
@@ -122,36 +134,53 @@ const UsagesView = () => {
                   <tr>
                     <th>Date Collected</th>
                     <th>Gallons</th>
-                    <th>Active</th>
+                    <th>Difference</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {usages &&
-                    usages.map(usage => {
+                    usages.map((usage, ind) => {
                       return (
                         <tr>
-                          <td>{usage.dateCollected}</td>
+                          <td>
+                            {" "}
+                            <span
+                              style={{
+                                height: 10,
+                                width: 10,
+                                backgroundColor: usage.isActive === "true" ? "green" : "red",
+                                borderRadius: 50,
+                                display: "inline-block",
+                                marginRight: 8
+                              }}
+                            ></span>
+                            {usage.dateCollected}
+                          </td>
                           <td>{usage.gallons}</td>
-                          <td>{usage.isActive}</td>
+                          <td>
+                            {ind < usages.length - 1
+                              ? renderDifference(parseInt(usage.gallons, 10), parseInt(usages[ind + 1].gallons, 10))
+                              : ""}
+                          </td>
                           <td style={{ textAlign: "center" }}>
-                            {/*<Button*/}
-                            {/*  onClick={() => {*/}
-                            {/*    setActiveProperty({ ...property });*/}
-                            {/*    setShowModal(true);*/}
-                            {/*  }}*/}
-                            {/*>*/}
-                            {/*  Edit*/}
-                            {/*</Button>*/}
+                            <Button
+                              onClick={() => {
+                                setActiveUsage({ ...usage });
+                                setShowModal(true);
+                              }}
+                            >
+                              Edit
+                            </Button>
                           </td>
                         </tr>
                       );
                     })}
                 </tbody>
               </StyledTable>
-              {/*{activeUsage && (*/}
-              {/*  <UsageEditModal showModal={showModal} property={{ ...activeUsage }} onModalClose={onModalClose} />*/}
-              {/*)}*/}
+              {showModal && activeUsage && (
+                <UsageEditModal showModal={showModal} usage={{ ...activeUsage }} onModalClose={onModalClose} />
+              )}
             </StyledFormContainer>
           </Well>
         </StyledWellContainer>

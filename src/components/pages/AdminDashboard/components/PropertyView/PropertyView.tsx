@@ -105,7 +105,19 @@ const PropertyView = () => {
                   {properties.map(property => {
                     return (
                       <tr key={property.id}>
-                        <td>{property.address}</td>
+                        <td>
+                          <span
+                            style={{
+                              height: 10,
+                              width: 10,
+                              backgroundColor: property.isActive === "true" ? "green" : "red",
+                              borderRadius: 50,
+                              display: "inline-block",
+                              marginRight: 8
+                            }}
+                          ></span>
+                          {property.address}
+                        </td>
                         <td>{property.description}</td>
                         <td>{property.homeowner}</td>
                         <td style={{ textAlign: "center" }}>

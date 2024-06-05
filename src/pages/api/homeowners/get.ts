@@ -29,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     // TODO: data validation
 
     const result = await db.from("homeowners").select().order("id", { ascending: true });
+    console.log(result);
     const homeowners = result.data as Homeowners[];
 
     return res.status(200).json({

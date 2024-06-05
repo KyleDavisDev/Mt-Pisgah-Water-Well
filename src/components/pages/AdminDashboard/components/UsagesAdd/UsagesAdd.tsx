@@ -41,7 +41,7 @@ const UsagesAdd = () => {
     type: undefined
   });
 
-  React.useEffect(() => {
+  function getUsagesByHomeowner() {
     // Fetch data from the API using a GET request
     fetch("/api/usages/getByHomeowner", { method: "GET" })
       .then(response => {
@@ -80,6 +80,10 @@ const UsagesAdd = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       });
+  }
+
+  React.useEffect(() => {
+    getUsagesByHomeowner();
   }, []);
 
   const onFlashClose = () => {
@@ -168,6 +172,8 @@ const UsagesAdd = () => {
           text: data.message,
           type: "success"
         });
+
+        getUsagesByHomeowner();
       }
     } catch (err: any) {
       console.log(err);

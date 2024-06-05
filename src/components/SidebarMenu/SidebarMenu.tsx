@@ -56,14 +56,21 @@ const SidebarMenu = (props: SidebarMenuProps) => {
       </StyledMenuItemContainer>
 
       <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowUsage(!showUsage)}>Usage</StyledMenuItem>
+        <StyledMenuItem onClick={() => setShowUsage(!showUsage)}>Usages</StyledMenuItem>
         {showUsage && (
           <>
             <StyledSubMenuItemContainer>
               <StyledMenuItem onClick={() => props.onMenuItemClick("view_usage")}>View All</StyledMenuItem>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("add_usage")}>Add Usage</StyledMenuItem>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("add_usage_by_homeowner")}>
+                Add Usage By Homeowner
+              </StyledMenuItem>
+            </StyledSubMenuItemContainer>
+            <StyledSubMenuItemContainer>
+              <StyledMenuItem onClick={() => props.onMenuItemClick("add_usage_by_order")}>
+                Add Usage By Order (WIP)
+              </StyledMenuItem>
             </StyledSubMenuItemContainer>
           </>
         )}

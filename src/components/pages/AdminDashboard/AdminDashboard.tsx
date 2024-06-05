@@ -25,7 +25,8 @@ const AdminDashboard = () => {
   const [showViewHomeowner, setShowViewHomeowner] = useState(false);
   const [showAddProperty, setShowAddProperty] = useState(false);
   const [showViewProperty, setShowViewProperty] = useState(false);
-  const [showAddUsage, setShowAddUsage] = useState(false);
+  const [showAddUsageByHomeowner, setShowAddUsageByHomeowner] = useState(false);
+  const [showAddUsageByOrder, setShowAddUsageByOrder] = useState(false);
   const [showViewUsage, setShowViewUsage] = useState(false);
 
   const onMenuItemClick = (item: string): void => {
@@ -35,7 +36,7 @@ const AdminDashboard = () => {
       setShowAddProperty(false);
       setShowViewProperty(false);
       setShowViewHomeowner(false);
-      setShowAddUsage(false);
+      setShowAddUsageByHomeowner(false);
       setShowViewUsage(false);
       setShowHome(false);
       return;
@@ -47,7 +48,7 @@ const AdminDashboard = () => {
       setShowAddHomeowner(false);
       setShowAddProperty(false);
       setShowViewProperty(false);
-      setShowAddUsage(false);
+      setShowAddUsageByHomeowner(false);
       setShowViewUsage(false);
       setShowHome(false);
       return;
@@ -59,7 +60,7 @@ const AdminDashboard = () => {
       setShowAddHomeowner(false);
       setShowViewProperty(false);
       setShowViewHomeowner(false);
-      setShowAddUsage(false);
+      setShowAddUsageByHomeowner(false);
       setShowViewUsage(false);
       setShowHome(false);
       return;
@@ -71,14 +72,26 @@ const AdminDashboard = () => {
       setShowAddProperty(false);
       setShowAddHomeowner(false);
       setShowViewHomeowner(false);
-      setShowAddUsage(false);
+      setShowAddUsageByHomeowner(false);
       setShowViewUsage(false);
       setShowHome(false);
       return;
     }
 
-    if (item === "add_usage") {
-      setShowAddUsage(true);
+    if (item === "add_usage_by_homeowner") {
+      setShowAddUsageByHomeowner(true);
+
+      setShowAddProperty(false);
+      setShowAddHomeowner(false);
+      setShowViewProperty(false);
+      setShowViewHomeowner(false);
+      setShowViewUsage(false);
+      setShowHome(false);
+      return;
+    }
+
+    if (item === "add_usage_by_order") {
+      setShowAddUsageByHomeowner(true);
 
       setShowAddProperty(false);
       setShowAddHomeowner(false);
@@ -96,7 +109,7 @@ const AdminDashboard = () => {
       setShowAddProperty(false);
       setShowAddHomeowner(false);
       setShowViewHomeowner(false);
-      setShowAddUsage(false);
+      setShowAddUsageByHomeowner(false);
       setShowHome(false);
       return;
     }
@@ -109,7 +122,7 @@ const AdminDashboard = () => {
       setShowAddProperty(false);
       setShowAddHomeowner(false);
       setShowViewHomeowner(false);
-      setShowAddUsage(false);
+      setShowAddUsageByHomeowner(false);
       return;
     }
   };
@@ -123,7 +136,7 @@ const AdminDashboard = () => {
       {showViewHomeowner && <HomeownersView />}
       {showAddProperty && <PropertyAdd />}
       {showViewProperty && <PropertyView />}
-      {showAddUsage && <UsagesAdd />}
+      {showAddUsageByHomeowner && <UsagesAdd />}
       {showViewUsage && <UsagesView />}
     </StyledDiv>
   );

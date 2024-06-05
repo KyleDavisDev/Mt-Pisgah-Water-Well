@@ -21,6 +21,7 @@ const HomeownersView = () => {
   const [activeHomeowner, setActiveHomeowner] = React.useState<homeownerVM | null>();
   const [showModal, setShowModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [onMount, setOnMount] = React.useState(true);
 
   const getHomeowners = () => {
     // Fetch data from the API using a GET request
@@ -54,9 +55,10 @@ const HomeownersView = () => {
   };
 
   React.useEffect(() => {
-    if (!loading && homeowner.length === 0) {
+    if (!loading && onMount) {
       setLoading(true);
       getHomeowners();
+      setOnMount(false);
     }
   }, [loading]);
 
@@ -70,8 +72,8 @@ const HomeownersView = () => {
               <StyledTable>
                 <thead>
                   <tr>
+                    <th>Name</th>
                     <th>Address</th>
-                    <th>Description</th>
                     <th>Active</th>
                     <th></th>
                   </tr>
@@ -81,7 +83,19 @@ const HomeownersView = () => {
                     homeowner.map((homeowner, ind) => {
                       return (
                         <tr key={`tr__${ind}__${homeowner.id}`}>
-                          <td>{homeowner.name}</td>
+                          <td>
+                            <span
+                              style={{
+                                height: 10,
+                                width: 10,
+                                backgroundColor: homeowner.isActive === "true" ? "green" : "red",
+                                borderRadius: 50,
+                                display: "inline-block",
+                                marginRight: 8
+                              }}
+                            ></span>
+                            {homeowner.name}
+                          </td>
                           <td>{homeowner.mailingAddress}</td>
                           <td>{homeowner.isActive}</td>
                           <td style={{ textAlign: "center" }}>
@@ -99,7 +113,7 @@ const HomeownersView = () => {
                     })}
                 </tbody>
               </StyledTable>
-              {activeHomeowner && (
+              {showModal && activeHomeowner && (
                 <HomeownerEditModal
                   showModal={showModal}
                   homeowner={{ ...activeHomeowner }}
