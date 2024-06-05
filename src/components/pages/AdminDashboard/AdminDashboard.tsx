@@ -66,6 +66,16 @@ const AdminDashboard = () => {
       id: "view_usage",
       component: <UsagesView />,
       isActive: false
+    },
+    {
+      id: "view_payments",
+      component: <UsagesView />,
+      isActive: false
+    },
+    {
+      id: "add_payment",
+      component: <UsagesView />,
+      isActive: false
     }
   ]);
 
