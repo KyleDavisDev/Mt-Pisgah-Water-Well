@@ -6,8 +6,8 @@ import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 type Data = {
   homeowners?: {
     id: string;
-    email?: string;
-    phone?: string;
+    email: string | null | undefined;
+    phone: string | null | undefined;
     name: string;
     mailingAddress: string;
     isActive: string;
@@ -36,11 +36,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       homeowners: homeowners.map(h => {
         return {
           name: h.name,
-          id: h.id,
+          id: h.id.toString(),
           email: h.email,
           phone: h.phone_number,
           mailingAddress: h.mailing_address,
-          isActive: h.is_active ? "true" : "false"
+          isActive: !!h.deleted_at ? "true" : "false"
         };
       })
     });
