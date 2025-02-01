@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
 import Homeowners from "../models/Homeowners";
-import { validateCookie, validatePermission } from "../utils/utils";
+import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 
 type Data = {
   homeowners?: {
@@ -23,14 +23,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   try {
     const jwtCookie = req.cookies["jwt"];
-    const username = await validateCookie(jwtCookie);
+    const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_HOMEOWNERS");
 
     // TODO: data validation
 
-    const result = await db.from("homeowners").select().order("id", { ascending: true });
-    console.log(result);
-    const homeowners = result.data as Homeowners[];
+    const homeowners = await db<Homeowners[]>`
+      select * from homeowners order by id asc
+    `;
 
     return res.status(200).json({
       homeowners: homeowners.map(h => {

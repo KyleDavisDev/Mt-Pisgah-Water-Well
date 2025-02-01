@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { db } from "../utils/db";
 import Users from "../models/Users";
 import jwt from "jsonwebtoken";
-import { validateCookie, validatePermission } from "../utils/utils";
+import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 
 type Data = {
   message?: string;
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if (req.method === "POST") {
     try {
       const jwtCookie = req.cookies["jwt"];
-      const username = await validateCookie(jwtCookie);
+      const username = await getUsernameFromCookie(jwtCookie);
       await validatePermission(username, "ADD_USAGE");
 
       const { usages } = JSON.parse(req.body);

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
-import { safeParseStr, validateCookie, validatePermission } from "../utils/utils";
+import { safeParseStr, getUsernameFromCookie, validatePermission } from "../utils/utils";
 
 type Data = {
   usages?: {
@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   try {
     const jwtCookie = req.cookies["jwt"];
-    const username = await validateCookie(jwtCookie);
+    const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_USAGES");
 
     const { id } = req.query;
