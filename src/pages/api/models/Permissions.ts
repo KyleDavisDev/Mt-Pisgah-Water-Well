@@ -1,7 +1,7 @@
-export default interface Permissions {
-    id: string
-    value: string
-    description: string
-    createdAt: string
-    isActive?: boolean
+export default interface Permission {
+  id: number;
+  value: string;
+  description: string;
+  created_at: string;
+  is_active: boolean;
 }
