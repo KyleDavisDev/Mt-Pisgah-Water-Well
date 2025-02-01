@@ -15,4 +15,5 @@ export default interface UsageBill {
   deleted_at?: string | null;
   deleted_by_id?: number | null;
   deleted_by?: User | null; // Optional relationship
+  uuid: string;
 }

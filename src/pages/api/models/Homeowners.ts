@@ -12,4 +12,5 @@ export default interface Homeowner {
   created_by?: User; // May be missing due to lazy-fetch
   deleted_by_id?: number | null;
   deleted_by?: User | null; // Optional relationship
+  uuid: string;
 }
