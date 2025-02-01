@@ -16,15 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       const { name, email, phone, mailingAddress } = JSON.parse(req.body);
 
-      const tmp = await db.from("homeowners").insert({
-        name,
-        email,
-        phone_number: phone,
-        mailing_address: mailingAddress,
-        is_active: true
-      });
-
-      console.log(tmp);
+      await db`
+      INSERT into homeowners (name, email, phone_number, mailing_address, created_by)
+          values (${name}, ${email}, ${phone}, ${mailingAddress}, (SELECT id from users where username = ${username}))
+      `;
 
       return res.status(200).json({ message: "Success!" });
     } catch (error) {
