@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const { name, email, phone, mailingAddress } = JSON.parse(req.body);
 
       await db`
-      INSERT into homeowners (name, email, phone_number, mailing_address, created_by)
+      INSERT into homeowners (name, email, phone_number, mailing_address, created_by_id)
           values (${name}, ${email}, ${phone}, ${mailingAddress}, (SELECT id from users where username = ${username}))
       `;
 
