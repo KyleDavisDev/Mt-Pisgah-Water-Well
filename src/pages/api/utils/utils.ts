@@ -27,7 +27,7 @@ const getUser = async (username: string): Promise<Users> => {
   return data[0];
 };
 
-export const validateCookie = async (jwtCookie: string | undefined): Promise<string> => {
+export const getUsernameFromCookie = async (jwtCookie: string | undefined): Promise<string> => {
   if (!jwtCookie) {
     throw new Error("Please re-login.");
   }
