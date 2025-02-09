@@ -1,5 +1,5 @@
 import Users from "../models/Users";
-import { db } from "./db";
+import { db } from "../utils/db";
 import jwt from "jsonwebtoken";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
@@ -75,4 +75,25 @@ export const validatePermission = async (username: string, permission: string): 
   // TODO: Check if provided permission exists in list
 
   return;
+};
+
+export const addInsertRecordToAuditTable = async ({
+  tableName,
+  recordId,
+  data,
+  actionBy
+}: {
+  tableName: string;
+  recordId: string;
+  data: string;
+  actionBy: string;
+}) => {
+  try {
+    await db`
+    INSERT into audit_log (table_name, record_id, action_type, old_data, new_data, action_by_id, action_timestamp)
+        VALUES (${tableName}, ${recordId}, 'INSERT', null, ${data}, (SELECT id from users where username = ${actionBy}), now())
+  `;
+  } catch (e) {
+    console.log("Unable to insert into audit_log table");
+  }
 };
