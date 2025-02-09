@@ -77,21 +77,25 @@ export const validatePermission = async (username: string, permission: string): 
   return;
 };
 
-export const addInsertRecordToAuditTable = async ({
+export const addAuditTableRecord = async ({
   tableName,
+  actionType,
   recordId,
-  data,
+  oldData,
+  newData,
   actionBy
 }: {
   tableName: string;
-  recordId: string;
-  data: string;
+  recordId: number;
+  oldData?: string | null;
+  newData?: string | null;
   actionBy: string;
+  actionType: "INSERT" | "UPDATE" | "DELETE";
 }) => {
   try {
     await db`
     INSERT into audit_log (table_name, record_id, action_type, old_data, new_data, action_by_id, action_timestamp)
-        VALUES (${tableName}, ${recordId}, 'INSERT', null, ${data}, (SELECT id from users where username = ${actionBy}), now())
+        VALUES (${tableName}, ${recordId}, ${actionType}, ${oldData ?? null}, ${newData ?? null}, (SELECT id from users where username = ${actionBy}), now())
   `;
   } catch (e) {
     console.log("Unable to insert into audit_log table");
