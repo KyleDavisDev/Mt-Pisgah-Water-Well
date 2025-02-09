@@ -29,7 +29,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     // TODO: data validation
 
     const homeowners = await db<Homeowners[]>`
-      select * from homeowners order by id asc
+        SELECT *
+        FROM homeowners
+        ORDER BY name DESC;
     `;
 
     return res.status(200).json({
@@ -40,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           email: h.email,
           phone: h.phone_number,
           mailingAddress: h.mailing_address,
-          isActive: !!h.deleted_at ? "true" : "false"
+          isActive: !h.is_active ? "true" : "false"
         };
       })
     });
