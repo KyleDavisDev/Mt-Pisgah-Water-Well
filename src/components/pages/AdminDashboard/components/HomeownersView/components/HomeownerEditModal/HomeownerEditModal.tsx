@@ -51,7 +51,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
 
     try {
       const response = await fetch("/api/homeowners/update", {
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify({
           name,
           email,
