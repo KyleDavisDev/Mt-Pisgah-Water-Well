@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
-import { getUsernameFromCookie, validatePermission } from "../utils/utils";
+import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../utils/utils";
+import Homeowner from "../models/Homeowners";
 
 type Data = {
   message?: string;
@@ -8,7 +9,7 @@ type Data = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  if (req.method === "POST") {
+  if (req.method === "PUT") {
     try {
       const jwtCookie = req.cookies["jwt"];
       const username = await getUsernameFromCookie(jwtCookie);
@@ -16,16 +17,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       const { name, email, phone, mailingAddress, id, isActive } = JSON.parse(req.body);
 
-      await db
-        .from("homeowners")
-        .update({
-          name,
-          email,
-          phone_number: phone,
-          mailing_address: mailingAddress,
-          is_active: isActive
-        })
-        .eq("id", id);
+      // Find record to be "edited"
+      const oldRecords = await db<Homeowner[]>`
+        SELECT * FROM homeowners where id = ${id}
+      `;
+
+      const updatedRecord = await db`
+          UPDATE homeowners SET name = ${name}, email = ${email}, phone_number = ${phone}, mailing_address = ${mailingAddress},
+                                is_active = ${isActive === "true"}
+          WHERE id = ${id}
+          returning *;
+      `;
+
+      await addAuditTableRecord({
+        newData: JSON.stringify(updatedRecord[0]),
+        oldData: JSON.stringify(oldRecords[0]),
+        recordId: oldRecords[0].id,
+        tableName: "homeowners",
+        actionType: "UPDATE",
+        actionBy: username
+      });
 
       return res.status(200).json({ message: "Success!" });
     } catch (error) {
