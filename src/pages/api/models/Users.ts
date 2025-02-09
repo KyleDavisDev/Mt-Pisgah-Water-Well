@@ -3,7 +3,5 @@ export default interface User {
   name: string;
   username: string;
   password: string;
-  created_at: string; // ISO timestamp format
-  modified_at: string; // ISO timestamp format
   is_active: boolean;
 }

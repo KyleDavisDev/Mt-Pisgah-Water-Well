@@ -1,7 +1,6 @@
 export default interface Permission {
   id: number;
   value: string;
-  description: string;
-  created_at: string;
+  description?: string | null;
   is_active: boolean;
 }
