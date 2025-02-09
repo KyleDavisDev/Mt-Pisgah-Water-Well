@@ -18,6 +18,22 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
       return;
     }
 
+    // Prevent closing if text is selected
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) {
+      return;
+    }
+
+    // Prevent closing if text inside of input element is selected
+    const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
+    if (
+      activeElement &&
+      (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA") &&
+      activeElement.selectionStart !== activeElement.selectionEnd
+    ) {
+      return;
+    }
+
     // Grab the x and y coordinates of the event
     const mouseX = e.pageX;
     const mouseY = e.pageY;
