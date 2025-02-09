@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           email: h.email,
           phone: h.phone_number,
           mailingAddress: h.mailing_address,
-          isActive: !h.is_active ? "true" : "false"
+          isActive: h.is_active ? "true" : "false"
         };
       })
     });
