@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
-import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../utils/utils";
+import { addAuditTableRecord, getUsernameFromCookie, updateAuditTableRecord, validatePermission } from "../utils/utils";
 
 type Data = {
   message?: string;
@@ -16,6 +16,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       const { name, email, phone, mailingAddress } = JSON.parse(req.body);
 
+      const auditLog = await addAuditTableRecord({
+        tableName: "homeowners",
+        recordId: 0, // will update
+        newData: JSON.stringify({ name, email, phone, mailingAddress, is_active: true }),
+        actionBy: username,
+        actionType: "INSERT"
+      });
+
       const record = await db`
         INSERT into homeowners (name, email, phone_number, mailing_address, is_active)
             values (${name}, ${email}, ${phone}, ${mailingAddress}, true)
@@ -23,16 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       `;
 
       if (!record) {
-        return res.status(500).json({ error: "Unable to insert new record" });
+        return res.status(500).json({ error: "Unable to insert new homeowners record" });
       }
 
-      await addAuditTableRecord({
-        tableName: "homeowners",
-        recordId: record[0].id as number,
-        newData: JSON.stringify(record[0]),
-        actionBy: username,
-        actionType: "INSERT"
-      });
+      await updateAuditTableRecord({ ...auditLog, record_id: record[0].id, is_complete: true });
 
       return res.status(200).json({ message: "Success!" });
     } catch (error) {
