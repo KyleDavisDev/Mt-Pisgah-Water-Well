@@ -23,39 +23,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_PROPERTIES");
 
-    const result = await db
-      .from("properties")
-      .select(
-        `
-        address,
-        description,
-        is_active,
-        id,
-        homeowners (
-          name
-        )
-      `
-      )
-      .order("id", { ascending: true });
-    const properties = result.data;
+    const records = await db`
+      SELECT prop.*, home.name as name FROM properties prop
+      JOIN homeowners home on prop.homeowner_id = home.id 
+    `;
 
     return res.status(200).json({
-      properties: properties
-        ? properties.map(prop => {
+      properties: records
+        ? records.map(record => {
             return {
-              address: prop.address,
-              description: prop.description,
-              isActive: prop.is_active ? "true" : "false",
-              id: prop.id as string,
+              address: record.address,
+              description: record.description,
+              isActive: record.is_active ? "true" : "false",
+              id: record.id as string,
               // @ts-ignore
-              homeowner: prop.homeowners.name
+              homeowner: record.name
             };
           })
         : []
     });
   } catch (error) {
     console.log(error);
-    return res.status(403).json({ error: "Invalid username or password." });
+    return res.status(403).json({ error: "Error looking up properties." });
   }
 
   return res.status(500).json({ error: "Something went wrong." });
