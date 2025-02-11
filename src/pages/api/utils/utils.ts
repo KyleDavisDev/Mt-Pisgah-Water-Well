@@ -1,6 +1,7 @@
 import Users from "../models/Users";
 import { db } from "../utils/db";
 import jwt from "jsonwebtoken";
+import AuditLog from "../models/AuditLogs";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -91,13 +92,39 @@ export const addAuditTableRecord = async ({
   newData?: string | null;
   actionBy: string;
   actionType: "INSERT" | "UPDATE" | "DELETE";
-}) => {
+}): Promise<AuditLog> => {
   try {
-    await db`
+    const record = await db<AuditLog[]>`
     INSERT into audit_log (table_name, record_id, action_type, old_data, new_data, action_by_id, action_timestamp)
         VALUES (${tableName}, ${recordId}, ${actionType}, ${oldData ?? null}, ${newData ?? null}, (SELECT id from users where username = ${actionBy}), now())
+    returning *;
   `;
+
+    if (!record) throw new Error("Audit log insertion failed: No record returned.");
+
+    return record[0];
   } catch (e) {
     console.log("Unable to insert into audit_log table");
+    throw new Error(`Could not insert audit_log record: ${e instanceof Error ? e.message : "Unknown error"}`);
+  }
+};
+
+export const updateAuditTableRecord = async (auditLog: AuditLog): Promise<AuditLog> => {
+  try {
+    await db`
+    UPDATE audit_log set table_name=${auditLog.table_name},
+                         record_id=${auditLog.record_id},
+                         action_type=${auditLog.action_type},
+                         old_data=${JSON.stringify(auditLog.old_data)},
+                         new_data=${JSON.stringify(auditLog.new_data)},
+                         action_by_id=${auditLog.action_by_id},
+                         action_timestamp=${auditLog.action_timestamp}
+    where id=${auditLog.id}
+  `;
+
+    return auditLog;
+  } catch (e) {
+    console.log("Unable to insert into audit_log table");
+    throw new Error(`Could not insert audit_log record: ${e instanceof Error ? e.message : "Unknown error"}`);
   }
 };
