@@ -21,6 +21,7 @@ const PropertyView = () => {
   const [activeProperty, setActiveProperty] = React.useState<propertyVM | null>();
   const [showModal, setShowModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [hadError, setHadError] = React.useState(false);
 
   function getProperties() {
     // Fetch data from the API using a GET request
@@ -64,6 +65,7 @@ const PropertyView = () => {
       .catch(error => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
+        setHadError(true);
       })
       .finally(() => {
         setLoading(false);
@@ -71,7 +73,7 @@ const PropertyView = () => {
   };
 
   React.useEffect(() => {
-    if (!loading && properties.length === 0) {
+    if (!loading && properties.length === 0 && !hadError) {
       setLoading(true);
       getProperties();
       getHomeowners();
