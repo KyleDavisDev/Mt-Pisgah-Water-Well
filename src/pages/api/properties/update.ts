@@ -41,17 +41,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         actionBy: username
       });
 
-      // Make update
-      await db`
-          UPDATE properties SET address = ${newObj.address},
-                                description = ${newObj.description},
-                                homeowner_id = ${homeownerId},
-                                is_active = ${newObj.is_active}
-          WHERE id = ${id};
-      `;
+      // Make update in a transaction
+      await db.begin(async db => {
+        await db`
+            UPDATE properties
+            SET address      = ${newObj.address},
+                description  = ${newObj.description},
+                homeowner_id = ${homeownerId},
+                is_active    = ${newObj.is_active}
+            WHERE id = ${id};
+        `;
 
-      // Update intent log
-      await updateAuditTableRecord({ ...auditRecord, is_complete: true });
+        await db`
+          UPDATE audit_log SET is_complete=true WHERE id = ${auditRecord.id};
+        `;
+      });
 
       return res.status(200).json({ message: "Success!" });
     } catch (error) {
