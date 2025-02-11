@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
-import { getUsernameFromCookie, validatePermission } from "../utils/utils";
+import { addAuditTableRecord, getUsernameFromCookie, updateAuditTableRecord, validatePermission } from "../utils/utils";
+import Property from "../models/Properties";
 
 type Data = {
   message?: string;
@@ -18,15 +19,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       // TODO: data validation
 
-      await db
-        .from("properties")
-        .update({
-          address: address,
-          description: description,
-          is_active: isActive,
-          homeowner_id: homeownerId
-        })
-        .eq("id", id);
+      // Find record to be edited
+      const oldRecords = await db<Property[]>`
+        SELECT * FROM properties where id = ${id}
+      `;
+
+      if (!oldRecords) {
+        return res.status(400).json({ error: "Cannot find homeowners record" });
+      }
+
+      // Get new record data
+      const newObj = { ...oldRecords[0], address, description, id, homeownerId, is_active: isActive === "true" };
+
+      // log intent
+      const auditRecord = await addAuditTableRecord({
+        oldData: JSON.stringify(oldRecords[0]),
+        newData: JSON.stringify(newObj),
+        recordId: oldRecords[0].id,
+        tableName: "properties",
+        actionType: "UPDATE",
+        actionBy: username
+      });
+
+      // Make update
+      await db`
+          UPDATE properties SET address = ${newObj.address},
+                                description = ${newObj.description},
+                                homeowner_id = ${homeownerId},
+                                is_active = ${newObj.is_active}
+          WHERE id = ${id};
+      `;
+
+      // Update intent log
+      await updateAuditTableRecord({ ...auditRecord, is_complete: true });
 
       return res.status(200).json({ message: "Success!" });
     } catch (error) {
