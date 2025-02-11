@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
-import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../utils/utils";
+import { addAuditTableRecord, getUsernameFromCookie, updateAuditTableRecord, validatePermission } from "../utils/utils";
 import Homeowner from "../models/Homeowners";
 
 type Data = {
@@ -17,26 +17,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       const { name, email, phone, mailingAddress, id, isActive } = JSON.parse(req.body);
 
-      // Find record to be "edited"
+      // Find record to be edited
       const oldRecords = await db<Homeowner[]>`
         SELECT * FROM homeowners where id = ${id}
       `;
 
-      const updatedRecord = await db`
-          UPDATE homeowners SET name = ${name}, email = ${email}, phone_number = ${phone}, mailing_address = ${mailingAddress},
-                                is_active = ${isActive === "true"}
-          WHERE id = ${id}
-          returning *;
-      `;
+      if (!oldRecords) {
+        return res.status(400).json({ error: "Cannot find homeowners record" });
+      }
 
-      await addAuditTableRecord({
-        newData: JSON.stringify(updatedRecord[0]),
+      // Get new record data
+      const newObj = { ...oldRecords[0], name, email, phone, mailingAddress, id, is_active: isActive === "true" };
+
+      // log intent
+      const auditRecord = await addAuditTableRecord({
         oldData: JSON.stringify(oldRecords[0]),
+        newData: JSON.stringify(newObj),
         recordId: oldRecords[0].id,
         tableName: "homeowners",
         actionType: "UPDATE",
         actionBy: username
       });
+
+      // Make update
+      await db`
+          UPDATE homeowners SET name = ${newObj.name},
+                                email = ${newObj.email},
+                                phone_number = ${newObj.phone},
+                                mailing_address = ${newObj.mailingAddress},
+                                is_active = ${newObj.is_active}
+          WHERE id = ${id};
+      `;
+
+      // Update intent log
+      await updateAuditTableRecord({ ...auditRecord, is_complete: true });
 
       return res.status(200).json({ message: "Success!" });
     } catch (error) {
