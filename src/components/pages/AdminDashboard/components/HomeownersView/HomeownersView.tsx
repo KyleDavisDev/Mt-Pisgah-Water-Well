@@ -21,8 +21,7 @@ const HomeownersView = () => {
   const [inactiveHomeowners, setInactiveHomeowners] = React.useState<homeownerVM[]>([]);
   const [activeHomeowner, setActiveHomeowner] = React.useState<homeownerVM | null>();
   const [showModal, setShowModal] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [onMount, setOnMount] = React.useState(true);
+  const initialized = React.useRef(false);
 
   const getHomeowners = () => {
     // Fetch data from the API using a GET request
@@ -48,7 +47,6 @@ const HomeownersView = () => {
             inactive.push(h);
           }
         });
-        console.log(active);
 
         setActiveHomeowners(active);
         setInactiveHomeowners(inactive);
@@ -57,25 +55,21 @@ const HomeownersView = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => {});
   };
 
   const onModalClose = () => {
     setShowModal(false);
-    setActiveHomeowner(null);
-
     getHomeowners();
   };
 
   React.useEffect(() => {
-    if (!loading && onMount) {
-      setLoading(true);
+    if (!initialized.current) {
+      initialized.current = true;
+
       getHomeowners();
-      setOnMount(false);
     }
-  }, [loading]);
+  }, []);
 
   return (
     <StyledContainer>
