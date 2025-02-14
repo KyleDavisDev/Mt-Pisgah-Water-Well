@@ -14,5 +14,6 @@ export const db = postgres({
   port: parseInt(dbPort, 10), // Postgres server port[s]
   database: dbName, // Name of database to connect to
   username: dbUser, // Username of database user
-  password: dbPassword // Password of database user
+  password: dbPassword, // Password of database user
+  max_lifetime: null
 });
