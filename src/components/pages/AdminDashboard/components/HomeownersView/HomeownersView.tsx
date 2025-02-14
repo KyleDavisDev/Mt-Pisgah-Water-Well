@@ -17,7 +17,8 @@ export interface homeownerVM {
 
 const HomeownersView = () => {
   // assign state
-  const [homeowner, setHomeowner] = React.useState<homeownerVM[]>([]);
+  const [activeHomeowners, setActiveHomeowners] = React.useState<homeownerVM[]>([]);
+  const [inactiveHomeowners, setInactiveHomeowners] = React.useState<homeownerVM[]>([]);
   const [activeHomeowner, setActiveHomeowner] = React.useState<homeownerVM | null>();
   const [showModal, setShowModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -36,7 +37,21 @@ const HomeownersView = () => {
       })
       .then(data => {
         // Update state with the fetched data
-        setHomeowner(data.homeowners);
+
+        const active: homeownerVM[] = [];
+        const inactive: homeownerVM[] = [];
+
+        data.homeowners.forEach((h: any) => {
+          if (h.isActive === "true") {
+            active.push(h);
+          } else {
+            inactive.push(h);
+          }
+        });
+        console.log(active);
+
+        setActiveHomeowners(active);
+        setInactiveHomeowners(inactive);
       })
       .catch(error => {
         // Handle fetch errors
@@ -69,50 +84,108 @@ const HomeownersView = () => {
           <Well>
             <h3>All Homeowners</h3>
             <StyledFormContainer>
-              <StyledTable>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Active</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {homeowner &&
-                    homeowner.map((homeowner, ind) => {
-                      return (
-                        <tr key={`tr__${ind}__${homeowner.id}`}>
-                          <td>
-                            <span
-                              style={{
-                                height: 10,
-                                width: 10,
-                                backgroundColor: homeowner.isActive === "true" ? "green" : "red",
-                                borderRadius: 50,
-                                display: "inline-block",
-                                marginRight: 8
-                              }}
-                            ></span>
-                            {homeowner.name}
-                          </td>
-                          <td>{homeowner.mailingAddress}</td>
-                          <td>{homeowner.isActive}</td>
-                          <td style={{ textAlign: "center" }}>
-                            <Button
-                              onClick={() => {
-                                setActiveHomeowner({ ...homeowner });
-                                setShowModal(true);
-                              }}
-                            >
-                              Edit
-                            </Button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </StyledTable>
+              {activeHomeowners.length > 0 ? (
+                <>
+                  <h3>Active</h3>
+                  <StyledTable style={{ marginBottom: "25px" }}>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Active</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeHomeowners.map((homeowner, ind) => {
+                        return (
+                          <tr key={`tr__${ind}__${homeowner.id}`}>
+                            <td>
+                              <span
+                                style={{
+                                  height: 10,
+                                  width: 10,
+                                  backgroundColor: homeowner.isActive === "true" ? "green" : "red",
+                                  borderRadius: 50,
+                                  display: "inline-block",
+                                  marginRight: 8
+                                }}
+                              ></span>
+                              {homeowner.name}
+                            </td>
+                            <td>{homeowner.mailingAddress}</td>
+                            <td>{homeowner.isActive}</td>
+                            <td style={{ textAlign: "center" }}>
+                              <Button
+                                onClick={() => {
+                                  setActiveHomeowner({ ...homeowner });
+                                  setShowModal(true);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </StyledTable>
+                </>
+              ) : (
+                <></>
+              )}
+
+              {inactiveHomeowners.length > 0 ? (
+                <>
+                  <h3>Inactive</h3>
+                  <StyledTable>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Active</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {inactiveHomeowners.map((homeowner, ind) => {
+                        return (
+                          <tr key={`tr__${ind}__${homeowner.id}`}>
+                            <td>
+                              <span
+                                style={{
+                                  height: 10,
+                                  width: 10,
+                                  backgroundColor: homeowner.isActive === "true" ? "green" : "red",
+                                  borderRadius: 50,
+                                  display: "inline-block",
+                                  marginRight: 8
+                                }}
+                              ></span>
+                              {homeowner.name}
+                            </td>
+                            <td>{homeowner.mailingAddress}</td>
+                            <td>{homeowner.isActive}</td>
+                            <td style={{ textAlign: "center" }}>
+                              <Button
+                                onClick={() => {
+                                  setActiveHomeowner({ ...homeowner });
+                                  setShowModal(true);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </StyledTable>
+                </>
+              ) : (
+                <></>
+              )}
+
               {showModal && activeHomeowner && (
                 <HomeownerEditModal
                   showModal={showModal}
