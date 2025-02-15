@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const username = await getUsernameFromCookie(jwtCookie);
       await validatePermission(username, "UPDATE_PROPERTY");
 
-      const { address, description, id, isActive, homeownerId } = JSON.parse(req.body);
+      const { description, id, isActive, homeownerId } = JSON.parse(req.body);
 
       // TODO: data validation
 
@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
 
       // Get new record data
-      const newObj = { ...oldRecords[0], address, description, id, homeownerId, is_active: isActive === "true" };
+      const newObj = { ...oldRecords[0], description, id, homeownerId, is_active: isActive === "true" };
 
       // log intent
       const auditRecord = await addAuditTableRecord({
@@ -45,8 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       await db.begin(async db => {
         await db`
             UPDATE properties
-            SET address      = ${newObj.address},
-                description  = ${newObj.description},
+            SET description  = ${newObj.description},
                 homeowner_id = ${homeownerId},
                 is_active    = ${newObj.is_active}
             WHERE id = ${id};

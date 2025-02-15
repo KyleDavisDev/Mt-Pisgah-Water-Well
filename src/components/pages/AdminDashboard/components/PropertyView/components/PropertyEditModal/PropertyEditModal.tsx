@@ -58,7 +58,6 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
         method: "POST",
         body: JSON.stringify({
           description,
-          address,
           id,
           isActive,
           homeownerId: activeHomeownerId
@@ -93,7 +92,6 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
     }
   };
 
-  console.log(activeHomeownerId);
   return (
     <Modal isActive={props.showModal} onClose={props.onModalClose}>
       <>
@@ -113,6 +111,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
             label={"Mailing Address"}
             name={"address"}
             required={true}
+            disabled={true}
           />
 
           <TextInput
