@@ -196,7 +196,8 @@ const UsagesAdd = () => {
               return {
                 id: key,
                 gallons: usages[key].new,
-                dateCollected: dateCollected
+                dateCollected: dateCollected,
+                recordedById: activeGatheredUser
               };
             })
         })
@@ -238,8 +239,8 @@ const UsagesAdd = () => {
               )}
 
               <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-                <div>
-                  <div style={{ maxWidth: "380px", width: "100%" }}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
                     <TextInput
                       onChange={e => {
                         console.log(e.currentTarget.value);
@@ -266,7 +267,7 @@ const UsagesAdd = () => {
                         return setActiveGatheredUser(e.target.value);
                       }}
                       id={"userWhoGathered"}
-                      label={"Who Collected?"}
+                      label={"Who Collected the Data?"}
                       required={true}
                       showLabel={true}
                       selectedValue={activeGatheredUser}
