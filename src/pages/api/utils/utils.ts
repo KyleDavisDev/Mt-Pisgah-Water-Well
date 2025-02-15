@@ -2,6 +2,7 @@ import Users from "../models/Users";
 import { db } from "../utils/db";
 import jwt from "jsonwebtoken";
 import AuditLog from "../models/AuditLogs";
+import User from "../models/Users";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -18,14 +19,15 @@ export const safeParseStr = (str: string) => {
 };
 
 const getUser = async (username: string): Promise<Users> => {
-  const results = await db.from("users").select().eq("username", username).limit(1);
-  const data = results.data as Users[];
+  const users = await db<User[]>`
+    SELECT * FROM users where username=${username} LIMIT 1;
+  `;
 
-  if (data.length !== 1) {
-    throw new Error("Invalid username or password.");
+  if (users.length !== 1) {
+    throw new Error("Could not find user.");
   }
 
-  return data[0];
+  return users[0];
 };
 
 export const getUsernameFromCookie = async (jwtCookie: string | undefined): Promise<string> => {
