@@ -87,13 +87,14 @@ const AdminDashboard = () => {
     setPages(tmpPages);
   };
 
+  // TODO: Add "key" to map
   return (
     <StyledDiv>
       <SidebarMenu onMenuItemClick={onMenuItemClick} />
       {pages.map(page => {
         if (!page.isActive) return null;
 
-        return <div key={page.id}>page.component</div>;
+        return page.component;
       })}
     </StyledDiv>
   );
