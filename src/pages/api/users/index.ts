@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
+import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 
 type Data = {
   users?: {
@@ -35,6 +36,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   try {
+    const jwtCookie = req.cookies["jwt"];
+    const username = await getUsernameFromCookie(jwtCookie);
+    await validatePermission(username, "VIEW_USERS");
+
     const permissions = extractPermissionsFromQuery(req);
     if (!permissions) return;
 
