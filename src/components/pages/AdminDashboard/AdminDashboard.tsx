@@ -93,7 +93,7 @@ const AdminDashboard = () => {
       {pages.map(page => {
         if (!page.isActive) return null;
 
-        return page.component;
+        return <div key={page.id}>page.component</div>;
       })}
     </StyledDiv>
   );
