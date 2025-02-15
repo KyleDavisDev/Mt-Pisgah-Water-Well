@@ -55,25 +55,21 @@ export const getUsernameFromCookie = async (jwtCookie: string | undefined): Prom
 };
 
 export const validatePermission = async (username: string, permission: string): Promise<void> => {
-  return;
+  const userPermissions = await db`
+      SELECT count(*)
+      FROM users u
+               JOIN user_permissions up on u.id = up.user_id
+               JOIN permissions p ON up.permission_id = p.id
+      WHERE (p.value = ${permission} OR p.value = 'ADMIN')
+        AND u.username = ${username}
+        AND u.is_active = true
+        AND up.is_active = true
+        AND p.is_active = true
+  `;
 
-  // TODO: Lookup user permissions
-  const userPermissions = await db
-    .from("users")
-    .select(
-      `
-    user_permissions (
-      permissions (
-        value
-      )
-    )
-  `
-    )
-    .eq("users.username", username)
-    .eq("users.isActive", true)
-    .eq("users.user_permissions.isActive", true)
-    .eq("users.user_permissions.permissions.isActive", true);
-  // TODO: Check if provided permission exists in list
+  if (userPermissions.length !== 1 || userPermissions[0].count === "0") {
+    throw Error("User does not have sufficient privileges.");
+  }
 
   return;
 };
