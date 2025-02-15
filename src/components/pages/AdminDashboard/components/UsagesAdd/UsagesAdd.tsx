@@ -12,6 +12,7 @@ import { Button } from "../../../../Button/Button";
 import React from "react";
 import { Article } from "../../../../Article/Article";
 import { TextInput } from "../../../../TextInput/TextInput";
+import Select from "../../../../Select/Select";
 
 interface UsageVM {
   id: string;
@@ -27,11 +28,18 @@ interface UsageVM {
   }[];
 }
 
+interface UserVM {
+  id: string;
+  name: string;
+}
+
 const UsagesAdd = () => {
   const _defaultErrorMessage = "There was a problem saving the usage. Please refresh your page and try again!";
 
   // assign state
   const [homeowners, setHomeowners] = React.useState<UsageVM[]>([]);
+  const [users, setUsers] = React.useState<UserVM[]>([]);
+  const [activeGatheredUser, setActiveGatheredUser] = React.useState<string>("");
   const [usages, setUsages] = React.useState<{ [key: string]: { previous: string; new: string } }>({});
   const [deltas, setDeltas] = React.useState<{ [key: string]: number }>({});
   const [dateCollected, setDateCollected] = React.useState("");
@@ -40,8 +48,9 @@ const UsagesAdd = () => {
     text: "",
     type: undefined
   });
+  const initialized = React.useRef(false);
 
-  function getUsagesByHomeowner() {
+  const getUsagesByHomeowner = () => {
     // Fetch data from the API using a GET request
     fetch("/api/usages/getByHomeowner", { method: "GET" })
       .then(response => {
@@ -80,10 +89,39 @@ const UsagesAdd = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       });
-  }
+  };
+
+  const getUsersWhoCanGather = () => {
+    // Fetch data from the API using a GET request
+    fetch("/api/users?permissions=[GATHER_USAGES]", { method: "GET" })
+      .then(response => {
+        // Check if the response is successful
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        // Parse the JSON response
+        return response.json();
+      })
+      .then(data => {
+        // Update state with the fetched data
+        console.log(data);
+
+        setUsers(data.users);
+        setActiveGatheredUser(data.users[0].id.toString());
+      })
+      .catch(error => {
+        // Handle fetch errors
+        console.error("Error fetching data:", error);
+      });
+  };
 
   React.useEffect(() => {
-    getUsagesByHomeowner();
+    if (!initialized.current) {
+      initialized.current = true;
+
+      getUsagesByHomeowner();
+      getUsersWhoCanGather();
+    }
   }, []);
 
   const onFlashClose = () => {
@@ -200,19 +238,40 @@ const UsagesAdd = () => {
               )}
 
               <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-                <div style={{ maxWidth: "380px", width: "100%" }}>
-                  <TextInput
-                    onChange={e => {
-                      console.log(e.currentTarget.value);
-                      setDateCollected(e.currentTarget.value);
-                    }}
-                    id={"dateCollected"}
-                    type={"date"}
-                    label={"Date Collected"}
-                    required={true}
-                    showLabel={true}
-                    value={dateCollected}
-                  />
+                <div>
+                  <div style={{ maxWidth: "380px", width: "100%" }}>
+                    <TextInput
+                      onChange={e => {
+                        console.log(e.currentTarget.value);
+                        setDateCollected(e.currentTarget.value);
+                      }}
+                      id={"dateCollected"}
+                      type={"date"}
+                      label={"Date Collected"}
+                      required={true}
+                      showLabel={true}
+                      value={dateCollected}
+                    />
+                  </div>
+
+                  <div style={{ maxWidth: "380px", width: "100%" }}>
+                    <Select
+                      options={users.map(u => {
+                        return {
+                          name: u.name,
+                          value: u.id
+                        };
+                      })}
+                      onSelect={e => {
+                        return setActiveGatheredUser(e.target.value);
+                      }}
+                      id={"userWhoGathered"}
+                      label={"Who Collected?"}
+                      required={true}
+                      showLabel={true}
+                      selectedValue={activeGatheredUser}
+                    />
+                  </div>
                 </div>
                 <StyledTable>
                   <thead>
