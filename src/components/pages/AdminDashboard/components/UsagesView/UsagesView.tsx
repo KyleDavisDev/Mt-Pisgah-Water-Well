@@ -113,12 +113,18 @@ const UsagesView = () => {
               <Select
                 id={"select_homeowner"}
                 options={[{ name: "Select...", value: "0" }].concat(
-                  properties.map(h => {
-                    return {
-                      name: h.address,
-                      value: h.id
-                    };
-                  })
+                  properties
+                    .sort((a, b) => {
+                      if (a.isActive === "true" && b.isActive !== "true") return -1;
+                      if (a.isActive !== "true" && b.isActive === "true") return 1;
+                      return 0;
+                    })
+                    .map(h => {
+                      return {
+                        name: (h.isActive === "true" ? "" : "(Inactive) ") + h.address,
+                        value: h.id
+                      };
+                    })
                 )}
                 selectedValue={property}
                 onSelect={e => {
