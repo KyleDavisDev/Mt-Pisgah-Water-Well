@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
-import { getUsernameFromCookie, validatePermission } from "../utils/utils";
+import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../utils/utils";
 import Usage from "../models/Usages";
 
 type Data = {
@@ -8,22 +8,24 @@ type Data = {
   error?: string;
 };
 
-const toModelAdapter = (usages: any): Usage => {
+const toModelAdapter = (usages: any): Usage[] => {
   if (!usages) throw Error("Could not map usages object");
-  if (!usages.dateCollected) throw Error("Could not map usages object");
-  if (!usages.gallons) throw Error("Could not map usages object");
-  if (!usages.id) throw Error("Could not map usages object");
-  if (!usages.recordedById) throw Error("Could not map usages object");
+  if (!Array.isArray(usages)) throw Error("Usages must be an array");
 
-  return usages.map((usage: any) => {
-    return {
-      date_collected: usage.dateCollected,
-      gallons: usage.gallons,
-      property_id: parseInt(usage.id, 10),
-      recorded_by_id: parseInt(usage.recordedById, 10),
-      is_active: true
-    };
-  });
+  return usages
+    .filter((u: any) => {
+      return !!u.dateCollected && !!u.gallons && !!u.id && !!u.recordedById;
+    })
+    .map((usage: any) => {
+      return {
+        id: 0, // Will be ignored in query
+        date_collected: usage.dateCollected,
+        gallons: usage.gallons,
+        property_id: parseInt(usage.id, 10),
+        recorded_by_id: parseInt(usage.recordedById, 10),
+        is_active: true
+      };
+    });
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
@@ -43,9 +45,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const sqlUsages = toModelAdapter(usages);
 
-    await db`
-        INSERT INTO usages ${db(sqlUsages)}
-    `;
+    for (let i = 0; i < sqlUsages.length; i++) {
+      const auditRecord = await addAuditTableRecord({
+        newData: JSON.stringify(sqlUsages[i]),
+        recordId: 0, // will be updated later
+        tableName: "usages",
+        actionType: "INSERT",
+        actionBy: username
+      });
+
+      try {
+        await db.begin(async db => {
+          const usage = await db`
+            INSERT INTO usages ${db(sqlUsages[i], "date_collected", "gallons", "property_id", "recorded_by_id", "is_active")}
+                returning *;
+        `;
+
+          await db`
+            UPDATE audit_log
+            SET is_complete= true,
+                record_id  = ${usage[0].id}
+            WHERE id = ${auditRecord.id};
+        `;
+        });
+      } catch (e) {
+        console.error("Failed to insert USAGE record", e);
+      }
+    }
 
     return res.status(200).json({ message: "Success!" });
   } catch (error) {
@@ -54,5 +80,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   return res.status(500).json({ error: "Something went wrong." });
-  return res.status(400).json({ error: "Unsupported request type." });
 }
