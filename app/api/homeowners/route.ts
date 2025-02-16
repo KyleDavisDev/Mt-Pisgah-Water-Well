@@ -4,18 +4,6 @@ import { db } from "../utils/db";
 import Homeowners from "../models/Homeowners";
 import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 
-type Data = {
-  homeowners?: {
-    id: string;
-    email: string | null | undefined;
-    phone: string | null | undefined;
-    name: string;
-    mailingAddress: string;
-    isActive: string;
-  }[];
-  error?: string;
-};
-
 export async function GET(req: NextApiRequest) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
