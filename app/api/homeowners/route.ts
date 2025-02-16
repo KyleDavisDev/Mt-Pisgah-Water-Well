@@ -1,4 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest } from "next";
+import { cookies } from "next/headers";
 import { db } from "../utils/db";
 import Homeowners from "../models/Homeowners";
 import { getUsernameFromCookie, validatePermission } from "../utils/utils";
@@ -15,14 +16,15 @@ type Data = {
   error?: string;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export async function GET(req: NextApiRequest) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   try {
-    const jwtCookie = req.cookies["jwt"];
+    const cookieStore = cookies();
+    const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_HOMEOWNERS");
 
@@ -34,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         ORDER BY name DESC;
     `;
 
-    return res.status(200).json({
+    return Response.json({
       homeowners: homeowners.map(h => {
         return {
           name: h.name,
@@ -48,8 +50,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
   } catch (error) {
     console.log(error);
-    return res.status(403).json({ error: "Invalid username or password." });
+    return new Response("Invalid username or password.", { status: 403 });
   }
 
-  return res.status(500).json({ error: "Something went wrong." });
+  return new Response("Something went wrong.", { status: 500 });
 }

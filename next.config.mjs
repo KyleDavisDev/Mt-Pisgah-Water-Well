@@ -9,10 +9,12 @@ const nextConfig = {
         source: "/admin",
         destination: "/admin/dashboard",
         permanent: true
-      },
+      }
     ];
+  },
+  compiler: {
+    styledComponents: true
   }
-
 };
 
 export default nextConfig;

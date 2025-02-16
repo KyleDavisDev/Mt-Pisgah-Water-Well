@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 
 import styled from "../../theme/styled-components";
@@ -9,7 +11,7 @@ export interface ArticleProps {
   style?: React.CSSProperties;
 }
 
-const Article: React.FunctionComponent<ArticleProps> = (props) => {
+const Article: React.FunctionComponent<ArticleProps> = props => {
   return (
     <article className={props.className} style={props.style}>
       {props.children}
@@ -18,7 +20,7 @@ const Article: React.FunctionComponent<ArticleProps> = (props) => {
 };
 
 const StyledArticle = styled(Article)`
-  max-width: ${(props) => {
+  max-width: ${props => {
     if (props.size === "xs") return "450px";
     if (props.size === "sm") return "600px";
     if (props.size === "md") return "900px";
@@ -34,7 +36,7 @@ const StyledArticle = styled(Article)`
     margin-bottom: 3.5rem;
   }
 
-  @media (min-width: ${(props) => props.theme.smToMd}) {
+  @media (min-width: ${props => props.theme.smToMd}) {
     padding: 0;
 
     > div {

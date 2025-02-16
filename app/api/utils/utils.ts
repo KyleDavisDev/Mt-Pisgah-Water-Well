@@ -1,3 +1,4 @@
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import Users from "../models/Users";
 import { db } from "../utils/db";
 import jwt from "jsonwebtoken";
@@ -30,11 +31,11 @@ const getUser = async (username: string): Promise<Users> => {
   return users[0];
 };
 
-export const getUsernameFromCookie = async (jwtCookie: string | undefined): Promise<string> => {
+export const getUsernameFromCookie = async (jwtCookie: RequestCookie | undefined): Promise<string> => {
   if (!jwtCookie) {
     throw new Error("Please re-login.");
   }
-  const token = jwtCookie.split(" ")[0];
+  const token = jwtCookie.value.split(" ")[0];
   if (!token) {
     throw new Error("Invalid token format");
   }

@@ -61,8 +61,6 @@ const GlobalStyle = createGlobalStyle`
             margin-top: auto;
         }
     }
-
-
 `;
 
 const Page: React.FunctionComponent<IPageProps> = props => {

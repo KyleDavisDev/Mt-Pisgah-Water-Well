@@ -1,6 +1,6 @@
 "use client";
 
-import styled from "styled-components";
+import styled from "../../theme/styled-components";
 import SidebarMenu from "./components/SidebarMenu/SidebarMenu";
 
 const StyledDiv = styled.div`
@@ -14,11 +14,14 @@ const StyledDiv = styled.div`
 
 function onMenuItemClick() {}
 
-const Layout = () => {
+const Layout = (props: any) => {
   return (
-    <StyledDiv>
-      <SidebarMenu onMenuItemClick={onMenuItemClick} />
-    </StyledDiv>
+    <>
+      <StyledDiv>
+        <SidebarMenu onMenuItemClick={onMenuItemClick} />
+        {props.children}
+      </StyledDiv>
+    </>
   );
 };
 
