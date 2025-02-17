@@ -11,7 +11,6 @@ import {
 export async function POST(req: Request) {
   if (req.method !== "POST") {
     // Handle any other HTTP method
-
     return new Response("Method Not Allowed", { status: 405 });
   }
 
