@@ -1,6 +1,5 @@
 "use client";
 
-// import { Link } from "../../../../components/Link/Link";
 import {
   StyledIconContainer,
   StyledMenuItem,
@@ -9,6 +8,7 @@ import {
   StyledSubMenuItemContainer
 } from "./SidebarMenuStyle";
 import { useState } from "react";
+import Link from "next/link";
 
 interface SidebarMenuProps {
   onMenuItemClick: (item: string) => void;
@@ -35,10 +35,10 @@ const SidebarMenu = (props: SidebarMenuProps) => {
         {showHomeowners && (
           <>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("view_homeowner")}>View All</StyledMenuItem>
+              <Link href={"/admin/dashboard/homeowners/all"}>View All</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("add_homeowner")}>Add Homeowner</StyledMenuItem>
+              <Link href={"/admin/dashboard/homeowners/add"}>Add Homeowner</Link>
             </StyledSubMenuItemContainer>
           </>
         )}
@@ -49,10 +49,12 @@ const SidebarMenu = (props: SidebarMenuProps) => {
         {showProperties && (
           <>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("view_property")}>View All</StyledMenuItem>
+              <Link href={"/admin/dashboard/properties/all"}>View All</Link>
+              {/*<StyledMenuItem onClick={() => props.onMenuItemClick("view_property")}>View All</StyledMenuItem>*/}
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("add_property")}>Add Property</StyledMenuItem>
+              <Link href={"/admin/dashboard/properties/add"}>Add Property</Link>
+              {/*<StyledMenuItem onClick={() => props.onMenuItemClick("add_property")}>Add Property</StyledMenuItem>*/}
             </StyledSubMenuItemContainer>
           </>
         )}
