@@ -10,7 +10,7 @@ export const StyledWellContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
 `;
 
 export const StyledFormContainer = styled.div`
