@@ -27,7 +27,6 @@ export async function GET(req: Request) {
               description: record.description,
               isActive: record.is_active ? "true" : "false",
               id: record.id as string,
-              // @ts-ignore
               homeowner: record.name
             };
           })
