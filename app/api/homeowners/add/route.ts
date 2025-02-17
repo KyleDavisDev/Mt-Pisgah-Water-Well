@@ -1,4 +1,3 @@
-import type { NextApiRequest } from "next";
 import { cookies } from "next/headers";
 
 import { db } from "../../utils/db";
@@ -9,7 +8,7 @@ import {
   validatePermission
 } from "../../utils/utils";
 
-export async function POST(req: NextApiRequest) {
+export async function POST(req: Request) {
   if (req.method !== "POST") {
     // Handle any other HTTP method
 
@@ -22,7 +21,7 @@ export async function POST(req: NextApiRequest) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "ADD_HOMEOWNER");
 
-    const { name, email, phone, mailingAddress } = JSON.parse(req.body);
+    const { name, email, phone, mailingAddress } = await req.json();
 
     const auditLog = await addAuditTableRecord({
       tableName: "homeowners",
