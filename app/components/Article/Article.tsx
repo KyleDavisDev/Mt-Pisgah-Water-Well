@@ -34,6 +34,7 @@ const StyledArticle = styled(Article)`
 
   > div {
     margin-bottom: 3.5rem;
+    margin-top: 3.5rem;
   }
 
   @media (min-width: ${props => props.theme.smToMd}) {
