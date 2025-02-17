@@ -87,7 +87,7 @@ const Page = () => {
                       <tr>
                         <th>Name</th>
                         <th>Address</th>
-                        <th>Active</th>
+                        <th>Email</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -109,7 +109,7 @@ const Page = () => {
                               {homeowner.name}
                             </td>
                             <td>{homeowner.mailingAddress}</td>
-                            <td>{homeowner.isActive}</td>
+                            <td>{homeowner.email}</td>
                             <td style={{ textAlign: "center" }}>
                               <Button
                                 onClick={() => {
@@ -138,7 +138,7 @@ const Page = () => {
                       <tr>
                         <th>Name</th>
                         <th>Address</th>
-                        <th>Active</th>
+                        <th>Email</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -160,7 +160,7 @@ const Page = () => {
                               {homeowner.name}
                             </td>
                             <td>{homeowner.mailingAddress}</td>
-                            <td>{homeowner.isActive}</td>
+                            <td>{homeowner.email}</td>
                             <td style={{ textAlign: "center" }}>
                               <Button
                                 onClick={() => {
