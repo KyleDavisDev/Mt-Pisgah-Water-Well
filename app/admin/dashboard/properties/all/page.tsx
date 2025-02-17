@@ -63,7 +63,7 @@ const page = () => {
 
   const getHomeowners = () => {
     // Fetch data from the API using a GET request
-    fetch(`/api/homeowners/get`, { method: "GET" })
+    fetch(`/api/homeowners`, { method: "GET" })
       .then(response => {
         // Check if the response is successful
         if (!response.ok) {
