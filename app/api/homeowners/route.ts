@@ -1,10 +1,9 @@
-import type { NextApiRequest } from "next";
 import { cookies } from "next/headers";
 import { db } from "../utils/db";
 import Homeowners from "../models/Homeowners";
 import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: Request) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
     return new Response("Method Not Allowed", { status: 405 });
