@@ -1,25 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../utils/utils";
+import { cookies } from "next/headers";
 
-type Data = {
-  properties?: {
-    address: string;
-    description?: string;
-    isActive: string;
-    homeowner: string;
-  }[];
-  error?: string;
-};
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export async function GET(req: Request) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   try {
-    const jwtCookie = req.cookies["jwt"];
+    const cookieStore = cookies();
+    const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_PROPERTIES");
 
@@ -28,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       JOIN homeowners home on prop.homeowner_id = home.id 
     `;
 
-    return res.status(200).json({
+    return Response.json({
       properties: records
         ? records.map(record => {
             return {
@@ -44,8 +35,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
   } catch (error) {
     console.log(error);
-    return res.status(403).json({ error: "Error looking up properties." });
+    return new Response("Invalid username or password.", { status: 403 });
   }
 
-  return res.status(500).json({ error: "Something went wrong." });
+  return new Response("Something went wrong.", { status: 500 });
 }
