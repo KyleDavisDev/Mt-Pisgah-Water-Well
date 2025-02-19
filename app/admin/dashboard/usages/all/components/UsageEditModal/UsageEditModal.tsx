@@ -1,12 +1,15 @@
-import { TextInput } from "../../../../../../TextInput/TextInput";
-import { StyledFooterDivs } from "../../../HomeownersAdd/HomeownersAddStyle";
-import { Button } from "../../../../../../Button/Button";
-import { Modal } from "../../../../../../Modal/Modal";
+"use client";
+
 import React from "react";
-import { usagesVM } from "../../UsagesView";
-import { FlashMessage, FlashMessageProps } from "../../../../../../FlashMessage/FlashMessage";
-import { RadioButton } from "../../../../../../RadioButton/RadioButton";
-import Label from "../../../../../../Label/Label";
+
+import { StyledFooterDivs } from "../../../../homeowners/all/pageStyle";
+import { usagesVM } from "../../page";
+import { TextInput } from "../../../../../../components/TextInput/TextInput";
+import { Button } from "../../../../../../components/Button/Button";
+import { Modal } from "../../../../../../components/Modal/Modal";
+import { FlashMessage, FlashMessageProps } from "../../../../../../components/FlashMessage/FlashMessage";
+import { RadioButton } from "../../../../../../components/RadioButton/RadioButton";
+import Label from "../../../../../../components/Label/Label";
 
 export interface UsageEditModalProps {
   showModal: boolean;
