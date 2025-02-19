@@ -1,12 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../utils/db";
-import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../utils/utils";
-import Usage from "../models/Usages";
-
-type Data = {
-  message?: string;
-  error?: string;
-};
+import { db } from "../../utils/db";
+import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../../utils/utils";
+import Usage from "../../models/Usages";
+import { cookies } from "next/headers";
 
 const toModelAdapter = (usages: any): Usage[] => {
   if (!usages) throw Error("Could not map usages object");
@@ -28,20 +23,20 @@ const toModelAdapter = (usages: any): Usage[] => {
     });
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export async function POST(req: Request) {
   if (req.method !== "POST") {
     // Handle any other HTTP method
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   try {
-    const jwtCookie = req.cookies["jwt"];
+    const cookieStore = cookies();
+    const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "ADD_USAGE");
 
-    const { usages } = JSON.parse(req.body);
-
     // TODO: Data validation
+    const { usages } = await req.json();
 
     const sqlUsages = toModelAdapter(usages);
 
@@ -73,11 +68,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
     }
 
-    return res.status(200).json({ message: "Success!" });
+    return Response.json({ message: "Success!" });
   } catch (error) {
     console.log(error);
-    return res.status(403).json({ error: "Invalid username or password." });
+    return new Response("Invalid username or password.", { status: 403 });
   }
 
-  return res.status(500).json({ error: "Something went wrong." });
+  return new Response("Something went wrong.", { status: 500 });
 }
