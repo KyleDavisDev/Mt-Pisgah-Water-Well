@@ -50,11 +50,9 @@ const SidebarMenu = (props: SidebarMenuProps) => {
           <>
             <StyledSubMenuItemContainer>
               <Link href={"/admin/dashboard/properties/all"}>View All</Link>
-              {/*<StyledMenuItem onClick={() => props.onMenuItemClick("view_property")}>View All</StyledMenuItem>*/}
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
               <Link href={"/admin/dashboard/properties/add"}>Add Property</Link>
-              {/*<StyledMenuItem onClick={() => props.onMenuItemClick("add_property")}>Add Property</StyledMenuItem>*/}
             </StyledSubMenuItemContainer>
           </>
         )}
@@ -65,17 +63,13 @@ const SidebarMenu = (props: SidebarMenuProps) => {
         {showUsage && (
           <>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("view_usage")}>View All</StyledMenuItem>
+              <Link href={"/admin/dashboard/usages/all"}>View All</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("add_usage_by_homeowner")}>
-                Add Usage By Homeowner
-              </StyledMenuItem>
+              <Link href={"/admin/dashboard/usages/add"}>Add Usage</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("add_usage_by_order")}>
-                Add Usage By Order (WIP)
-              </StyledMenuItem>
+              <Link href={"/admin/dashboard/usages/add"}>Add By order</Link>
             </StyledSubMenuItemContainer>
           </>
         )}
