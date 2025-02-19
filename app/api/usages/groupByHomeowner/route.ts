@@ -46,7 +46,7 @@ export async function GET(req: Request) {
     // Fetch latest usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
     const usages = await db<Usages[]>`
-        SELECT DISTINCT ON (property_id) *
+        SELECT *
         FROM usages
         WHERE property_id IN ${db(propertyIds)}
           AND is_active = true
@@ -68,7 +68,8 @@ export async function GET(req: Request) {
                 .filter((u: Usages) => u.property_id === p.id)
                 .map((u: Usages) => ({
                   id: u.id.toString(),
-                  gallons: u.gallons.toString()
+                  gallons: u.gallons.toString(),
+                  dateCollected: u.date_collected
                 }))
             };
           })
