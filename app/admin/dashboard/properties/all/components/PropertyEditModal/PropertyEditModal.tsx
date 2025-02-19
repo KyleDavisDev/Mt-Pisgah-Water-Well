@@ -58,7 +58,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
 
     try {
       const response = await fetch("/api/properties/update", {
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify({
           description,
           id,
