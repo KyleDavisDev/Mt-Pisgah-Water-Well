@@ -1,7 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../utils/db";
-import { addAuditTableRecord, getUsernameFromCookie, updateAuditTableRecord, validatePermission } from "../utils/utils";
-import Property from "../models/Properties";
+import { db } from "../../utils/db";
+import {
+  addAuditTableRecord,
+  getUsernameFromCookie,
+  updateAuditTableRecord,
+  validatePermission
+} from "../../utils/utils";
+import Property from "../../models/Properties";
 import { cookies } from "next/headers";
 
 type Data = {
@@ -19,6 +24,7 @@ export async function PUT(req: NextApiRequest, res: NextApiResponse<Data>) {
     const cookieStore = cookies();
     const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
+    await validatePermission(username, "UPDATE_PROPERTY");
 
     // TODO: data validation
     const { description, id, isActive, homeownerId } = JSON.parse(req.body);
