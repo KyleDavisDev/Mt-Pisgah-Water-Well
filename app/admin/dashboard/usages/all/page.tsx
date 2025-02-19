@@ -24,19 +24,30 @@ export interface usagesVM {
   isActive: string;
 }
 
+interface homeownerData {
+  id: string;
+  name: string;
+  properties: {
+    id: string;
+    address: string;
+    description: string | null | undefined;
+    usages: { id: string; gallons: string; dateCollected: string }[];
+  }[];
+}
+
 const Page = () => {
   // assign state
   const [properties, setProperties] = React.useState<propertyVM[]>([]);
-  const [property, setProperty] = React.useState("");
+  const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
   const [usages, setUsages] = React.useState<usagesVM[]>([]);
   const [activeProperty, setActiveProperty] = React.useState<string | null>(null);
   const [activeUsage, setActiveUsage] = React.useState<usagesVM | null>(null);
   const [showModal, setShowModal] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const initialized = React.useRef(false);
 
-  const getProperties = () => {
+  const getUsagesByHomeowner = () => {
     // Fetch data from the API using a GET request
-    fetch("/api/properties/get", { method: "GET" })
+    fetch(`/api/usages/groupByHomeowner`, { method: "GET" })
       .then(response => {
         // Check if the response is successful
         if (!response.ok) {
@@ -47,53 +58,28 @@ const Page = () => {
       })
       .then(data => {
         // Update state with the fetched data
-        setProperties(data.properties);
+        console.log(data);
+
+        setHomeowners(data.homeowners);
       })
       .catch(error => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  const getUsagesByPropertyId = (id: string) => {
-    // Fetch data from the API using a GET request
-    fetch(`/api/usages/get?id=${id}`, { method: "GET" })
-      .then(response => {
-        // Check if the response is successful
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        // Parse the JSON response
-        return response.json();
-      })
-      .then(data => {
-        // Update state with the fetched data
-
-        setUsages(data.usages.map((usage: any) => ({ ...usage, gallons: usage.gallons.toString() })));
-      })
-      .catch(error => {
-        // Handle fetch errors
-        console.error("Error fetching data:", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => {});
   };
 
   React.useEffect(() => {
-    if (!loading && properties.length === 0) {
-      setLoading(true);
-      getProperties();
+    if (!initialized.current) {
+      initialized.current = true;
+      getUsagesByHomeowner();
     }
-  }, [loading]);
+  }, []);
 
   const onModalClose = () => {
     setShowModal(false);
 
-    if (activeProperty) getUsagesByPropertyId(activeProperty);
+    // if (activeProperty) getUsagesByHomeowner(activeProperty);
   };
 
   const renderDifference = (usage1: number, usage2: number) => {
@@ -106,6 +92,11 @@ const Page = () => {
     return <span style={{ color: "red" }}>{`${difference}`}</span>;
   };
 
+  const formatDate = (dateStr: string): string => {
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(date);
+  };
+
   return (
     <StyledContainer>
       <Article size="lg">
@@ -113,81 +104,74 @@ const Page = () => {
           <Well>
             <h3>View Usages</h3>
             <StyledFormContainer>
-              <Select
-                id={"select_homeowner"}
-                options={[{ name: "Select...", value: "0" }].concat(
-                  properties
-                    .sort((a, b) => {
-                      if (a.isActive === "true" && b.isActive !== "true") return -1;
-                      if (a.isActive !== "true" && b.isActive === "true") return 1;
-                      return 0;
-                    })
-                    .map(h => {
-                      return {
-                        name: (h.isActive === "true" ? "" : "(Inactive) ") + h.address,
-                        value: h.id
-                      };
-                    })
-                )}
-                selectedValue={property}
-                onSelect={e => {
-                  setProperty(e.target.value);
-
-                  if (e.target.value === "0") return;
-                  setActiveProperty(e.target.value);
-                  getUsagesByPropertyId(e.target.value);
-                }}
-              />
-              {activeProperty && (
-                <StyledTable>
-                  <thead>
-                    <tr>
-                      <th>Date Collected</th>
-                      <th>Gallons</th>
-                      <th>Difference</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {usages &&
-                      usages.map((usage, ind) => {
+              {homeowners.length > 0 ? (
+                homeowners.map(homeowner => {
+                  return (
+                    <div key={homeowner.id}>
+                      <h3>{homeowner.name}</h3>
+                      {homeowner.properties.map(property => {
                         return (
-                          <tr>
-                            <td>
-                              {" "}
-                              <span
-                                style={{
-                                  height: 10,
-                                  width: 10,
-                                  backgroundColor: usage.isActive === "true" ? "green" : "red",
-                                  borderRadius: 50,
-                                  display: "inline-block",
-                                  marginRight: 8
-                                }}
-                              ></span>
-                              {usage.dateCollected}
-                            </td>
-                            <td>{usage.gallons}</td>
-                            <td>
-                              {ind < usages.length - 1
-                                ? renderDifference(parseInt(usage.gallons, 10), parseInt(usages[ind + 1].gallons, 10))
-                                : ""}
-                            </td>
-                            <td style={{ textAlign: "center" }}>
-                              <Button
-                                onClick={() => {
-                                  setActiveUsage({ ...usage });
-                                  setShowModal(true);
-                                }}
-                              >
-                                Edit
-                              </Button>
-                            </td>
-                          </tr>
+                          <div key={property.id} style={{ width: "100%" }}>
+                            <h5>{property.address}</h5>
+                            <StyledTable>
+                              <thead>
+                                <tr>
+                                  <th>Date Collected</th>
+                                  <th>Gallons</th>
+                                  <th>Difference</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {property.usages &&
+                                  property.usages.map((usage, ind) => {
+                                    return (
+                                      <tr>
+                                        <td>
+                                          {" "}
+                                          <span
+                                            style={{
+                                              height: 10,
+                                              width: 10,
+                                              // backgroundColor: usage.isActive === "true" ? "green" : "red",
+                                              borderRadius: 50,
+                                              display: "inline-block",
+                                              marginRight: 8
+                                            }}
+                                          ></span>
+                                          {formatDate(usage.dateCollected)}
+                                        </td>
+                                        <td>{usage.gallons}</td>
+                                        <td>
+                                          {ind < property.usages.length - 1
+                                            ? renderDifference(
+                                                parseInt(usage.gallons, 10),
+                                                parseInt(property.usages[ind + 1].gallons, 10)
+                                              )
+                                            : ""}
+                                        </td>
+                                        <td style={{ textAlign: "center" }}>
+                                          <Button
+                                            onClick={() => {
+                                              setShowModal(true);
+                                            }}
+                                          >
+                                            Edit
+                                          </Button>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                              </tbody>
+                            </StyledTable>
+                          </div>
                         );
                       })}
-                  </tbody>
-                </StyledTable>
+                    </div>
+                  );
+                })
+              ) : (
+                <></>
               )}
 
               {showModal && activeUsage && (
