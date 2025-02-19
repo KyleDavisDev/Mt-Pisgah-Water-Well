@@ -1,21 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../utils/db";
-import {
-  addAuditTableRecord,
-  getUsernameFromCookie,
-  updateAuditTableRecord,
-  validatePermission
-} from "../../utils/utils";
+import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Property from "../../models/Properties";
 import { cookies } from "next/headers";
 
-type Data = {
-  message?: string;
-  error?: string;
-};
-
-export async function PUT(req: NextApiRequest, res: NextApiResponse<Data>) {
-  if (req.method !== "POST") {
+export async function PUT(req: Request) {
+  if (req.method !== "PUT") {
     // Handle any other HTTP method
     return new Response("Method Not Allowed", { status: 405 });
   }
@@ -27,7 +16,7 @@ export async function PUT(req: NextApiRequest, res: NextApiResponse<Data>) {
     await validatePermission(username, "UPDATE_PROPERTY");
 
     // TODO: data validation
-    const { description, id, isActive, homeownerId } = JSON.parse(req.body);
+    const { description, id, isActive, homeownerId } = await req.json();
 
     // Find record to be edited
     const oldRecords = await db<Property[]>`
@@ -37,7 +26,7 @@ export async function PUT(req: NextApiRequest, res: NextApiResponse<Data>) {
     `;
 
     if (!oldRecords) {
-      return res.status(400).json({ error: "Cannot find homeowners record" });
+      return new Response("Cannot find property record", { status: 404 });
     }
 
     // Get new record data
