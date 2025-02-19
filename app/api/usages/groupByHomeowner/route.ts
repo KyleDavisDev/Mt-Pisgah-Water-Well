@@ -1,39 +1,21 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../utils/db";
-import { getUsernameFromCookie, validatePermission } from "../utils/utils";
-import Homeowners from "../models/Homeowners";
-import Property from "../models/Properties";
-import Usages from "../models/Usages";
+import { db } from "../../utils/db";
+import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
+import Homeowners from "../../models/Homeowners";
+import Property from "../../models/Properties";
+import Usages from "../../models/Usages";
+import { cookies } from "next/headers";
 
-const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
-
-type Data = {
-  homeowners?: {
-    id: string;
-    name: string;
-    properties: {
-      id: string;
-      address: string;
-      description?: string | null | undefined;
-      usages: {
-        id: string;
-        gallons: string;
-      }[];
-    }[];
-  }[];
-  error?: string;
-};
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export async function GET(req: Request) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   try {
-    const jwtCookie = req.cookies["jwt"];
+    const cookieStore = cookies();
+    const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
-    await validatePermission(username, "VIEW_PROPERTIES");
+    await validatePermission(username, "VIEW_USAGES");
 
     const homeowners = await db<Homeowners[]>`
         SELECT homeowner.id, homeowner.name, homeowner.is_active
@@ -43,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     `;
 
     if (!homeowners || homeowners.length === 0) {
-      return res.status(200).json({ homeowners: [] });
+      return Response.json({ homeowners: [] });
     }
 
     // Fetch properties in a single query for all homeowners
@@ -56,9 +38,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     `;
 
     if (!properties || properties.length === 0) {
-      return res
-        .status(200)
-        .json({ homeowners: homeowners.map(h => ({ id: h.id.toString(), name: h.name, properties: [] })) });
+      return Response.json({
+        homeowners: homeowners.map(h => ({ id: h.id.toString(), name: h.name, properties: [] }))
+      });
     }
 
     // Fetch latest usages for all properties in a single query
@@ -71,20 +53,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         ORDER BY property_id, date_collected DESC
     `;
 
-    const returnData = homeowners.map(homeowner => {
+    const returnData = homeowners.map((homeowner: Homeowners) => {
       return {
         id: homeowner.id.toString(),
         name: homeowner.name,
         properties: properties
-          .filter(p => p.homeowner_id === homeowner.id)
-          .map(p => {
+          .filter((p: Property) => p.homeowner_id === homeowner.id)
+          .map((p: Property) => {
             return {
               id: p.id.toString(),
               address: p.address,
               description: p.description,
               usages: usages
-                .filter(u => u.property_id === p.id)
-                .map(u => ({
+                .filter((u: Usages) => u.property_id === p.id)
+                .map((u: Usages) => ({
                   id: u.id.toString(),
                   gallons: u.gallons.toString()
                 }))
@@ -93,13 +75,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       };
     });
 
-    return res.status(200).json({
+    return Response.json({
       homeowners: returnData
     });
   } catch (error) {
     console.log(error);
-    return res.status(403).json({ error: "Invalid username or password." });
+    return new Response("Invalid username or password.", { status: 403 });
   }
 
-  return res.status(500).json({ error: "Something went wrong." });
+  return new Response("Something went wrong.", { status: 500 });
 }
