@@ -17,6 +17,18 @@ export const StyledFormContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+
+  > div {
+    width: 100%;
+  }
+`;
+
+export const StyledTableContainer = styled.div`
+  padding: 5px 0 15px;
+`;
+
+export const StyledTableHeader = styled.h5`
+  padding-bottom: 5px;
 `;
 
 export const StyledTable = styled.table`
