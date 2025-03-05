@@ -112,13 +112,13 @@ export const addAuditTableRecord = async ({
 export const updateAuditTableRecord = async (auditLog: AuditLog): Promise<AuditLog> => {
   try {
     await db`
-      UPDATE audit_log set table_name =${auditLog.table_name},
-                           record_id =${auditLog.record_id},
-                           action_type =${auditLog.action_type},
-                           old_data =${JSON.stringify(auditLog.old_data)},
-                           new_data =${JSON.stringify(auditLog.new_data)},
-                           action_by_id =${auditLog.action_by_id},
-                           action_timestamp =${auditLog.action_timestamp}
+      UPDATE audit_log set table_name = ${auditLog.table_name},
+                           record_id = ${auditLog.record_id},
+                           action_type = ${auditLog.action_type},
+                           old_data = ${JSON.stringify(auditLog.old_data)},
+                           new_data = ${JSON.stringify(auditLog.new_data)},
+                           action_by_id = ${auditLog.action_by_id},
+                           action_timestamp = ${auditLog.action_timestamp}
       where id=${auditLog.id}
     `;
 
