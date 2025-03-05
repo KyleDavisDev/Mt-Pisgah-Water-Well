@@ -69,7 +69,8 @@ export async function GET(req: Request) {
                 .map((u: Usages) => ({
                   id: u.id.toString(),
                   gallons: u.gallons.toString(),
-                  dateCollected: u.date_collected
+                  dateCollected: u.date_collected,
+                  isActive: u.is_active.toString()
                 }))
             };
           })
