@@ -46,7 +46,7 @@ export async function GET(req: Request) {
     // Fetch latest usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
     const usages = await db<Usages[]>`
-        SELECT *
+        SELECT id, property_id, gallons, TO_CHAR(date_collected, 'YYYY-MM-DD') AS date_collected, is_active
         FROM usages
         WHERE property_id IN ${db(propertyIds)}
           AND is_active = true
@@ -66,12 +66,14 @@ export async function GET(req: Request) {
               description: p.description,
               usages: usages
                 .filter((u: Usages) => u.property_id === p.id)
-                .map((u: Usages) => ({
-                  id: u.id.toString(),
-                  gallons: u.gallons.toString(),
-                  dateCollected: u.date_collected,
-                  isActive: u.is_active.toString()
-                }))
+                .map((u: Usages) => {
+                  return {
+                    id: u.id.toString(),
+                    gallons: u.gallons.toString(),
+                    dateCollected: u.date_collected,
+                    isActive: u.is_active.toString()
+                  };
+                })
             };
           })
       };
