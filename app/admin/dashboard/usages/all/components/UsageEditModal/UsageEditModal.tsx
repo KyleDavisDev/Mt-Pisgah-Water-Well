@@ -51,7 +51,7 @@ const UsageEditModal = (props: UsageEditModalProps) => {
 
     try {
       const response = await fetch("/api/usages/update", {
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify({
           gallons: gallons,
           id,
