@@ -71,21 +71,25 @@ const SidebarMenu = (props: SidebarMenuProps) => {
             <StyledSubMenuItemContainer>
               <Link href={"/admin/dashboard/usages/add"}>Add By order</Link>
             </StyledSubMenuItemContainer>
+            <StyledSubMenuItemContainer>
+              <Link href={"/admin/dashboard/bills/view"}>View All Bills</Link>
+            </StyledSubMenuItemContainer>
+            <StyledSubMenuItemContainer>
+              <Link href={"/admin/dashboard/bills/add"}>Generate Monthly Bills</Link>
+            </StyledSubMenuItemContainer>
           </>
         )}
       </StyledMenuItemContainer>
 
       <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowPayments(!showPayments)}>Payments</StyledMenuItem>
+        <StyledMenuItem onClick={() => setShowPayments(!showPayments)}>Account Balances</StyledMenuItem>
         {showPayments && (
           <>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("view_payments")}>View All</StyledMenuItem>
+              <Link href={"/admin/dashboard/balances/all"}>View All</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <StyledMenuItem onClick={() => props.onMenuItemClick("add_payment")}>
-                Add Payment By Homeowner
-              </StyledMenuItem>
+              <Link href={"/admin/dashboard/payments/add"}>Add Payment</Link>
             </StyledSubMenuItemContainer>
           </>
         )}
