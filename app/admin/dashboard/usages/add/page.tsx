@@ -38,7 +38,6 @@ interface UserVM {
 const Page = () => {
   const _defaultErrorMessage = "There was a problem saving the usage. Please refresh your page and try again!";
 
-  // assign state
   const [homeowners, setHomeowners] = React.useState<UsageVM[]>([]);
   const [users, setUsers] = React.useState<UserVM[]>([]);
   const [activeGatheredUser, setActiveGatheredUser] = React.useState<string>("");
@@ -232,7 +231,7 @@ const Page = () => {
       <Article size="lg">
         <StyledWellContainer>
           <Well>
-            <h3>Add Usage</h3>
+            <h3>Generate Bill</h3>
             <StyledFormContainer>
               {flashMessage.isVisible && (
                 <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
