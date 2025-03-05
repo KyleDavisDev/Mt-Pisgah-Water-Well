@@ -96,8 +96,9 @@ const Page = () => {
   };
 
   const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric", timeZone: "UTC" });
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const [year, month, day] = dateStr.split("-");
+    return `${months[parseInt(month, 10) - 1]} ${day}, ${year}`;
   };
 
   return (
