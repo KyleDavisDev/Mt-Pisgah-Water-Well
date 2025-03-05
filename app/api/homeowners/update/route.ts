@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 
 export async function PUT(req: Request) {
   if (req.method !== "PUT") {
-    // Handle any other HTTP method
     return new Response("Method Not Allowed", { status: 405 });
   }
 
@@ -15,9 +14,23 @@ export async function PUT(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "UPDATE_HOMEOWNER");
 
+    // Data validation
     const { name, email, phone, mailingAddress, id, isActive } = await req.json();
 
-    // TODO: Data validation
+    if (!name || !email || !phone || !mailingAddress || !id || isActive === undefined) {
+      return new Response("Missing required fields", { status: 400 });
+    }
+
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof phone !== "string" ||
+      typeof mailingAddress !== "string" ||
+      typeof id !== "string" ||
+      typeof isActive !== "string"
+    ) {
+      return new Response("Invalid field format", { status: 400 });
+    }
 
     // Find record to be edited
     const oldRecords = await db<Homeowner[]>`

@@ -10,17 +10,26 @@ import {
 
 export async function POST(req: Request) {
   if (req.method !== "POST") {
-    // Handle any other HTTP method
     return new Response("Method Not Allowed", { status: 405 });
   }
 
   try {
     const cookieStore = cookies();
     const jwtCookie = cookieStore.get("jwt");
+    if (!jwtCookie) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     const username = await getUsernameFromCookie(jwtCookie);
+    if (!username) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     await validatePermission(username, "ADD_HOMEOWNER");
 
     const { name, email, phone, mailingAddress } = await req.json();
+
+    if (!name || !email || !phone || !mailingAddress) {
+      return new Response("Missing required fields", { status: 400 });
+    }
 
     const auditLog = await addAuditTableRecord({
       tableName: "homeowners",
@@ -30,13 +39,17 @@ export async function POST(req: Request) {
       actionType: "INSERT"
     });
 
+    if (!auditLog) {
+      return new Response("Unable to insert audit_log record", { status: 500 });
+    }
+
     const record = await db`
         INSERT into homeowners (name, email, phone_number, mailing_address, is_active)
         values (${name}, ${email}, ${phone}, ${mailingAddress}, true)
         returning *;
     `;
 
-    if (!record) {
+    if (!record || !record[0].id) {
       return new Response("Unable to insert new homeowners record", { status: 500 });
     }
 

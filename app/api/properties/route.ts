@@ -4,7 +4,6 @@ import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
-    // Handle any other HTTP method
     return new Response("Method Not Allowed", { status: 405 });
   }
 
@@ -15,8 +14,8 @@ export async function GET(req: Request) {
     await validatePermission(username, "VIEW_PROPERTIES");
 
     const records = await db`
-      SELECT prop.*, home.name as name FROM properties prop
-      JOIN homeowners home on prop.homeowner_id = home.id 
+      SELECT prop.*, homeowner.name as name FROM properties prop
+      JOIN homeowners homeowner on prop.homeowner_id = homeowner.id 
     `;
 
     return Response.json({

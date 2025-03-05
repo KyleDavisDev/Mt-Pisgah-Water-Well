@@ -15,8 +15,6 @@ export async function GET(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_HOMEOWNERS");
 
-    // TODO: data validation
-
     const homeowners = await db<Homeowners[]>`
         SELECT *
         FROM homeowners

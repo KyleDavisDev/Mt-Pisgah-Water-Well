@@ -9,7 +9,6 @@ import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   if (req.method !== "POST") {
-    // Handle any other HTTP method
     return new Response("Method Not Allowed", { status: 405 });
   }
 
@@ -21,7 +20,9 @@ export async function POST(req: Request) {
 
     const { address, description, homeowner } = await req.json();
 
-    // TODO: Data validation
+    if (!address || !description || !homeowner) {
+      return new Response("Missing required fields", { status: 400 });
+    }
 
     const auditLog = await addAuditTableRecord({
       tableName: "properties",
@@ -31,17 +32,21 @@ export async function POST(req: Request) {
       actionType: "INSERT"
     });
 
-    const record = await db`
-        INSERT into properties (address, description, homeowner_id, is_active)
-        VALUES (${address}, ${description}, (SELECT id FROM homeowners where id = ${homeowner}), true)
-        returning *;
-    `;
+    // Make update in a transaction
+    await db.begin(async (db: any) => {
+      const record = await db`
+          INSERT into properties (address, description, homeowner_id, is_active)
+          VALUES (${address}, ${description}, (SELECT id FROM homeowners where id = ${homeowner}), true)
+          returning *;
+      `;
 
-    if (!record) {
-      return new Response("Unable to insert new properties record", { status: 500 });
-    }
-
-    await updateAuditTableRecord({ ...auditLog, record_id: record[0].id, is_complete: true });
+      await db`
+          UPDATE audit_log
+          SET is_complete= true,
+              record_id  = ${record[0].id}
+          WHERE id = ${auditLog.id};
+      `;
+    });
 
     return Response.json({ message: "Success!" });
   } catch (error) {
