@@ -2,7 +2,14 @@
 
 import React from "react";
 
-import { StyledWellContainer, StyledFormContainer, StyledTable, StyledContainer } from "./pageStyle";
+import {
+  StyledWellContainer,
+  StyledFormContainer,
+  StyledTable,
+  StyledContainer,
+  StyledTableContainer,
+  StyledTableHeader
+} from "./pageStyle";
 import Well from "../../../../components/Well/Well";
 import { Article } from "../../../../components/Article/Article";
 import Select from "../../../../components/Select/Select";
@@ -31,16 +38,12 @@ interface homeownerData {
     id: string;
     address: string;
     description: string | null | undefined;
-    usages: { id: string; gallons: string; dateCollected: string }[];
+    usages: { id: string; gallons: string; dateCollected: string; isActive: string }[];
   }[];
 }
 
 const Page = () => {
-  // assign state
-  const [properties, setProperties] = React.useState<propertyVM[]>([]);
   const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
-  const [usages, setUsages] = React.useState<usagesVM[]>([]);
-  const [activeProperty, setActiveProperty] = React.useState<string | null>(null);
   const [activeUsage, setActiveUsage] = React.useState<usagesVM | null>(null);
   const [showModal, setShowModal] = React.useState(false);
   const initialized = React.useRef(false);
@@ -79,7 +82,7 @@ const Page = () => {
   const onModalClose = () => {
     setShowModal(false);
 
-    // if (activeProperty) getUsagesByHomeowner(activeProperty);
+    getUsagesByHomeowner();
   };
 
   const renderDifference = (usage1: number, usage2: number) => {
@@ -94,7 +97,7 @@ const Page = () => {
 
   const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
-    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(date);
+    return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric", timeZone: "UTC" });
   };
 
   return (
@@ -111,8 +114,8 @@ const Page = () => {
                       <h3>{homeowner.name}</h3>
                       {homeowner.properties.map(property => {
                         return (
-                          <div key={property.id} style={{ width: "100%" }}>
-                            <h5>{property.address}</h5>
+                          <StyledTableContainer key={property.id}>
+                            <StyledTableHeader>{property.address}</StyledTableHeader>
                             <StyledTable>
                               <thead>
                                 <tr>
@@ -148,12 +151,13 @@ const Page = () => {
                                                 parseInt(usage.gallons, 10),
                                                 parseInt(property.usages[ind + 1].gallons, 10)
                                               )
-                                            : ""}
+                                            : "---"}
                                         </td>
                                         <td style={{ textAlign: "center" }}>
                                           <Button
                                             onClick={() => {
                                               setShowModal(true);
+                                              setActiveUsage(usage);
                                             }}
                                           >
                                             Edit
@@ -164,7 +168,7 @@ const Page = () => {
                                   })}
                               </tbody>
                             </StyledTable>
-                          </div>
+                          </StyledTableContainer>
                         );
                       })}
                     </div>
