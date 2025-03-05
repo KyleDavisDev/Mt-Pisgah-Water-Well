@@ -14,7 +14,6 @@ export async function PUT(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "UPDATE_HOMEOWNER");
 
-    // Data validation
     const { name, email, phone, mailingAddress, id, isActive } = await req.json();
 
     if (!name || !email || !phone || !mailingAddress || !id || isActive === undefined) {
