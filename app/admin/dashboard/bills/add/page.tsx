@@ -1,328 +1,146 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
-  StyledContainer,
-  StyledFooterDivs,
+  StyledWellContainer,
   StyledFormContainer,
   StyledTable,
-  StyledTd,
-  StyledWellContainer
+  StyledContainer,
+  StyledTableContainer,
+  StyledTableHeader
 } from "./pageStyle";
 import Well from "../../../../components/Well/Well";
-import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
-import { Button } from "../../../../components/Button/Button";
 import { Article } from "../../../../components/Article/Article";
-import { TextInput } from "../../../../components/TextInput/TextInput";
-import Select from "../../../../components/Select/Select";
+import { Button } from "../../../../components/Button/Button";
 
-interface homeownerVM {
+interface Property {
   id: string;
-  name: string;
-  properties: {
-    id: string;
-    address: string;
-    description: string;
-    usages: {
-      id: string;
-      gallons: string;
-    }[];
-  }[];
+  address: string;
+  description?: string;
+  gallonsUsed: string;
+  startingGallons: number;
+  endingGallons: number;
 }
 
-interface UserVM {
+interface Homeowner {
   id: string;
   name: string;
+  properties: Property[];
 }
 
 const Page = () => {
-  const _defaultErrorMessage = "There was a problem saving the usage. Please refresh your page and try again!";
+  const [homeowners, setHomeowners] = useState<Homeowner[]>([]);
+  const [loading, setLoading] = useState(true);
+  const initialized = useRef(false);
 
-  const [homeowners, setHomeowners] = React.useState<homeownerVM[]>([]);
-  const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
-    isVisible: false,
-    text: "",
-    type: undefined
-  });
-  const initialized = React.useRef(false);
-
-  const getUsagesByHomeowner = () => {
-    // Fetch data from the API using a GET request
-    fetch("/api/usages/groupByHomeowner", { method: "GET" })
-      .then(response => {
-        // Check if the response is successful
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        // Parse the JSON response
-        return response.json();
-      })
-      .then(data => {
-        // Update state with the fetched data
-      })
-      .catch(error => {
-        // Handle fetch errors
-        console.error("Error fetching data:", error);
-      });
-  };
-
-  const getUsersWhoCanGather = () => {
-    // Fetch data from the API using a GET request
-    fetch("/api/users?permissions=GATHER_USAGES", { method: "GET" })
-      .then(response => {
-        // Check if the response is successful
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        // Parse the JSON response
-        return response.json();
-      })
-      .then(data => {
-        // Update state with the fetched data
-        console.log(data);
-      })
-      .catch(error => {
-        // Handle fetch errors
-        console.error("Error fetching data:", error);
-      });
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-
-      getUsagesByHomeowner();
-      getUsersWhoCanGather();
+      fetchUsages();
     }
   }, []);
 
-  const onFlashClose = () => {
-    // clear flash message if was shown
-    setFlashMessage({
-      isVisible: false,
-      text: "",
-      type: undefined
-    });
+  const fetchUsages = () => {
+    fetch(`/api/usages/amount_used?month=02&year=2025`, { method: "GET" })
+      .then(response => response.json())
+      .then(data => {
+        setHomeowners(data.homeowners);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
   };
 
-  const safeParseStr = (str: string) => {
+  const createBills = async () => {
     try {
-      const num = parseInt(str, 10); // Parse the string to an integer with base 10
-      if (isNaN(num)) {
-        return 0;
+      const response = await fetch("/api/usage_bill/create", {
+        method: "POST"
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create bills");
       }
-      return num;
+
+      alert("Usage bills created successfully!");
+      fetchUsages(); // Refresh data after creating bills
     } catch (error) {
-      return 0;
+      console.error("Error creating usage bills:", error);
+      alert("Failed to create usage bills");
     }
   };
 
-  let getFormattedFirstDayOfMonth = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, "0");
-    const firstDayOfMonth = "01";
+  // const calculateTotalGallons = (property: Property) => {
+  //   return property.usages.reduce((total, usage) => total + parseInt(usage.gallonsUsed, 10), 0);
+  // };
 
-    // Format the first day of the month as 'yyyy-mm-dd'
-    return `${year}-${month}-${firstDayOfMonth}`;
+  const formatDate = (dateStr: string): string => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const [year, month, day] = dateStr.split("-");
+    return `${months[parseInt(month, 10) - 1]} ${day}, ${year}`;
   };
 
-  const updateDeltas = (id: string) => {
-    const newDeltas = { ...deltas };
-    const newUsage = safeParseStr(usages[id].new);
-    const previousUsage = safeParseStr(usages[id].previous);
-    newDeltas[id] = newUsage - previousUsage;
-    setDeltas(newDeltas);
-    setFlashMessage({
-      isVisible: false,
-      text: "",
-      type: undefined
-    });
-  };
-
-  const onSubmit = async (event: React.FormEvent): Promise<any> => {
-    event.preventDefault();
-
-    for (const key in deltas) {
-      const delta = deltas[key];
-
-      if (delta < 0) {
-        setFlashMessage({
-          isVisible: true,
-          text: "Cannot have a negative usage.",
-          type: "alert"
-        });
-        return;
-      }
-    }
-
-    try {
-      const response = await fetch("/api/usages/add", {
-        method: "POST",
-        body: JSON.stringify({
-          usages: Object.keys(usages)
-            .filter(key => {
-              return safeParseStr(usages[key].new) > 0;
-            })
-            .map(key => {
-              return {
-                id: key,
-                gallons: usages[key].new,
-                dateCollected: dateCollected,
-                recordedById: activeGatheredUser
-              };
-            })
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-
-        setFlashMessage({
-          isVisible: true,
-          text: data.message,
-          type: "success"
-        });
-
-        getUsagesByHomeowner();
-      }
-    } catch (err: any) {
-      console.log(err);
-      // Create warning flash
-      setFlashMessage({
-        isVisible: true,
-        text: err.response?.data?.msg || _defaultErrorMessage,
-        type: "warning"
-      });
-    }
-  };
+  if (loading) {
+    return (
+      <StyledContainer>
+        <Article size="lg">
+          <StyledWellContainer>
+            <Well>Loading data...</Well>
+          </StyledWellContainer>
+        </Article>
+      </StyledContainer>
+    );
+  }
 
   return (
     <StyledContainer>
       <Article size="lg">
         <StyledWellContainer>
           <Well>
-            <h3>Add Usage</h3>
+            <h3>Create Usage Bills</h3>
             <StyledFormContainer>
-              {flashMessage.isVisible && (
-                <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
-                  {flashMessage.text}
-                </FlashMessage>
+              {homeowners.length > 0 ? (
+                homeowners.map(homeowner => (
+                  <div key={homeowner.id}>
+                    <h3>{homeowner.name}</h3>
+
+                    {homeowner.properties.map(property => (
+                      <StyledTableContainer key={property.id}>
+                        <StyledTableHeader>{property.address}</StyledTableHeader>
+                        <StyledTable>
+                          <thead>
+                            <tr>
+                              <th>Starting Gallons</th>
+                              <th>Ending Gallons</th>
+                              <th>Total Used</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{property.startingGallons || "---"}</td>
+                              <td>{property.endingGallons || "---"}</td>
+                              <td>{property.gallonsUsed || "---"}</td>
+                            </tr>
+                          </tbody>
+                        </StyledTable>
+                      </StyledTableContainer>
+                    ))}
+
+                    <p>
+                      <strong>Total Gallons Used (All Properties):</strong>{" "}
+                      {/*{homeowner.properties.reduce((sum, property) => sum + calculateGallonsUsed(property), 0)}*/}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p>No data available.</p>
               )}
 
-              <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
-                    <TextInput
-                      onChange={e => {
-                        console.log(e.currentTarget.value);
-                        setDateCollected(e.currentTarget.value);
-                      }}
-                      id={"dateCollected"}
-                      type={"date"}
-                      label={"Date Collected"}
-                      required={true}
-                      showLabel={true}
-                      value={dateCollected}
-                    />
-                  </div>
-
-                  <div style={{ maxWidth: "380px", width: "100%" }}>
-                    <Select
-                      options={users.map(u => {
-                        return {
-                          name: u.name,
-                          value: u.id
-                        };
-                      })}
-                      onSelect={e => {
-                        return setActiveGatheredUser(e.target.value);
-                      }}
-                      id={"userWhoGathered"}
-                      label={"Who Collected the Data?"}
-                      required={true}
-                      showLabel={true}
-                      selectedValue={activeGatheredUser}
-                    />
-                  </div>
-                </div>
-                <StyledTable>
-                  <thead>
-                    <tr>
-                      <th>Homeowner</th>
-                      <th>Property</th>
-                      <th>Previous Reading</th>
-                      <th>New Reading</th>
-                      <th>Usage</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {homeowners &&
-                      homeowners.map(homeowner => {
-                        return (
-                          <tr key={`homeowner_${homeowner.id}`}>
-                            <td>
-                              <h4>{homeowner.name}</h4>
-                            </td>
-                            <StyledTd>
-                              {homeowner.properties.map(property => {
-                                return <div key={`property_${property.id}`}>{property.address}</div>;
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map((property, index) => {
-                                let value = "0";
-
-                                if (!property.usages) value = "0";
-                                else if (!property.usages[0]) value = "0";
-                                else value = property.usages[0].gallons;
-
-                                return <div key={`previous_usage_${index}`}>{value}</div>;
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map(property => {
-                                return (
-                                  <TextInput
-                                    key={`new_usage_${property.id}`}
-                                    id={property.id}
-                                    value={usages[property.id].new}
-                                    onChange={e => {
-                                      const inputValue = e.currentTarget.value;
-
-                                      const newUsages = { ...usages };
-                                      newUsages[property.id] = {
-                                        ...newUsages[property.id],
-                                        new: inputValue.replace(/\D+/, "")
-                                      };
-                                      setUsages(newUsages);
-                                    }}
-                                    onBlur={() => updateDeltas(property.id)}
-                                  />
-                                );
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map(p => {
-                                const color = deltas[p.id] > 0 ? "green" : "red";
-                                return (
-                                  <div key={`difference_${p.id}`} style={{ color }}>
-                                    {deltas[p.id].toLocaleString()}
-                                  </div>
-                                );
-                              })}
-                            </StyledTd>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </StyledTable>
-                <StyledFooterDivs>
-                  <Button type="submit" fullWidth>
-                    Save Usages
-                  </Button>
-                </StyledFooterDivs>
-              </form>
+              {/* Create Bills Button */}
+              <div style={{ marginTop: "20px", textAlign: "center" }}>
+                <Button onClick={createBills}>Create Bills</Button>
+              </div>
             </StyledFormContainer>
           </Well>
         </StyledWellContainer>
