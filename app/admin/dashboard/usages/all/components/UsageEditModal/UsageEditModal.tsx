@@ -21,6 +21,7 @@ const UsageEditModal = (props: UsageEditModalProps) => {
   const [id, setId] = React.useState(props.usage.id);
   const [gallons, setGallons] = React.useState(props.usage.gallons);
   const [isActive, setIsActive] = React.useState(props.usage.isActive);
+  const [loading, setLoading] = React.useState(false);
 
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
@@ -40,6 +41,8 @@ const UsageEditModal = (props: UsageEditModalProps) => {
   const onSubmit = async (event: React.FormEvent): Promise<any> => {
     event.preventDefault();
 
+    if (loading) return; // Prevent duplicate submissions
+
     if (!gallons || !id) {
       setFlashMessage({
         isVisible: true,
@@ -48,6 +51,8 @@ const UsageEditModal = (props: UsageEditModalProps) => {
       });
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await fetch("/api/usages/update", {
@@ -77,6 +82,8 @@ const UsageEditModal = (props: UsageEditModalProps) => {
         text: err.response?.data?.msg || "Error",
         type: "warning"
       });
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -120,8 +127,8 @@ const UsageEditModal = (props: UsageEditModalProps) => {
           />
 
           <StyledFooterDivs>
-            <Button type="submit" fullWidth>
-              Save
+            <Button type="submit" fullWidth disabled={loading}>
+              {loading ? "Saving..." : "Save"}
             </Button>
           </StyledFooterDivs>
         </form>

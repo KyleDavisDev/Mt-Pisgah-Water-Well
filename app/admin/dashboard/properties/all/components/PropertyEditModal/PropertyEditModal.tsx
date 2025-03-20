@@ -28,6 +28,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
   const homeowner = props.homeowners.find(h => h.name === props.property.homeowner);
   const activeId = homeowner?.id ? homeowner.id.toString() : "";
   const [activeHomeownerId, setActiveHomeownerId] = React.useState(activeId);
+  const [loading, setLoading] = React.useState(false);
 
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
@@ -47,6 +48,8 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
   const onSubmit = async (event?: React.FormEvent): Promise<any> => {
     event?.preventDefault();
 
+    if (loading) return; // Prevent duplicate submissions
+
     if (!address || !id || !activeHomeownerId) {
       setFlashMessage({
         isVisible: true,
@@ -55,6 +58,8 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
       });
       return;
     }
+
+    setLoading(true); // Set loading to true to disable the button
 
     try {
       const response = await fetch("/api/properties/update", {
@@ -86,6 +91,8 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
         text: err.response?.data?.msg || "Error",
         type: "warning"
       });
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -163,8 +170,8 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
           />
 
           <StyledFooterDivs>
-            <Button type="submit" fullWidth>
-              Save
+            <Button type="submit" fullWidth disabled={loading}>
+              {loading ? "Saving..." : "Save"}
             </Button>
           </StyledFooterDivs>
         </form>
