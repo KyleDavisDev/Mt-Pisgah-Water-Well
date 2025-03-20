@@ -16,17 +16,17 @@ export async function PUT(req: Request) {
 
     const { name, email, phone, mailingAddress, id, isActive } = await req.json();
 
-    if (!name || !email || !phone || !mailingAddress || !id || isActive === undefined) {
+    if (!name || !mailingAddress || !id || isActive === undefined) {
       return new Response("Missing required fields", { status: 400 });
     }
 
     if (
       typeof name !== "string" ||
-      typeof email !== "string" ||
-      typeof phone !== "string" ||
       typeof mailingAddress !== "string" ||
       typeof id !== "string" ||
-      typeof isActive !== "string"
+      typeof isActive !== "string" ||
+      (email !== null && typeof email !== "string") ||
+      (phone !== null && typeof phone !== "string")
     ) {
       return new Response("Invalid field format", { status: 400 });
     }
