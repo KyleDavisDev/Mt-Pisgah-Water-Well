@@ -264,7 +264,7 @@ const Page = () => {
                     />
                   </div>
 
-                  <div style={{ maxWidth: "380px", width: "100%" }}>
+                  <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
                     <Select
                       options={users.map(u => {
                         return {
