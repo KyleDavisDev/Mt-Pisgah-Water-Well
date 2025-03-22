@@ -15,6 +15,7 @@ import { Button } from "../../../../components/Button/Button";
 import { Article } from "../../../../components/Article/Article";
 import { TextInput } from "../../../../components/TextInput/TextInput";
 import Select from "../../../../components/Select/Select";
+import Checkbox from "../../../../components/Checkbox/Checkbox";
 
 interface UsageVM {
   id: string;
@@ -50,6 +51,7 @@ const Page = () => {
     type: undefined
   });
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [allowNegativeInputs, setAllowNegativeInputs] = React.useState<boolean>(false);
   const initialized = React.useRef(false);
 
   const getUsagesByHomeowner = () => {
@@ -173,16 +175,18 @@ const Page = () => {
 
     if (loading) return false;
 
-    for (const key in deltas) {
-      const delta = deltas[key];
+    if (!allowNegativeInputs) {
+      for (const key in deltas) {
+        const delta = deltas[key];
 
-      if (delta < 0) {
-        setFlashMessage({
-          isVisible: true,
-          text: "Cannot have a negative usage.",
-          type: "alert"
-        });
-        return;
+        if (delta < 0) {
+          setFlashMessage({
+            isVisible: true,
+            text: "Cannot have a negative usage.",
+            type: "alert"
+          });
+          return;
+        }
       }
     }
 
@@ -245,7 +249,7 @@ const Page = () => {
               )}
 
               <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-                <div style={{ display: "flex", flexDirection: "row" }}>
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                   <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
                     <TextInput
                       onChange={e => {
@@ -278,6 +282,22 @@ const Page = () => {
                       selectedValue={activeGatheredUser}
                     />
                   </div>
+                  <div
+                    style={{
+                      maxWidth: "380px",
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center"
+                    }}
+                  >
+                    <Checkbox
+                      id={"ckbxOverrideRestrictions"}
+                      isChecked={allowNegativeInputs}
+                      onChange={() => setAllowNegativeInputs(!allowNegativeInputs)}
+                      label={"Allow negative usages"}
+                    />
+                  </div>
                 </div>
                 <StyledTable>
                   <thead>
@@ -304,7 +324,7 @@ const Page = () => {
                             </StyledTd>
                             <StyledTd>
                               {homeowner.properties.map((property, index) => {
-                                let value = "0";
+                                let value;
 
                                 if (!property.usages) value = "0";
                                 else if (!property.usages[0]) value = "0";
