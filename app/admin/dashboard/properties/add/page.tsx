@@ -8,6 +8,7 @@ import { TextInput } from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
 import Select from "../../../../components/Select/Select";
 import { Article } from "../../../../components/Article/Article";
+import { bool } from "prop-types";
 
 const page = () => {
   const _defaultErrorMessage = "There was a problem saving the property. Please refresh your page and try again!";
@@ -22,6 +23,7 @@ const page = () => {
     text: "",
     type: undefined
   });
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     // Fetch data from the API using a GET request
@@ -65,6 +67,8 @@ const page = () => {
   const onSubmit = async (event: React.FormEvent): Promise<any> => {
     event.preventDefault();
 
+    if (loading) return false;
+
     if (!address) {
       setFlashMessage({
         isVisible: true,
@@ -73,6 +77,8 @@ const page = () => {
       });
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await fetch("/api/properties/add", {
@@ -105,6 +111,8 @@ const page = () => {
         text: err.response?.data?.msg || _defaultErrorMessage,
         type: "warning"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -171,8 +179,8 @@ const page = () => {
                 )}
 
                 <StyledFooterDivs>
-                  <Button type="submit" fullWidth>
-                    Add Property
+                  <Button type="submit" fullWidth disabled={loading}>
+                    {loading ? "Adding..." : "Add Property"}
                   </Button>
                 </StyledFooterDivs>
               </form>
