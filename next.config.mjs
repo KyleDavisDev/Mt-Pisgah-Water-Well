@@ -15,7 +15,7 @@ const nextConfig = {
   compiler: {
     styledComponents: {
       displayName: true,
-      ssr: true
+      ssr: false
     }
   }
 };
