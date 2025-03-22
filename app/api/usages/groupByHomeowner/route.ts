@@ -28,7 +28,7 @@ export async function GET(req: Request) {
       return Response.json({ homeowners: [] });
     }
 
-    // Fetch properties in a single query for all homeowners
+    // Fetch properties for all homeowners
     const homeownerIds = homeowners.map(h => h.id);
     const properties = await db<Property[]>`
         SELECT *
@@ -53,31 +53,35 @@ export async function GET(req: Request) {
         ORDER BY property_id, date_collected DESC
     `;
 
-    const returnData = homeowners.map((homeowner: Homeowners) => {
-      return {
-        id: homeowner.id.toString(),
-        name: homeowner.name,
-        properties: properties
-          .filter((p: Property) => p.homeowner_id === homeowner.id)
-          .map((p: Property) => {
-            return {
-              id: p.id.toString(),
-              address: p.address,
-              description: p.description,
-              usages: usages
-                .filter((u: Usages) => u.property_id === p.id)
-                .map((u: Usages) => {
-                  return {
-                    id: u.id.toString(),
-                    gallons: u.gallons.toString(),
-                    dateCollected: u.date_collected,
-                    isActive: u.is_active.toString()
-                  };
-                })
-            };
-          })
-      };
-    });
+    const returnData = homeowners
+      .filter((homeowner: Homeowners) => {
+        return properties.some(property => property.homeowner_id === homeowner.id);
+      })
+      .map((homeowner: Homeowners) => {
+        return {
+          id: homeowner.id.toString(),
+          name: homeowner.name,
+          properties: properties
+            .filter((p: Property) => p.homeowner_id === homeowner.id)
+            .map((p: Property) => {
+              return {
+                id: p.id.toString(),
+                address: p.address,
+                description: p.description,
+                usages: usages
+                  .filter((u: Usages) => u.property_id === p.id)
+                  .map((u: Usages) => {
+                    return {
+                      id: u.id.toString(),
+                      gallons: u.gallons.toString(),
+                      dateCollected: u.date_collected,
+                      isActive: u.is_active.toString()
+                    };
+                  })
+              };
+            })
+        };
+      });
 
     return Response.json({
       homeowners: returnData
