@@ -12,25 +12,12 @@ export interface ButtonProps {
   fullWidth?: boolean;
 }
 
-const Button: React.FunctionComponent<ButtonProps> = (props) => {
-  const {
-    className,
-    style,
-    onClick,
-    type = "button",
-    fullWidth = false,
-    disabled = false,
-    children,
-  } = props;
+const Button: React.FunctionComponent<ButtonProps> = props => {
+  const { className, style, onClick, type = "button", fullWidth = false, disabled = false, children } = props;
 
   return (
     <div className={className} style={style}>
-      <button
-        onClick={onClick}
-        type={type}
-        disabled={disabled}
-        aria-disabled={disabled}
-      >
+      <button onClick={onClick} type={type} disabled={disabled} aria-disabled={disabled}>
         {children}
       </button>
     </div>
@@ -40,13 +27,13 @@ const Button: React.FunctionComponent<ButtonProps> = (props) => {
 const StyledButton = styled(Button)`
   display: inline-block;
 
-  width: ${(props) => {
+  width: ${props => {
     return props.fullWidth ? "100%" : "default";
   }};
 
   button {
     font-size: 1rem;
-    width: ${(props) => {
+    width: ${props => {
       return props.fullWidth ? "100%" : "default";
     }};
     text-decoration: none;
@@ -54,39 +41,25 @@ const StyledButton = styled(Button)`
     padding: 0.5em 1em;
     transition: all 0.2s ease;
     border-radius: 3px;
-    background-color: ${(props) =>
-      props.displayType === "outline"
-        ? "transparent"
-        : props.theme.primaryThemeColor};
-    border: ${(props) => "2px solid " + props.theme.primaryThemeColor};
-    color: ${(props) =>
-      props.displayType === "outline" ? props.theme.black : props.theme.white2};
+    background-color: ${props => (props.displayType === "outline" ? "transparent" : props.theme.primaryThemeColor)};
+    border: ${props => "2px solid " + props.theme.primaryThemeColor};
+    color: ${props => (props.displayType === "outline" ? props.theme.primaryThemeColor : props.theme.white2)};
 
     &:disabled {
-      color: ${(props) =>
-        props.displayType === "outline"
-          ? props.theme.black
-          : props.theme.white};
-      background-color: ${(props) =>
-        props.displayType === "outline"
-          ? props.theme.lightGrey
-          : props.theme.primaryDarkThemeColor};
-      border: ${(props) =>
+      color: ${props => (props.displayType === "outline" ? props.theme.black : props.theme.white)};
+      background-color: ${props =>
+        props.displayType === "outline" ? props.theme.lightGrey : props.theme.primaryDarkThemeColor};
+      border: ${props =>
         props.displayType === "outline"
           ? "2px solid " + props.theme.lightGrey
           : "2px solid " + props.theme.primaryDarkThemeColor};
 
       &:hover,
       &:focus {
-        color: ${(props) =>
-          props.displayType === "outline"
-            ? props.theme.black
-            : props.theme.white};
-        background-color: ${(props) =>
-          props.displayType === "outline"
-            ? props.theme.lightGrey
-            : props.theme.primaryDarkThemeColor};
-        border: ${(props) =>
+        color: ${props => (props.displayType === "outline" ? props.theme.black : props.theme.white)};
+        background-color: ${props =>
+          props.displayType === "outline" ? props.theme.lightGrey : props.theme.primaryDarkThemeColor};
+        border: ${props =>
           props.displayType === "outline"
             ? "2px solid " + props.theme.lightGrey
             : "2px solid " + props.theme.primaryDarkThemeColor};
@@ -95,22 +68,15 @@ const StyledButton = styled(Button)`
 
     &:hover,
     &:focus {
-      cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-      background-color: ${(props) =>
-        props.displayType === "outline"
-          ? "transparent"
-          : props.theme.primaryDarkThemeColor};
-      border: ${(props) => "2px solid " + props.theme.primaryDarkThemeColor};
-      color: ${(props) =>
-        props.displayType === "outline"
-          ? props.theme.primaryDarkThemeColor
-          : props.theme.buttonFontColor};
+      cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
+      background-color: ${props =>
+        props.displayType === "outline" ? "transparent" : props.theme.primaryDarkThemeColor};
+      border: ${props => "2px solid " + props.theme.primaryDarkThemeColor};
+      color: ${props =>
+        props.displayType === "outline" ? props.theme.primaryDarkThemeColor : props.theme.buttonFontColor};
 
       svg {
-        fill: ${(props) =>
-          props.displayType === "outline"
-            ? props.theme.primaryDarkThemeColor
-            : props.theme.white};
+        fill: ${props => (props.displayType === "outline" ? props.theme.primaryDarkThemeColor : props.theme.white)};
       }
     }
 
