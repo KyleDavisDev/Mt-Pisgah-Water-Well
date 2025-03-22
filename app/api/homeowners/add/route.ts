@@ -27,7 +27,12 @@ export async function POST(req: Request) {
 
     const { name, email, phone, mailingAddress } = await req.json();
 
-    if (!name || !email || !phone || !mailingAddress) {
+    if (
+      !name ||
+      !mailingAddress ||
+      (email !== null && typeof email !== "string") ||
+      (phone !== null && typeof phone !== "string")
+    ) {
       return new Response("Missing required fields", { status: 400 });
     }
 
@@ -43,17 +48,24 @@ export async function POST(req: Request) {
       return new Response("Unable to insert audit_log record", { status: 500 });
     }
 
-    const record = await db`
-        INSERT into homeowners (name, email, phone_number, mailing_address, is_active)
-        values (${name}, ${email}, ${phone}, ${mailingAddress}, true)
-        returning *;
-    `;
+    try {
+      await db.begin(async db => {
+        const homeowner = await db`
+            INSERT into homeowners (name, email, phone_number, mailing_address, is_active)
+            values (${name}, ${email}, ${phone}, ${mailingAddress}, true)
+            returning *;
+        `;
 
-    if (!record || !record[0].id) {
-      return new Response("Unable to insert new homeowners record", { status: 500 });
+        await db`
+            UPDATE audit_log
+            SET is_complete= true,
+                record_id  = ${homeowner[0].id}
+            WHERE id = ${auditLog.id};
+        `;
+      });
+    } catch (e) {
+      console.error("Failed to insert Homeowner record", e);
     }
-
-    await updateAuditTableRecord({ ...auditLog, record_id: record[0].id, is_complete: true });
 
     return Response.json({ message: "Success!" });
   } catch (error) {
