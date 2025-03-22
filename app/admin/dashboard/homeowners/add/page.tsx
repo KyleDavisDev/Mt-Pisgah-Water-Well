@@ -11,11 +11,11 @@ import { Article } from "../../../../components/Article/Article";
 const Page = () => {
   const _defaultErrorMessage = "There was a problem saving the homeowner. Please refresh your page and try again!";
 
-  // assign state
   const [name, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [mailingAddress, setMailingAddress] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
@@ -35,6 +35,8 @@ const Page = () => {
   const onSubmit = async (event: React.FormEvent): Promise<any> => {
     event.preventDefault();
 
+    if (loading) return; // Prevent duplicate submissions
+
     if (!name || !mailingAddress) {
       setFlashMessage({
         isVisible: true,
@@ -43,6 +45,8 @@ const Page = () => {
       });
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await fetch("/api/homeowners/add", {
@@ -72,6 +76,8 @@ const Page = () => {
         text: err.response?.data?.msg || _defaultErrorMessage,
         type: "warning"
       });
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -128,8 +134,8 @@ const Page = () => {
                   required={true}
                 />
                 <StyledFooterDivs>
-                  <Button type="submit" fullWidth>
-                    Add Homeowner
+                  <Button type="submit" fullWidth disabled={loading}>
+                    {loading ? "Adding..." : "Add Homeowner"}
                   </Button>
                 </StyledFooterDivs>
               </form>
