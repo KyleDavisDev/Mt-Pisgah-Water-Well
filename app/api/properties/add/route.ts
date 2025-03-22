@@ -1,10 +1,5 @@
 import { db } from "../../utils/db";
-import {
-  addAuditTableRecord,
-  getUsernameFromCookie,
-  updateAuditTableRecord,
-  validatePermission
-} from "../../utils/utils";
+import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
@@ -20,7 +15,7 @@ export async function POST(req: Request) {
 
     const { address, description, homeowner } = await req.json();
 
-    if (!address || !description || !homeowner) {
+    if (!address || (description !== null && typeof description !== "string") || !homeowner) {
       return new Response("Missing required fields", { status: 400 });
     }
 
