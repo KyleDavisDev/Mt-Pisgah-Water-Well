@@ -49,6 +49,7 @@ const Page = () => {
     text: "",
     type: undefined
   });
+  const [loading, setLoading] = React.useState<boolean>(false);
   const initialized = React.useRef(false);
 
   const getUsagesByHomeowner = () => {
@@ -105,8 +106,6 @@ const Page = () => {
       })
       .then(data => {
         // Update state with the fetched data
-        console.log(data);
-
         setUsers(data.users);
         setActiveGatheredUser(data.users[0].id.toString());
       })
@@ -172,6 +171,8 @@ const Page = () => {
   const onSubmit = async (event: React.FormEvent): Promise<any> => {
     event.preventDefault();
 
+    if (loading) return false;
+
     for (const key in deltas) {
       const delta = deltas[key];
 
@@ -184,6 +185,8 @@ const Page = () => {
         return;
       }
     }
+
+    setLoading(true);
 
     try {
       const response = await fetch("/api/usages/add", {
@@ -223,6 +226,8 @@ const Page = () => {
         text: err.response?.data?.msg || _defaultErrorMessage,
         type: "warning"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -231,7 +236,7 @@ const Page = () => {
       <Article size="lg">
         <StyledWellContainer>
           <Well>
-            <h3>Generate Bill</h3>
+            <h3>Add water usage</h3>
             <StyledFormContainer>
               {flashMessage.isVisible && (
                 <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
@@ -244,7 +249,6 @@ const Page = () => {
                   <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
                     <TextInput
                       onChange={e => {
-                        console.log(e.currentTarget.value);
                         setDateCollected(e.currentTarget.value);
                       }}
                       id={"dateCollected"}
@@ -347,8 +351,8 @@ const Page = () => {
                   </tbody>
                 </StyledTable>
                 <StyledFooterDivs>
-                  <Button type="submit" fullWidth>
-                    Save Usages
+                  <Button type="submit" fullWidth disabled={loading}>
+                    {loading ? "Saving..." : "Save Usages"}
                   </Button>
                 </StyledFooterDivs>
               </form>
