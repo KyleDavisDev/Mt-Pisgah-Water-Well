@@ -42,7 +42,7 @@ const Page = (): React.JSX.Element => {
     }
 
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch("/api/account/login", {
         method: "POST",
         body: JSON.stringify({ username, password })
       });
