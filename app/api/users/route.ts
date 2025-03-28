@@ -1,19 +1,6 @@
 import { db } from "../utils/db";
-import { getUsernameFromCookie, validatePermission } from "../utils/utils";
+import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
 import { cookies } from "next/headers";
-
-type Data = {
-  users?: {
-    id: string;
-    name: string;
-  }[];
-  error?: string;
-};
-
-const extractPermissionsFromQuery = (request: Request): string[] | null => {
-  const url = new URL(request.url);
-  return url.searchParams.getAll("permissions");
-};
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
@@ -27,7 +14,7 @@ export async function GET(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_USERS");
 
-    const permissions = extractPermissionsFromQuery(req);
+    const permissions = extractKeyFromRequest(req, "permissions");
 
     // TODO: Dynamic query
 
