@@ -45,7 +45,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = props => {
       {showLabel && label && (
         <Label htmlFor={id}>
           {label}
-          {required ? <span style={{ color: "#B20000" }}> *</span> : ""}
+          {required ? <span style={{ color: "#B20000" }}>*</span> : ""}
         </Label>
       )}
 
