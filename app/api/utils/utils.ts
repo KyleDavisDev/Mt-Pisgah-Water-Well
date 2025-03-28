@@ -145,6 +145,48 @@ export const updateAuditTableRecord = async (auditLog: AuditLog): Promise<AuditL
   }
 };
 
+/**
+ * Extracts the client's IP address from a Next Request object, using common proxy headers.
+ * Falls back to a default IP if not found. Also handles IPv4-mapped IPv6 addresses like "::ffff:127.0.0.1".
+ *
+ * @param request - The incoming Request object (e.g. from Next.js or Fetch API)
+ * @returns A normalized IPv4 address as a string
+ */
+export const getClientIPFromRequest = (request: Request): string => {
+  const FALLBACK_IP_ADDRESS = "0.0.0.0";
+
+  // Check the "x-forwarded-for" header first (may contain multiple comma-separated IPs)
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    const clientIp = forwardedFor.split(",")[0].trim();
+    return normalizeIp(clientIp || FALLBACK_IP_ADDRESS);
+  }
+
+  // Fallback to "x-real-ip" header or default
+  const realIp = request.headers.get("x-real-ip");
+  return normalizeIp(realIp || FALLBACK_IP_ADDRESS);
+};
+
+/**
+ * Converts IPv4-mapped IPv6 addresses (e.g. "::ffff:127.0.0.1") to plain IPv4 format.
+ *
+ * @param ip - The IP address string to normalize
+ * @returns A simplified IPv4 address if applicable
+ */
+const normalizeIp = (ip: string): string => {
+  return ip.startsWith("::ffff:") ? ip.replace("::ffff:", "") : ip;
+};
+
+/**
+ * Extracts the User-Agent string from the incoming Next.js Request.
+ *
+ * @param request - The Next.js Request object
+ * @returns The user agent string, or "unknown" if not available
+ */
+export const getUserAgentFromRequest = (request: Request): string => {
+  return request.headers.get("user-agent") || "unknown";
+};
+
 export const extractKeyFromRequest = (request: Request, key: string): string[] | null => {
   const url = new URL(request.url);
   return url.searchParams.getAll(key);
