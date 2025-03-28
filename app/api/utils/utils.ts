@@ -128,3 +128,8 @@ export const updateAuditTableRecord = async (auditLog: AuditLog): Promise<AuditL
     throw new Error(`Could not update audit_log record: ${e instanceof Error ? e.message : "Unknown error"}`);
   }
 };
+
+export const extractKeyFromRequest = (request: Request, key: string): string[] | null => {
+  const url = new URL(request.url);
+  return url.searchParams.getAll(key);
+};
