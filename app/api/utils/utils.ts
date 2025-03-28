@@ -19,13 +19,27 @@ export const safeParseStr = (str: string) => {
   }
 };
 
-const getUser = async (username: string): Promise<Users> => {
+/**
+ * Retrieves a single user from the database by their username.
+ *
+ * @param username - The username of the user to retrieve.
+ * @returns A promise that resolves to the matching user.
+ * @throws An error if no user is found or if more than one user is returned.
+ */
+export const getUserByUsername = async (username: string): Promise<Users> => {
+  if (username.trim().length === 0) {
+    throw new Error("Invalid username provided.");
+  }
+
   const users = await db<User[]>`
-    SELECT * FROM users where username=${username} LIMIT 1;
+      SELECT *
+      FROM users
+      where username = ${username}
+      LIMIT 1;
   `;
 
   if (users.length !== 1) {
-    throw new Error("Could not find user.");
+    throw new Error(`User not found for username: ${username}`);
   }
 
   return users[0];
@@ -95,8 +109,9 @@ export const addAuditTableRecord = async ({
   try {
     const record = await db<AuditLog[]>`
         INSERT into audit_log (table_name, record_id, action_type, old_data, new_data, action_by_id, action_timestamp)
-            VALUES (${tableName}, ${recordId}, ${actionType}, ${oldData ?? null}, ${newData ?? null}, (SELECT id from users where username = ${actionBy}), now())
-        
+        VALUES (${tableName}, ${recordId}, ${actionType}, ${oldData ?? null}, ${newData ?? null},
+                (SELECT id from users where username = ${actionBy}), now())
+
         returning *;
     `;
 
@@ -112,14 +127,15 @@ export const addAuditTableRecord = async ({
 export const updateAuditTableRecord = async (auditLog: AuditLog): Promise<AuditLog> => {
   try {
     await db`
-      UPDATE audit_log set table_name = ${auditLog.table_name},
-                           record_id = ${auditLog.record_id},
-                           action_type = ${auditLog.action_type},
-                           old_data = ${JSON.stringify(auditLog.old_data)},
-                           new_data = ${JSON.stringify(auditLog.new_data)},
-                           action_by_id = ${auditLog.action_by_id},
-                           action_timestamp = ${auditLog.action_timestamp}
-      where id=${auditLog.id}
+        UPDATE audit_log
+        set table_name       = ${auditLog.table_name},
+            record_id        = ${auditLog.record_id},
+            action_type      = ${auditLog.action_type},
+            old_data         = ${JSON.stringify(auditLog.old_data)},
+            new_data         = ${JSON.stringify(auditLog.new_data)},
+            action_by_id     = ${auditLog.action_by_id},
+            action_timestamp = ${auditLog.action_timestamp}
+        where id = ${auditLog.id}
     `;
 
     return auditLog;
