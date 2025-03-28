@@ -1,15 +1,9 @@
 import { db } from "../../utils/db";
 import bcrypt from "bcrypt";
-import { getUserByUsername } from "../../utils/utils";
+import { addAuditTableRecord, getUserByUsername } from "../../utils/utils";
 
 const pwConcat = process.env.PASSWORD_CONCAT;
 const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
-
-interface RequestBody {
-  name: string;
-  username: string;
-  password: string;
-}
 
 export async function POST(req: Request): Promise<Response> {
   try {
@@ -26,21 +20,45 @@ export async function POST(req: Request): Promise<Response> {
 
     try {
       await getUserByUsername(username);
-    } catch (e) {
-      // Fake response.
+
+      console.log("Sending fake account creation message.");
       return Response.json({ message: "User created successfully" }, { status: 201 });
-    }
+    } catch (e) {}
 
     // Hash password with salt and secret
     const saltedPassword = password + pwConcat;
     const hashedPassword = await bcrypt.hash(saltedPassword, saltRounds);
 
-    // Insert user
-    const result = await db`
-        INSERT INTO users (name, username, password, is_active)
-        VALUES (${name}, ${username}, ${hashedPassword}, true)
-        RETURNING id, username
-    `;
+    const auditLog = await addAuditTableRecord({
+      tableName: "users",
+      recordId: 0, // will update
+      newData: JSON.stringify({ name, username, hashedPassword, is_active: true }),
+      actionBy: "SYSTEM",
+      actionType: "INSERT"
+    });
+
+    if (!auditLog) {
+      return new Response("Unable to insert audit_log record", { status: 500 });
+    }
+
+    try {
+      await db.begin(async db => {
+        const result = await db`
+            INSERT INTO users (name, username, password, is_active)
+            VALUES (${name}, ${username}, ${hashedPassword}, true)
+            RETURNING id, username
+        `;
+
+        await db`
+            UPDATE audit_log
+            SET is_complete= true,
+                record_id  = ${result[0].id}
+            WHERE id = ${auditLog.id};
+        `;
+      });
+    } catch (e) {
+      console.error("Failed to insert User record", e);
+    }
 
     return Response.json({ message: "User created successfully" }, { status: 201 });
   } catch (err) {
