@@ -65,6 +65,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
       const response = await fetch("/api/properties/update", {
         method: "PUT",
         body: JSON.stringify({
+          address,
           description,
           id,
           isActive,
@@ -118,10 +119,10 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
             type={"text"}
             id={"address"}
             showLabel={true}
-            label={"Mailing Address"}
+            label={"Address"}
             name={"address"}
             required={true}
-            disabled={true}
+            disabled={false}
           />
 
           <TextInput

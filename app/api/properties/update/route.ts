@@ -14,14 +14,15 @@ export async function PUT(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "UPDATE_PROPERTY");
 
-    const { description, id, isActive, homeownerId } = await req.json();
+    const { description, id, isActive, homeownerId, address } = await req.json();
 
-    if (!id || !homeownerId || !isActive) {
+    if (!id || !homeownerId || !isActive || !address) {
       return new Response("Missing required fields", { status: 400 });
     }
 
     if (
       typeof description !== "string" ||
+      typeof address !== "string" ||
       typeof id !== "number" ||
       typeof homeownerId !== "string" ||
       typeof isActive !== "string"
@@ -41,7 +42,7 @@ export async function PUT(req: Request) {
     }
 
     // Get new record data
-    const newObj = { ...oldRecords[0], description, id, homeownerId, is_active: isActive === "true" };
+    const newObj = { ...oldRecords[0], description, id, homeownerId, address, is_active: isActive === "true" };
 
     // log intent
     const auditRecord = await addAuditTableRecord({
@@ -59,6 +60,7 @@ export async function PUT(req: Request) {
           UPDATE properties
           SET description  = ${newObj.description},
               homeowner_id = ${homeownerId},
+              address      = ${address},
               is_active    = ${newObj.is_active}
           WHERE id = ${id};
       `;
