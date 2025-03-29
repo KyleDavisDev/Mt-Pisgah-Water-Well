@@ -20,6 +20,7 @@ export const StyledFormContainer = styled.div`
 
   > div {
     width: 100%;
+    padding-bottom: 25px;
   }
 `;
 
