@@ -52,13 +52,18 @@ const Page = () => {
   const [selectedMonth, setSelectedMonth] = React.useState<string>("Jan");
   const [selectedYear, setSelectedYear] = React.useState<string>("2025");
 
-  const fetchUsages = () => {
+  // Prefixes a "0" to the single-digit month if needed.
+  const getPrefixedMonthValue = (numericMonth: number) => {
+    return numericMonth + 1 < 10 ? "0" + (numericMonth + 1).toString() : (numericMonth + 1).toString();
+  };
+
+  const fetchAmountUsedByMonthAndYear = () => {
     if (loading) return;
 
     const numericMonth = MONTHS.indexOf(selectedMonth);
     if (numericMonth === -1) return;
-    // We need to prefix a "0" to the single-digit month if needed.
-    const formattedMonth = numericMonth + 1 < 10 ? "0" + (numericMonth + 1).toString() : (numericMonth + 1).toString();
+
+    const formattedMonth = getPrefixedMonthValue(numericMonth);
 
     setLoading(true);
 
@@ -78,18 +83,31 @@ const Page = () => {
   const createBills = async () => {
     if (loading) return;
 
+    const numericMonth = MONTHS.indexOf(selectedMonth);
+    if (numericMonth === -1) return;
+
     setLoading(true);
     try {
-      const response = await fetch("/api/usage_bill/create", {
-        method: "POST"
+      const body = {
+        month: getPrefixedMonthValue(numericMonth),
+        year: selectedYear
+      };
+
+      const response = await fetch("/api/bill/add", {
+        method: "POST",
+        body: JSON.stringify(body)
       });
 
       if (!response.ok) {
         throw new Error("Failed to create bills");
       }
 
-      alert("Usage bills created successfully!");
-      fetchUsages(); // Refresh data after creating bills
+      // setFlashMessage({
+      //   isVisible: true,
+      //   text: data.message,
+      //   type: "success"
+      // });
+      fetchAmountUsedByMonthAndYear(); // Refresh data after creating bills
     } catch (error) {
       console.error("Error creating usage bills:", error);
       alert("Failed to create usage bills");
@@ -98,22 +116,12 @@ const Page = () => {
     }
   };
 
-  // const calculateTotalGallons = (property: Property) => {
-  //   return property.usages.reduce((total, usage) => total + parseInt(usage.gallonsUsed, 10), 0);
-  // };
-
-  const formatDate = (dateStr: string): string => {
-    const [year, month, day] = dateStr.split("-");
-    return `${MONTHS[parseInt(month, 10) - 1]} ${day}, ${year}`;
-  };
-
   return (
     <StyledContainer>
       <Article size="lg">
         <StyledWellContainer>
           <Well>
             <h3>Create Usage Bills</h3>
-
             <StyledFormContainer>
               <div style={{ display: "flex", flexDirection: "row", alignItems: "last baseline" }}>
                 <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
@@ -141,7 +149,7 @@ const Page = () => {
                   />
                 </div>
                 <div style={{ maxWidth: "380px", width: "100%" }}>
-                  <Button onClick={fetchUsages} disabled={loading} displayType={"outline"}>
+                  <Button onClick={fetchAmountUsedByMonthAndYear} disabled={loading} displayType={"outline"}>
                     {loading ? "Loading..." : "Load"}
                   </Button>
                 </div>
@@ -150,7 +158,6 @@ const Page = () => {
                 homeowners.map(homeowner => (
                   <div key={homeowner.id}>
                     <h3>{homeowner.name}</h3>
-
                     {homeowner.properties.map(property => (
                       <StyledTableContainer key={property.id}>
                         <StyledTableHeader>{property.address}</StyledTableHeader>
@@ -166,17 +173,27 @@ const Page = () => {
                             <tr>
                               <td>{property.startingGallons || "---"}</td>
                               <td>{property.endingGallons || "---"}</td>
-                              <td>{property.gallonsUsed || "---"}</td>
+                              <td>
+                                <strong>{property.gallonsUsed || "---"}</strong>
+                              </td>
                             </tr>
                           </tbody>
                         </StyledTable>
                       </StyledTableContainer>
                     ))}
 
-                    <p>
-                      <strong>Total Gallons Used (All Properties):</strong>{" "}
-                      {/*{homeowner.properties.reduce((sum, property) => sum + calculateGallonsUsed(property), 0)}*/}
-                    </p>
+                    {homeowner.properties.length > 1 ? (
+                      <p>
+                        <i>Total Gallons Used (All Properties):</i>{" "}
+                        {homeowner.properties.reduce(
+                          (sum, property) =>
+                            sum + (isNaN(parseInt(property.gallonsUsed, 10)) ? 0 : parseInt(property.gallonsUsed, 10)),
+                          0
+                        )}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 ))
               ) : (
