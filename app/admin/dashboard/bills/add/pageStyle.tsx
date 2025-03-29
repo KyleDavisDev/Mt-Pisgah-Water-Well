@@ -20,6 +20,7 @@ export const StyledFormContainer = styled.div`
 
   > div {
     width: 100%;
+    padding-bottom: 25px;
   }
 `;
 
@@ -38,6 +39,10 @@ export const StyledTable = styled.table`
 
   thead {
     border-collapse: collapse;
+  }
+
+  th {
+    font-weight: 400;
   }
 
   th,
