@@ -9,12 +9,9 @@ import {
 } from "./SidebarMenuStyle";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
-interface SidebarMenuProps {
-  onMenuItemClick: (item: string) => void;
-}
-
-const SidebarMenu = (props: SidebarMenuProps) => {
+const SidebarMenu = () => {
   const [showHomeowners, setShowHomeowners] = useState<boolean>(false);
   const [showProperties, setShowProperties] = useState<boolean>(false);
   const [showUsage, setShowUsage] = useState<boolean>(false);
@@ -23,12 +20,9 @@ const SidebarMenu = (props: SidebarMenuProps) => {
   return (
     <StyledSideBarContainer>
       <StyledIconContainer>
-        <img
-          src={"/water-well.png"}
-          style={{ height: "75px" }}
-          alt={"Well Icon"}
-          onClick={() => props.onMenuItemClick("home")}
-        />
+        <Link href={"/admin/dashboard"}>
+          <Image src="/water-well.png" height={75} width={75} alt={"Well Icon"} />
+        </Link>
       </StyledIconContainer>
       <StyledMenuItemContainer>
         <StyledMenuItem onClick={() => setShowHomeowners(!showHomeowners)}>Homeowners</StyledMenuItem>
