@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { FlashMessage, FlashMessageProps } from "../../components/FlashMessage/FlashMessage";
 import { Article } from "../../components/Article/Article";
 import { StyledContainer, StyledFooterDivs, StyledFormContainer } from "./pageStyle";
@@ -11,7 +12,6 @@ import { Button } from "../../components/Button/Button";
 const Page = (): React.JSX.Element => {
   const _defaultErrorMessage = "There was a problem logging into your account. Please refresh your page and try again!";
 
-  // assign state
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
@@ -19,6 +19,7 @@ const Page = (): React.JSX.Element => {
     text: "",
     type: undefined
   });
+  const router = useRouter();
 
   const onFlashClose = () => {
     // clear flash message if was shown
@@ -56,7 +57,7 @@ const Page = (): React.JSX.Element => {
           type: "success"
         });
 
-        // router.push("/admin/dashboard");
+        router.push("/admin/dashboard");
       }
     } catch (err: any) {
       console.log(err);
