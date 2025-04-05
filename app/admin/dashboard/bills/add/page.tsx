@@ -13,6 +13,8 @@ import Well from "../../../../components/Well/Well";
 import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import Select from "../../../../components/Select/Select";
+import { Badge } from "../../../../components/Badge/Badge";
+import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
 
 interface Property {
   id: string;
@@ -21,6 +23,7 @@ interface Property {
   gallonsUsed: string;
   startingGallons: number;
   endingGallons: number;
+  isAlreadyCreated: boolean;
 }
 
 interface Homeowner {
@@ -116,6 +119,24 @@ const Page = () => {
     }
   };
 
+  const renderTotalUsedCell = (property: Property) => {
+    if (property.gallonsUsed === "--") {
+      return "---";
+    }
+
+    const badge = property.isAlreadyCreated ? (
+      <Badge variant={"primary"}>Already Created</Badge>
+    ) : (
+      <NotificationDot variant={"warning"} />
+    );
+
+    return (
+      <>
+        {property.gallonsUsed} {badge}
+      </>
+    );
+  };
+
   return (
     <StyledContainer>
       <Article size="lg">
@@ -164,8 +185,8 @@ const Page = () => {
                         <StyledTable>
                           <thead>
                             <tr>
-                              <th>Starting Gallons</th>
-                              <th>Ending Gallons</th>
+                              <th style={{ maxWidth: "35%", width: "100%" }}>Starting Gallons</th>
+                              <th style={{ maxWidth: "35%", width: "100%" }}>Ending Gallons</th>
                               <th>Total Used</th>
                             </tr>
                           </thead>
@@ -174,7 +195,7 @@ const Page = () => {
                               <td>{property.startingGallons || "---"}</td>
                               <td>{property.endingGallons || "---"}</td>
                               <td>
-                                <strong>{property.gallonsUsed || "---"}</strong>
+                                <strong>{renderTotalUsedCell(property)}</strong>
                               </td>
                             </tr>
                           </tbody>
