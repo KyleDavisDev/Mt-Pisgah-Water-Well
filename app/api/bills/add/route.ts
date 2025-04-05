@@ -18,8 +18,8 @@ type Formula = {
 const PRICING_FORMULAS: Record<string, Formula> = {
   tiered_2025_v1: {
     name: "tiered_2025_v1",
-    description: "Flat $21 for first 2000 gallons used, then additional $0.0001 per gallon after.",
-    calculate: (gallons: number) => (gallons <= 2000 ? 2100 : 2100 + Math.round(gallons * 0.01))
+    description: "Flat $21 for first 4000 gallons used, then additional $0.0001 per gallon after.",
+    calculate: (gallons: number) => (gallons <= 4000 ? 2100 : 2100 + Math.round(gallons * 0.01))
   },
   flat_rate: {
     name: "flat_rate",
