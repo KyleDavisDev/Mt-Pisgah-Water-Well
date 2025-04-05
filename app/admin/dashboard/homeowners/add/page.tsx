@@ -83,7 +83,7 @@ const Page = () => {
 
   return (
     <StyledContainer>
-      <Article size="md">
+      <Article size="lg">
         <StyledWellContainer>
           <Well>
             <h3>Add Homeowner</h3>
