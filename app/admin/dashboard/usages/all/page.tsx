@@ -130,20 +130,7 @@ const Page = () => {
                                   property.usages.map((usage, ind) => {
                                     return (
                                       <tr>
-                                        <td>
-                                          {" "}
-                                          <span
-                                            style={{
-                                              height: 10,
-                                              width: 10,
-                                              // backgroundColor: usage.isActive === "true" ? "green" : "red",
-                                              borderRadius: 50,
-                                              display: "inline-block",
-                                              marginRight: 8
-                                            }}
-                                          ></span>
-                                          {formatDate(usage.dateCollected)}
-                                        </td>
+                                        <td>{formatDate(usage.dateCollected)}</td>
                                         <td>{usage.gallons}</td>
                                         <td>
                                           {ind < property.usages.length - 1
