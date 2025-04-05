@@ -1,9 +1,9 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import Users from "../models/Users";
+import User from "../models/Users";
 import { db } from "../utils/db";
 import jwt from "jsonwebtoken";
 import AuditLog from "../models/AuditLogs";
-import User from "../models/Users";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -190,4 +190,66 @@ export const getUserAgentFromRequest = (request: Request): string => {
 export const extractKeyFromRequest = (request: Request, key: string): string[] | null => {
   const url = new URL(request.url);
   return url.searchParams.getAll(key);
+};
+
+/**
+ * Pads a month number to a two-digit string.
+ *
+ * @param {number} month - The month number (1–12).
+ * @returns {string} A two-digit month string, e.g. '02' for February.
+ * If the month is invalid (< 1 or > 12), it returns '01' as a safe fallback.
+ */
+const padMonthInteger = (month: number): string => {
+  if (month < 1 || month > 12) return "01";
+
+  return month < 10 ? `0${month}` : month.toString();
+};
+
+/**
+ * Given a year and month, returns the start and end of that month,
+ * as well as the start and end of the next month.
+ *
+ * @param {string} year - The 4-digit year (e.g., '2025').
+ * @param {string} month - The 1- or 2-digit month (e.g., '1' or '01'). Will be normalized to '01'–'12'.
+ * @returns {Object} An object containing:
+ *   - startOfMonth: e.g., '2025-02-01'
+ *   - endOfMonth: e.g., '2025-02-28'
+ *   - startOfNextMonth: e.g., '2025-03-01'
+ *   - endOfNextMonth: e.g., '2025-03-28'
+ *
+ * Note: February and other months are simplified to 28 days
+ * to avoid needing actual calendar day logic.
+ */
+export const getStartAndEndOfProvidedMonthAndNextMonth = (
+  year: string,
+  month: string
+): { startOfMonth: string; endOfMonth: string; startOfNextMonth: string; endOfNextMonth: string } => {
+  // Ensure year is a 4-digit string
+  let safeYear = year.padStart(4, "0");
+  const numericYear = parseInt(safeYear, 10);
+
+  // Normalize and clamp month to range 1–12
+  let numericMonth = parseInt(month, 10);
+  if (isNaN(numericMonth) || numericMonth < 1 || numericMonth > 12) {
+    numericMonth = 1;
+  }
+  const formattedMonth = padMonthInteger(numericMonth);
+
+  const startOfMonth = `${year}-${formattedMonth}-01`;
+  const endOfMonth = `${year}-${formattedMonth}-28`;
+
+  let nextMonth = numericMonth + 1;
+  let nextYear = numericYear;
+
+  if (nextMonth > 12) {
+    nextMonth = 1;
+    nextYear += 1;
+  }
+
+  const paddedNextMonth = padMonthInteger(nextMonth);
+
+  const startOfNextMonth = `${nextYear}-${paddedNextMonth}-01`;
+  const endOfNextMonth = `${nextYear}-${paddedNextMonth}-28`;
+
+  return { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth };
 };
