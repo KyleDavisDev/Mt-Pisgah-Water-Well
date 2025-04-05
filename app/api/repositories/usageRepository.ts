@@ -45,3 +45,27 @@ export const getFirstUsageByDateCollectedRangeAndPropertyIn = async (
 
   return usages ?? [];
 };
+
+/**
+ * Retrieves the earliest active usage record per property within a given date range.
+ * @param propertyIds list of property Ids to search for
+ * @param limit  the limit on how many records to return
+ *
+ * @returns Promise resolving to an array of Usage records
+ */
+export const findAllActiveByPropertyIdInAndLimitBy = async (propertyIds: number[], limit: number): Promise<Usage[]> => {
+  const usages = await db<Usage[]>`
+      SELECT id,
+             property_id,
+             gallons,
+             recorded_by_id,
+             is_active,
+             TO_CHAR(date_collected, 'YYYY-MM-DD') AS date_collected
+      FROM usages
+      WHERE property_id IN ${db(propertyIds)}
+        AND is_active = true
+      ORDER BY property_id, date_collected DESC
+      limit ${limit}`;
+
+  return usages ?? [];
+};
