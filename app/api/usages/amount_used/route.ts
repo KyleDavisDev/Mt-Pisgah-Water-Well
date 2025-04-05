@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
 import { getAllActiveProperties } from "../../repositories/propertiesRepository";
 import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
+import { getActiveUsageBillsForYearAndMonthAndPropertyIn } from "../../repositories/billRepository";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
@@ -45,6 +46,11 @@ export async function GET(req: Request) {
       endOfNextMonth,
       propertyIds
     );
+    const alreadyCreatedBills = await getActiveUsageBillsForYearAndMonthAndPropertyIn(
+      parseInt(year[0], 10),
+      parseInt(month[0], 10),
+      propertyIds
+    );
 
     const homeowners = await getAllActiveHomeowners();
     const returnData = homeowners
@@ -60,6 +66,7 @@ export async function GET(req: Request) {
             .map(p => {
               const firstUsage = startingUsages.find(f => f.property_id === p.id);
               const lastUsage = endingUsages.find(l => l.property_id === p.id);
+              const isAlreadyCreated = alreadyCreatedBills.find(b => b.property_id === p.id);
 
               return {
                 id: p.id.toString(),
@@ -67,7 +74,8 @@ export async function GET(req: Request) {
                 description: p.description,
                 startingGallons: firstUsage ? firstUsage.gallons : "--",
                 endingGallons: lastUsage ? lastUsage.gallons : "--",
-                gallonsUsed: lastUsage && firstUsage ? lastUsage.gallons - firstUsage.gallons : "--"
+                gallonsUsed: lastUsage && firstUsage ? lastUsage.gallons - firstUsage.gallons : "--",
+                isAlreadyCreated: !!isAlreadyCreated
               };
             })
         };
