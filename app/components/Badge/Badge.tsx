@@ -13,7 +13,7 @@ const variantStyles: Record<string, { bg: string; text: string }> = {
   primary: { bg: "#007bff", text: "#fff" },
   success: { bg: "#28a745", text: "#fff" },
   danger: { bg: "#dc3545", text: "#fff" },
-  warning: { bg: "#ffc107", text: "#212529" },
+  warning: { bg: "#ffc107", text: "#fff" },
   info: { bg: "#17a2b8", text: "#fff" },
   secondary: { bg: "#6c757d", text: "#fff" }
 };
