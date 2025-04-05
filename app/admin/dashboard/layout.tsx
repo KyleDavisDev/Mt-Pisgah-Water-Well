@@ -18,7 +18,7 @@ const Layout = (props: any) => {
   return (
     <>
       <StyledDiv>
-        <SidebarMenu onMenuItemClick={onMenuItemClick} />
+        <SidebarMenu />
         {props.children}
       </StyledDiv>
     </>
