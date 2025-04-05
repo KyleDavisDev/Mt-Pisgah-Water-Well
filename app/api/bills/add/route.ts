@@ -1,8 +1,11 @@
 import { db } from "../../utils/db";
-import { getUsernameFromCookie, validatePermission, getUserByUsername } from "../../utils/utils";
+import {
+  getStartAndEndOfProvidedMonthAndNextMonth,
+  getUsernameFromCookie,
+  validatePermission
+} from "../../utils/utils";
 import { cookies } from "next/headers";
 import { addAuditTableRecord } from "../../utils/utils";
-import { getStartAndEndOfMonthAndNextMonth } from "../../usages/amount_used/route";
 import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
 import { getAllActiveProperties } from "../../repositories/propertiesRepository";
 
@@ -47,7 +50,7 @@ export async function POST(req: Request): Promise<Response> {
       return new Response("Missing month or year", { status: 400 });
     }
 
-    const { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth } = getStartAndEndOfMonthAndNextMonth(
+    const { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth } = getStartAndEndOfProvidedMonthAndNextMonth(
       year,
       month
     );
