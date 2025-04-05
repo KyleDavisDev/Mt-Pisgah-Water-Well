@@ -1,9 +1,11 @@
-import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Homeowners from "../../models/Homeowners";
 import Property from "../../models/Properties";
 import Usages from "../../models/Usages";
 import { cookies } from "next/headers";
+import { findAllActiveByPropertyIdInAndLimitBy } from "../../repositories/usageRepository";
+import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
+import { getAllActivePropertiesByHomeownerIdIn } from "../../repositories/propertiesRepository";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
@@ -17,26 +19,14 @@ export async function GET(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_USAGES");
 
-    const homeowners = await db<Homeowners[]>`
-        SELECT homeowner.id, homeowner.name, homeowner.is_active
-        FROM homeowners homeowner
-        WHERE homeowner.is_active = true
-        ORDER BY homeowner.id
-    `;
-
+    const homeowners = await getAllActiveHomeowners();
     if (!homeowners || homeowners.length === 0) {
       return Response.json({ homeowners: [] });
     }
 
     // Fetch properties for all homeowners
     const homeownerIds = homeowners.map(h => h.id);
-    const properties = await db<Property[]>`
-        SELECT *
-        FROM properties
-        WHERE homeowner_id IN ${db(homeownerIds)}
-          AND is_active = true
-    `;
-
+    const properties = await getAllActivePropertiesByHomeownerIdIn(homeownerIds);
     if (!properties || properties.length === 0) {
       return Response.json({
         homeowners: homeowners.map(h => ({ id: h.id.toString(), name: h.name, properties: [] }))
@@ -45,13 +35,7 @@ export async function GET(req: Request) {
 
     // Fetch latest usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const usages = await db<Usages[]>`
-        SELECT id, property_id, gallons, TO_CHAR(date_collected, 'YYYY-MM-DD') AS date_collected, is_active
-        FROM usages
-        WHERE property_id IN ${db(propertyIds)}
-          AND is_active = true
-        ORDER BY property_id, date_collected DESC
-    `;
+    const usages = await findAllActiveByPropertyIdInAndLimitBy(propertyIds, 12);
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
