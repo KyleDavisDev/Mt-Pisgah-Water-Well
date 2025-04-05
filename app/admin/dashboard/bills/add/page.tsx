@@ -93,7 +93,7 @@ const Page = () => {
         year: selectedYear
       };
 
-      const response = await fetch("/api/bill/add", {
+      const response = await fetch("/api/bills/add", {
         method: "POST",
         body: JSON.stringify(body)
       });
