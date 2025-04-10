@@ -12,8 +12,6 @@ const StyledDiv = styled.div`
   color: ${props => props.theme.siteFontColor};
 `;
 
-function onMenuItemClick() {}
-
 const Layout = (props: any) => {
   return (
     <>
