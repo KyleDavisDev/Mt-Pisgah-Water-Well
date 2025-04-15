@@ -47,3 +47,22 @@ export const getActiveUsageBillsForYearAndMonthAndPropertyIn = async (
 
   return bills ?? [];
 };
+
+/**
+ * Retrieves a single usage bill by its unique identifier.
+ *
+ * @param {string} id - The unique identifier of the bill to retrieve.
+ * @returns {Promise<UsageBill | null>} A promise that resolves to the usage bill if found, or null if not found.
+ */
+export const getBillById = async (id: string): Promise<UsageBill | null> => {
+  if (!id) return null;
+
+  const [bill] = await db<UsageBill[]>`
+    SELECT *
+    FROM usage_bill
+    WHERE id = ${id}
+    LIMIT 1;
+  `;
+
+  return bill ?? null;
+};
