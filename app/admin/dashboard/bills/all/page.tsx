@@ -27,7 +27,7 @@ const Page = () => {
   const getBillsByHomeowner = () => {
     setIsLoading(true);
     setError(null);
-    
+
     fetch(`/api/bills/groupByHomeowner`, { method: "GET" })
       .then(response => {
         if (!response.ok) {
@@ -134,7 +134,7 @@ const Page = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {sortBillsByDate(property.bills).map((bill) => (
+                              {sortBillsByDate(property.bills).map(bill => (
                                 <tr key={bill.id}>
                                   <td>{formatDate(bill.dateCreated)}</td>
                                   <td>{bill.gallonsUsed}</td>
@@ -142,11 +142,18 @@ const Page = () => {
                                   <td style={{ textAlign: "center" }}>
                                     <Button
                                       onClick={() => {
-                                        setShowModal(true);
                                         setActiveUsage(bill);
+                                        setShowModal(true);
                                       }}
                                     >
-                                      Edit
+                                      View Details
+                                    </Button>
+                                    <Button
+                                      onClick={() => {
+                                        window.open(`/admin/dashboard/bills/view/${bill.id}`, "_blank");
+                                      }}
+                                    >
+                                      Print Bill
                                     </Button>
                                   </td>
                                 </tr>
