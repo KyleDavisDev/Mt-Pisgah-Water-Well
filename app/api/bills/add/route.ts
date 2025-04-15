@@ -8,29 +8,7 @@ import { cookies } from "next/headers";
 import { addAuditTableRecord } from "../../utils/utils";
 import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
 import { getAllActiveProperties } from "../../repositories/propertiesRepository";
-
-type Formula = {
-  name: string;
-  calculate: (gallons: number) => number;
-  description: string;
-};
-
-const PRICING_FORMULAS: Record<string, Formula> = {
-  tiered_2025_v1: {
-    name: "tiered_2025_v1",
-    description: "Flat $21 for first 4000 gallons used, then additional $0.0001 per gallon after.",
-    calculate: (gallons: number) => (gallons <= 4000 ? 2100 : 2100 + Math.round(gallons * 0.01))
-  },
-  flat_rate: {
-    name: "flat_rate",
-    description: "Simple flat fee of $25",
-    calculate: (_gallons: number) => 2500
-  }
-};
-
-const calculateAmountInPenniesFromGallons = (formula: Formula, gallons: number) => {
-  return formula.calculate(gallons);
-};
+import { PRICING_FORMULAS } from "../pricingFormulas";
 
 export async function POST(req: Request): Promise<Response> {
   if (req.method !== "POST") {
@@ -87,14 +65,14 @@ export async function POST(req: Request): Promise<Response> {
 
       if (existing.length > 0) continue;
 
-      const formulaToUse = PRICING_FORMULAS["tiered_2025_v1"];
+      const formula = PRICING_FORMULAS["tiered_2025_v1"];
       const newData = {
         property_id: property.id,
         billing_month: parseInt(month),
         billing_year: parseInt(year),
         gallons_used: gallonsUsed,
-        amount_in_pennies: calculateAmountInPenniesFromGallons(formulaToUse, gallonsUsed),
-        formula_used: `${formulaToUse.name}||${formulaToUse.description}`,
+        amount_in_pennies: formula.calculate(gallonsUsed),
+        formula_used: `${formula.name}||${formula.description}`,
         is_active: true
       };
 
