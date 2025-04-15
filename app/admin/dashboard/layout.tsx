@@ -12,14 +12,22 @@ const StyledDiv = styled.div`
   color: ${props => props.theme.siteFontColor};
 `;
 
-const Layout = (props: any) => {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Layout component that wraps the main application content with a sidebar menu.
+ *
+ * @param {LayoutProps} props - The props for the layout component.
+ * @returns {JSX.Element} The rendered layout component.
+ */
+const Layout = ({ children }: LayoutProps): JSX.Element => {
   return (
-    <>
-      <StyledDiv>
-        <SidebarMenu />
-        {props.children}
-      </StyledDiv>
-    </>
+    <StyledDiv>
+      <SidebarMenu />
+      {children}
+    </StyledDiv>
   );
 };
 
