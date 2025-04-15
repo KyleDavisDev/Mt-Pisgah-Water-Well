@@ -58,10 +58,18 @@ export const getBillById = async (id: string): Promise<UsageBill | null> => {
   if (!id) return null;
 
   const [bill] = await db<UsageBill[]>`
-    SELECT *
-    FROM usage_bill
-    WHERE id = ${id}
-    LIMIT 1;
+      SELECT id,
+             property_id,
+             billing_month,
+             billing_year,
+             gallons_used,
+             formula_used,
+             amount_in_pennies,
+             created_at,
+             is_active
+      FROM usage_bill
+      WHERE id = ${id}
+      LIMIT 1;
   `;
 
   return bill ?? null;
