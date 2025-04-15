@@ -4,6 +4,7 @@ import { getHomeownerByPropertyId } from "../../repositories/homeownerRepository
 import { cookies } from "next/headers";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { getPropertyById } from "../../repositories/propertiesRepository";
+import { getLateFeesByUsageBillId } from "../../repositories/lateFeeRepository";
 
 export async function GET(req: Request, { params }: { params: { id: string } }): Promise<Response> {
   if (req.method !== "GET") {
@@ -34,10 +35,19 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
       return Response.json({ error: "Property information not found" }, { status: 404 });
     }
 
+    const lateFees = await getLateFeesByUsageBillId(bill.id);
+
     return Response.json({
-      bill,
-      homeownerName: homeowner.name,
-      propertyAddress: property.address
+      bill: {
+        amountInPennies: bill.amount_in_pennies,
+        formula: {},
+        gallonsUsed: bill.gallons_used,
+        month: bill.billing_month,
+        year: bill.billing_year,
+        isActive: bill.is_active
+      },
+      homeowner: { name: homeowner.name },
+      property: { address: property.address }
     });
   } catch (error) {
     console.error("Error processing bill request:", error);
