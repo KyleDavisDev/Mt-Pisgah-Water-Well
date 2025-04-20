@@ -15,6 +15,7 @@ import { Button } from "../../../../components/Button/Button";
 import Select from "../../../../components/Select/Select";
 import { Badge } from "../../../../components/Badge/Badge";
 import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
+import { MONTHS, YEARS } from "../../appConstants";
 
 interface Property {
   id: string;
@@ -33,23 +34,6 @@ interface Homeowner {
 }
 
 const Page = () => {
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const YEARS = [
-    "2015",
-    "2016",
-    "2017",
-    "2018",
-    "2019",
-    "2020",
-    "2021",
-    "2022",
-    "2023",
-    "2024",
-    "2025",
-    "2026",
-    "2027"
-  ];
-
   const [homeowners, setHomeowners] = React.useState<Homeowner[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = React.useState<string>("Jan");
