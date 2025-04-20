@@ -50,7 +50,7 @@ export async function GET(req: Request) {
             .map((p: Property) => {
               return {
                 id: p.id.toString(),
-                address: p.address,
+                address: p.street,
                 description: p.description,
                 usages: usages
                   .filter((u: Usages) => u.property_id === p.id)
