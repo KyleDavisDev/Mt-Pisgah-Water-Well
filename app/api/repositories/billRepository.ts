@@ -11,10 +11,10 @@ export const getBillsByPropertyIds = async (propertyIds: number[]): Promise<Usag
   if (!propertyIds || propertyIds.length === 0) return [];
 
   const bills = await db<UsageBill[]>`
-    SELECT *
-    FROM usage_bill
-    WHERE property_id IN ${db(propertyIds)}
-    ORDER BY billing_year DESC, billing_month DESC;
+      SELECT *
+      FROM usage_bill
+      WHERE property_id IN ${db(propertyIds)}
+      ORDER BY billing_year DESC, billing_month DESC;
   `;
 
   return bills;
@@ -73,4 +73,38 @@ export const getBillById = async (id: string): Promise<UsageBill | null> => {
   `;
 
   return bill ?? null;
+};
+
+/**
+ * Retrieves the most recent N active usage bills for a property,
+ * on or before the specified billing month and year, ordered descending.
+ *
+ * @param {number} propertyId - The property ID to fetch usage bills for.
+ * @param {number} limit - The maximum number of usage bills to retrieve.
+ * @param {number} billingMonth - The cutoff billing month (1–12).
+ * @param {number} billingYear - The cutoff billing year (e.g. 2025).
+ * @returns {Promise<UsageBill[]>} A promise that resolves to an array of usage bills.
+ */
+export const getRecentActiveBillsByPropertyBeforeBillingMonthYear = async (
+  propertyId: number,
+  limit: number,
+  billingMonth: number,
+  billingYear: number
+): Promise<UsageBill[]> => {
+  if (!limit || limit <= 0 || billingMonth < 1 || billingMonth > 12 || billingYear < 0) return [];
+
+  const bills = await db<UsageBill[]>`
+      SELECT *
+      FROM usage_bill
+      WHERE is_active = true
+        AND property_id = ${propertyId}
+        AND (
+          billing_year < ${billingYear} OR
+          (billing_year = ${billingYear} AND billing_month < ${billingMonth})
+          )
+      ORDER BY billing_year DESC, billing_month DESC
+      LIMIT ${limit};
+  `;
+
+  return bills ?? [];
 };
