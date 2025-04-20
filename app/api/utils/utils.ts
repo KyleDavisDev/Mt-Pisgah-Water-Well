@@ -26,19 +26,16 @@ export const getUsernameFromCookie = async (jwtCookie: RequestCookie | undefined
   if (!token) {
     throw new Error("Invalid token format");
   }
-  const payload = jwt.verify(token, jwtPrivateKey as string);
 
-  if (!payload) {
+  const payload = jwt.verify(token, jwtPrivateKey as string);
+  if (!payload || typeof payload === "string") {
     throw new Error("Invalid token");
   }
 
-  // @ts-ignore
   const username = payload.username;
 
   if (!username) {
-    {
-      throw new Error("Missing username");
-    }
+    throw new Error("Missing username");
   }
 
   return username;
