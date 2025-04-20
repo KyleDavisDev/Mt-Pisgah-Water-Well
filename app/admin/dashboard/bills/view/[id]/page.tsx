@@ -19,9 +19,11 @@ import {
   StyledUsageItem,
   StyledUsageLabel,
   StyledUsageTableTitle,
-  StyledUsageValue
+  StyledUsageValue,
+  StyledCompanyName
 } from "./pageStyle";
 import { formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util";
+import Image from "next/image";
 
 export default function BillView({ params }: { params: { id: string } }) {
   const [bill, setBill] = React.useState<billDTO | null>(null);
@@ -74,7 +76,10 @@ export default function BillView({ params }: { params: { id: string } }) {
     <StyledBillTemplate>
       <StyledHeader>
         <StyledCompanyInfo>
-          <h2>{billDetails.waterCompany.name}</h2>
+          <StyledCompanyName>
+            <Image src="/water-well.png" height={75} width={75} alt={"Well Icon"} />
+            <h2>{billDetails.waterCompany.name}</h2>
+          </StyledCompanyName>
           <p>{billDetails.waterCompany.address}</p>
           <p>
             {billDetails.waterCompany.city}, {billDetails.waterCompany.state} {billDetails.waterCompany.zip}
@@ -84,7 +89,7 @@ export default function BillView({ params }: { params: { id: string } }) {
           <p>Email: {billDetails.waterCompany.email}</p>
         </StyledCompanyInfo>
         <StyledAccountInfo>
-          <p>Account Date: {billDetails.createdDate}</p>
+          <p>Invoice Created On: {billDetails.createdDate}</p>
         </StyledAccountInfo>
       </StyledHeader>
 
@@ -101,7 +106,7 @@ export default function BillView({ params }: { params: { id: string } }) {
       <StyledCurrentUsage>
         <StyledUsageContainer>
           <StyledUsageItem>
-            <StyledUsageLabel>Period</StyledUsageLabel>
+            <StyledUsageLabel>Month</StyledUsageLabel>
             <StyledUsageValue>{billDetails.billingPeriod}</StyledUsageValue>
           </StyledUsageItem>
           <StyledUsageItem>

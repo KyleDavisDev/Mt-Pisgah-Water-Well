@@ -1,15 +1,17 @@
 import styled from "../../../../../theme/styled-components";
 
 export const StyledBillTemplate = styled.div`
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 40px;
-  width: 8.5in;
+  min-width: 900px;
   min-height: 11in;
-  margin: 0 auto;
+  margin: 25px auto;
   background: white;
   color: #333;
   font-family: "Arial", sans-serif;
   line-height: 1.4;
-  position: relative;
   box-sizing: border-box;
 
   @media print {
@@ -27,15 +29,28 @@ export const StyledHeader = styled.div`
 `;
 
 export const StyledCompanyInfo = styled.div`
-  h2 {
-    font-size: 20px;
-    margin: 0 0 15px 0;
-    font-weight: 600;
-  }
-
   p {
     margin: 4px 0;
     font-size: 14px;
+  }
+`;
+
+export const StyledCompanyName = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  margin-bottom: 15px;
+
+  img {
+    height: 40px;
+    width: 40px;
+    margin-right: 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
   }
 `;
 
