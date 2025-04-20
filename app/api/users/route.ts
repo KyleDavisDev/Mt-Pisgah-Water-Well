@@ -1,6 +1,6 @@
-import { db } from "../utils/db";
 import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
 import { cookies } from "next/headers";
+import { getAllActiveUsersByPermission, getAllUsers } from "../repositories/userRepository";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
@@ -15,27 +15,9 @@ export async function GET(req: Request) {
     await validatePermission(username, "VIEW_USERS");
 
     const permissions = extractKeyFromRequest(req, "permissions");
+    // TODO: data validation of permissions
 
-    // TODO: Dynamic query
-
-    let users;
-    if (permissions) {
-      users = await db`
-          SELECT u.id, u.name
-          FROM users u
-                   JOIN user_permissions up on u.id = up.user_id
-                   JOIN permissions p on up.permission_id = p.id
-          WHERE up.is_active = true
-            AND p.is_active = true
-            AND u.is_active = true
-            AND p.value in ${db(permissions)}
-      `;
-    } else {
-      users = await db`
-          SELECT u.id, u.name
-          FROM users u
-      `;
-    }
+    const users = permissions ? await getAllActiveUsersByPermission(permissions) : await getAllUsers();
 
     return Response.json({
       users: users.map(u => {
