@@ -19,32 +19,6 @@ export const safeParseStr = (str: string) => {
   }
 };
 
-/**
- * Retrieves a single user from the database by their username.
- *
- * @param username - The username of the user to retrieve.
- * @returns A promise that resolves to the matching user.
- * @throws An error if no user is found or if more than one user is returned.
- */
-export const getUserByUsername = async (username: string): Promise<Users> => {
-  if (username.trim().length === 0) {
-    throw new Error("Invalid username provided.");
-  }
-
-  const users = await db<User[]>`
-      SELECT *
-      FROM users
-      where username = ${username}
-      LIMIT 1;
-  `;
-
-  if (users.length !== 1) {
-    throw new Error(`User not found for username: ${username}`);
-  }
-
-  return users[0];
-};
-
 export const getUsernameFromCookie = async (jwtCookie: RequestCookie | undefined): Promise<string> => {
   if (!jwtCookie) {
     throw new Error("Please re-login.");
