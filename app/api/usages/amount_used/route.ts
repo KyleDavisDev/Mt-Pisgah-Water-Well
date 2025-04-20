@@ -70,7 +70,7 @@ export async function GET(req: Request) {
 
               return {
                 id: p.id.toString(),
-                address: p.address,
+                address: p.street,
                 description: p.description,
                 startingGallons: firstUsage ? firstUsage.gallons : "--",
                 endingGallons: lastUsage ? lastUsage.gallons : "--",
