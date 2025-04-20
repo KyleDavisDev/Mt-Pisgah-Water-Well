@@ -44,9 +44,7 @@ export const StyledAccountInfo = styled.div`
   font-size: 14px;
 `;
 
-export const StyledAddressSection = styled.div`
-  margin-bottom: 40px;
-`;
+export const StyledAddressSection = styled.div``;
 
 export const StyledHomeownerInfo = styled.div`
   p {
@@ -55,45 +53,47 @@ export const StyledHomeownerInfo = styled.div`
   }
 `;
 
-export const StyledBillingPeriod = styled.h3`
-  text-align: center;
-  font-size: 18px;
-  margin: 15px 0;
-  font-weight: 600;
-`;
-
 export const StyledChargesSection = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
   margin: 30px 0;
-`;
 
-export const StyledChargeRow = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  padding: 8px 0;
-  font-size: 14px;
-  border-bottom: 1px solid #eee;
+  > div {
+    width: 100%;
 
-  &:last-child {
-    border-bottom: none;
-  }
+    &:not(:last-child) {
+      margin-right: 20px;
+    }
 
-  span:last-child {
-    text-align: right;
+    &:last-child {
+      margin-left: 20px;
+    }
   }
 `;
 
-export const StyledChargeTotalRow = styled.div`
-  font-weight: 600;
-  border-top: 2px solid #333;
-  border-bottom: 2px solid #333;
-  padding: 12px 0;
-  margin-top: 12px;
-`;
+export const StyledCurrentChargesTable = styled.div`
+  div {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
 
-export const StyledChargesTable = styled.div``;
+    &:nth-last-child(2) {
+      border-bottom: none;
+    }
+
+    &:last-child {
+      font-weight: 600;
+      border-top: 2px solid #333;
+      border-bottom: 2px solid #333;
+      padding: 12px 0;
+      margin-top: 4px;
+    }
+  }
+`;
 
 export const StyledUsageTableTitle = styled.h4`
   font-size: 16px;
@@ -110,7 +110,6 @@ export const StyledTable = styled.table`
     padding: 8px;
     text-align: right;
     border: 1px solid #ddd;
-    background: #f8f8f8;
     font-weight: 600;
 
     &:first-child {
@@ -141,7 +140,7 @@ export const StyledCurrentUsage = styled.div`
   background: #f8f8f8;
   padding: 20px;
   border-radius: 4px;
-  margin-bottom: 30px;
+  margin: 25px 0;
 `;
 
 export const StyledUsageContainer = styled.div`
