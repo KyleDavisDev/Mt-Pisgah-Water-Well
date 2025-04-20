@@ -1,8 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
 import postgres from "postgres";
 
-const dbURL = process.env.DATABASE_URL || "";
-const dbKey = process.env.DATABASE_KEY || "";
 const dbHost = process.env.DATABASE_HOST || "";
 const dbPort = process.env.DATABASE_PORT || "";
 const dbName = process.env.DATABASE_NAME || "";
