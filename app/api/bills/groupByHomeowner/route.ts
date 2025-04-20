@@ -50,7 +50,7 @@ export async function GET(req: Request) {
             .map((p: Property) => {
               return {
                 id: p.id.toString(),
-                address: p.address,
+                address: p.street,
                 description: p.description,
                 bills: bills
                   .filter((u: UsageBill) => u.property_id === p.id)
@@ -58,7 +58,7 @@ export async function GET(req: Request) {
                     return {
                       id: u.id.toString(),
                       gallonsUsed: u.gallons_used.toString(),
-                      dateCreated: "2025-01-01",
+                      dateCreated: u.created_at,
                       amountInPennies: u.amount_in_pennies,
                       isActive: u.is_active.toString()
                     };
