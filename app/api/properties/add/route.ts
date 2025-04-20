@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "ADD_PROPERTY");
 
-    const { address, description, homeowner } = await req.json();
+    const { address, city, state, zip, description, homeowner } = await req.json();
 
     if (!address || (description !== null && typeof description !== "string") || !homeowner) {
       return new Response("Missing required fields", { status: 400 });
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     const auditLog = await addAuditTableRecord({
       tableName: "properties",
       recordId: 0, // will update
-      newData: JSON.stringify({ address, description, homeowner, is_active: true }),
+      newData: JSON.stringify({ address, city, state, zip, description, homeowner, is_active: true }),
       actionBy: username,
       actionType: "INSERT"
     });
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
     // Make update in a transaction
     await db.begin(async (db: any) => {
       const record = await db`
-          INSERT into properties (address, description, homeowner_id, is_active)
-          VALUES (${address}, ${description}, (SELECT id FROM homeowners where id = ${homeowner}), true)
+          INSERT into properties (street, city, state, zip, description, homeowner_id, is_active)
+          VALUES (${address}, ${city}, ${state}, ${zip}, ${description}, (SELECT id FROM homeowners where id = ${homeowner}), true)
           returning *;
       `;
 
