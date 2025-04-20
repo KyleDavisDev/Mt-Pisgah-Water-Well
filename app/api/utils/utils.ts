@@ -51,39 +51,6 @@ export const validatePermission = async (username: string, permission: string): 
   return;
 };
 
-export const addAuditTableRecord = async ({
-  tableName,
-  actionType,
-  recordId,
-  oldData,
-  newData,
-  actionBy
-}: {
-  tableName: string;
-  recordId: number;
-  oldData?: string | null;
-  newData?: string | null;
-  actionBy: string;
-  actionType: "INSERT" | "UPDATE" | "DELETE";
-}): Promise<AuditLog> => {
-  try {
-    const record = await db<AuditLog[]>`
-        INSERT into audit_log (table_name, record_id, action_type, old_data, new_data, action_by_id, action_timestamp)
-        VALUES (${tableName}, ${recordId}, ${actionType}, ${oldData ?? null}, ${newData ?? null},
-                (SELECT id from users where username = ${actionBy}), now())
-
-        returning *;
-    `;
-
-    if (!record) throw new Error("Audit log insertion failed: No record returned.");
-
-    return record[0];
-  } catch (e) {
-    console.log("Unable to insert into audit_log table");
-    throw new Error(`Could not insert audit_log record: ${e instanceof Error ? e.message : "Unknown error"}`);
-  }
-};
-
 export const updateAuditTableRecord = async (auditLog: AuditLog): Promise<AuditLog> => {
   try {
     await db`

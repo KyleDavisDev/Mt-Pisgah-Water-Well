@@ -5,10 +5,10 @@ import {
   validatePermission
 } from "../../utils/utils";
 import { cookies } from "next/headers";
-import { addAuditTableRecord } from "../../utils/utils";
 import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
 import { getAllActiveProperties } from "../../repositories/propertiesRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
+import { addAuditTableRecord } from "../../repositories/auditRepository";
 
 export async function POST(req: Request): Promise<Response> {
   if (req.method !== "POST") {

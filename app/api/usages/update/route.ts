@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { db } from "../../utils/db";
-import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../../utils/utils";
+import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { getUsageById } from "../../repositories/usageRepository";
+import { addAuditTableRecord } from "../../repositories/auditRepository";
 
 export async function PUT(req: Request) {
   if (req.method !== "PUT") {

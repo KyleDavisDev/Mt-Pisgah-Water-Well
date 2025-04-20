@@ -1,7 +1,8 @@
 import { db } from "../../utils/db";
-import { addAuditTableRecord, getUsernameFromCookie, validatePermission } from "../../utils/utils";
+import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Usage from "../../models/Usages";
 import { cookies } from "next/headers";
+import { addAuditTableRecord } from "../../repositories/auditRepository";
 
 const toModelAdapter = (usages: any): Usage[] => {
   if (!usages) throw Error("Could not map usages object");
