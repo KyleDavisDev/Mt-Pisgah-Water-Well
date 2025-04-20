@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
 import { db } from "../../utils/db";
-import { getUsernameFromCookie, updateAuditTableRecord, validatePermission } from "../../utils/utils";
+import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { addAuditTableRecord } from "../../repositories/auditRepository";
 
 export async function POST(req: Request) {
