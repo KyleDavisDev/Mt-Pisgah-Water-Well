@@ -1,9 +1,8 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import Users from "../models/Users";
-import User from "../models/Users";
 import { db } from "../utils/db";
 import jwt from "jsonwebtoken";
 import AuditLog from "../models/AuditLogs";
+import { getActiveUserByPermissionAndUsername } from "../repositories/userRepository";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -46,19 +45,9 @@ export const getUsernameFromCookie = async (jwtCookie: RequestCookie | undefined
 };
 
 export const validatePermission = async (username: string, permission: string): Promise<void> => {
-  const userPermissions = await db`
-      SELECT count(*)
-      FROM users u
-               JOIN user_permissions up on u.id = up.user_id
-               JOIN permissions p ON up.permission_id = p.id
-      WHERE (p.value = ${permission} OR p.value = 'ADMIN')
-        AND u.username = ${username}
-        AND u.is_active = true
-        AND up.is_active = true
-        AND p.is_active = true
-  `;
+  const user = await getActiveUserByPermissionAndUsername(permission, username);
 
-  if (userPermissions.length !== 1 || userPermissions[0].count === "0") {
+  if (user === null) {
     throw Error("User does not have sufficient privileges.");
   }
 

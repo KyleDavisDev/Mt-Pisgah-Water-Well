@@ -35,6 +35,35 @@ export const getAllActiveUsersByPermission = async (permissions: string[]): Prom
 };
 
 /**
+ * Retrieve active user by permission and username
+ *
+ * @param permission - The permission to check for
+ * @param username - The username of the user to retrieve
+ * @returns Promise resolving to User or null
+ */
+export const getActiveUserByPermissionAndUsername = async (
+  permission: string,
+  username: string
+): Promise<User | null> => {
+  const users = await db<User[]>`
+      SELECT u.*
+      FROM users u
+               JOIN user_permissions up on u.id = up.user_id
+               JOIN permissions p ON up.permission_id = p.id
+      WHERE (p.value = ${permission} OR p.value = 'ADMIN')
+        AND u.username = ${username}
+        AND u.is_active = true
+        AND up.is_active = true
+        AND p.is_active = true`;
+
+  if (users.length !== 1) {
+    throw new Error(`User not found for username: ${username}`);
+  }
+
+  return users[0];
+};
+
+/**
  * Retrieves a single user from the database by their username.
  *
  * @param username - The username of the user to retrieve.
