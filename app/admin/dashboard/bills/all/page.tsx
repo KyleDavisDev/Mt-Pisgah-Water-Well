@@ -15,6 +15,7 @@ import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import UsageEditModal from "./components/UsageEditModal/UsageEditModal";
 import { billVM, homeownerData } from "./types";
+import { formatISODateToUserFriendlyLocal, formatPenniesToDollars } from "../../util";
 
 const Page = () => {
   const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
@@ -57,22 +58,6 @@ const Page = () => {
   const onModalClose = () => {
     setShowModal(false);
     getBillsByHomeowner();
-  };
-
-  const formatDate = (dateStr: string): string => {
-    try {
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const [year, month, day] = dateStr.split("-");
-      if (!year || !month || !day) throw new Error("Invalid date format");
-      return `${months[parseInt(month, 10) - 1]} ${day}, ${year}`;
-    } catch (e) {
-      console.error("Error formatting date:", e);
-      return "Invalid Date";
-    }
-  };
-
-  const formatAmountToDollars = (amountInPennies: number): string => {
-    return `$${(amountInPennies / 100).toFixed(2)}`;
   };
 
   const sortBillsByDate = (bills: billVM[]): billVM[] => {
@@ -136,9 +121,9 @@ const Page = () => {
                             <tbody>
                               {sortBillsByDate(property.bills).map(bill => (
                                 <tr key={bill.id}>
-                                  <td>{formatDate(bill.dateCreated)}</td>
+                                  <td>{formatISODateToUserFriendlyLocal(bill.dateCreated)}</td>
                                   <td>{bill.gallonsUsed}</td>
-                                  <td>{formatAmountToDollars(bill.amountInPennies)}</td>
+                                  <td>{formatPenniesToDollars(bill.amountInPennies)}</td>
                                   <td style={{ textAlign: "center" }}>
                                     <Button
                                       onClick={() => {
