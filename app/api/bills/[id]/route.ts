@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { getBillById } from "../../repositories/billRepository";
-import { getHomeownerByPropertyId } from "../../repositories/homeownerRepository";
 import { cookies } from "next/headers";
+
+import { getBillById, getRecentActiveBillsByPropertyBeforeBillingMonthYear } from "../../repositories/billRepository";
+import { getHomeownerByPropertyId } from "../../repositories/homeownerRepository";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { getPropertyById } from "../../repositories/propertiesRepository";
 import { getLateFeesByUsageBillId } from "../../repositories/lateFeeRepository";
@@ -23,31 +23,37 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
       return Response.json({ error: "Bill not found" }, { status: 404 });
     }
 
-    // Fetch associated homeowner data
-    const homeowner = await getHomeownerByPropertyId(bill.property_id);
-    if (!homeowner) {
-      return Response.json({ error: "Homeowner not found" }, { status: 404 });
-    }
+    // Fetch associated homeowner data, property address, historical usages, and late fees in parallel
+    const [homeowner, property, historicalUsages, lateFees] = await Promise.all([
+      getHomeownerByPropertyId(bill.property_id),
+      getPropertyById(bill.property_id),
+      getRecentActiveBillsByPropertyBeforeBillingMonthYear(bill.property_id, 12, bill.billing_month, bill.billing_year),
+      getLateFeesByUsageBillId(bill.id)
+    ]);
 
-    // Get property address from homeowner data
-    const property = await getPropertyById(bill.property_id);
-    if (!property) {
-      return Response.json({ error: "Property information not found" }, { status: 404 });
+    if (!homeowner || !property) {
+      return Response.json({ error: "Homeowner and Property info not found" }, { status: 404 });
     }
-
-    const lateFees = await getLateFeesByUsageBillId(bill.id);
 
     return Response.json({
       bill: {
+        id: bill.id,
         amountInPennies: bill.amount_in_pennies,
         formula: {},
         gallonsUsed: bill.gallons_used,
         month: bill.billing_month,
         year: bill.billing_year,
+        createdAt: bill.created_at,
         isActive: bill.is_active
       },
       homeowner: { name: homeowner.name },
-      property: { address: property.address }
+      property: { street: property.street, city: property.city, state: property.state, zip: property.zip },
+      historicalUsage: historicalUsages.map(h => ({
+        month: h.billing_month,
+        year: h.billing_year,
+        gallonsUsed: h.gallons_used,
+        amountInPennies: h.amount_in_pennies
+      }))
     });
   } catch (error) {
     console.error("Error processing bill request:", error);
