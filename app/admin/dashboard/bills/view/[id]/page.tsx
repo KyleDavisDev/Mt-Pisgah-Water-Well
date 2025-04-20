@@ -2,15 +2,13 @@
 
 import React from "react";
 import { generateBillDetails } from "./utils/billGenerator";
-import { billVM } from "./types";
+import { billDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
 import {
   StyledAccountInfo,
   StyledAddressSection,
   StyledBillTemplate,
-  StyledChargeRow,
   StyledChargesSection,
-  StyledChargesTable,
-  StyledChargeTotalRow,
+  StyledCurrentChargesTable,
   StyledCompanyInfo,
   StyledCurrentUsage,
   StyledHeader,
@@ -23,11 +21,13 @@ import {
   StyledUsageTableTitle,
   StyledUsageValue
 } from "./pageStyle";
+import { formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util";
 
 export default function BillView({ params }: { params: { id: string } }) {
-  const [bill, setBill] = React.useState<billVM | null>(null);
-  const [homeownerName, setHomeownerName] = React.useState("");
-  const [propertyAddress, setPropertyAddress] = React.useState("");
+  const [bill, setBill] = React.useState<billDTO | null>(null);
+  const [homeowner, setHomeowner] = React.useState<homeownerDTO | null>(null);
+  const [property, setProperty] = React.useState<propertyDTO | null>(null);
+  const [historicalUsage, setHistoricalUsage] = React.useState<historicalUsageDTO[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -40,8 +40,9 @@ export default function BillView({ params }: { params: { id: string } }) {
         }
         const data = await response.json();
         setBill(data.bill);
-        setHomeownerName(data.homeownerName);
-        setPropertyAddress(data.propertyAddress);
+        setHomeowner(data.homeowner);
+        setProperty(data.property);
+        setHistoricalUsage(data.historicalUsage);
       } catch (err) {
         setError("Failed to load bill details");
         console.error(err);
@@ -63,11 +64,11 @@ export default function BillView({ params }: { params: { id: string } }) {
     return <div>Loading bill details...</div>;
   }
 
-  if (error || !bill) {
+  if (error || !bill || !homeowner || !property || !historicalUsage) {
     return <div>Error loading bill: {error}</div>;
   }
 
-  const billDetails = generateBillDetails(bill, homeownerName, propertyAddress);
+  const billDetails = generateBillDetails(bill, homeowner, property, historicalUsage);
 
   return (
     <StyledBillTemplate>
@@ -83,16 +84,16 @@ export default function BillView({ params }: { params: { id: string } }) {
           <p>Email: {billDetails.waterCompany.email}</p>
         </StyledCompanyInfo>
         <StyledAccountInfo>
-          <p>Account Date: {billDetails.accountDate}</p>
+          <p>Account Date: {billDetails.createdDate}</p>
         </StyledAccountInfo>
       </StyledHeader>
 
       <StyledAddressSection>
         <StyledHomeownerInfo>
           <p>{billDetails.homeowner.name}</p>
-          <p>{billDetails.homeowner.address}</p>
+          <p>{billDetails.property.street}</p>
           <p>
-            {billDetails.homeowner.city}, {billDetails.homeowner.state} {billDetails.homeowner.zip}
+            {billDetails.property.city}, {billDetails.property.state} {billDetails.property.zip}
           </p>
         </StyledHomeownerInfo>
       </StyledAddressSection>
@@ -100,62 +101,67 @@ export default function BillView({ params }: { params: { id: string } }) {
       <StyledCurrentUsage>
         <StyledUsageContainer>
           <StyledUsageItem>
+            <StyledUsageLabel>Period</StyledUsageLabel>
+            <StyledUsageValue>{billDetails.billingPeriod}</StyledUsageValue>
+          </StyledUsageItem>
+          <StyledUsageItem>
             <StyledUsageLabel>Gallons Used</StyledUsageLabel>
             <StyledUsageValue>{billDetails.currentUsage.usage.toLocaleString()}</StyledUsageValue>
           </StyledUsageItem>
           <StyledUsageItem>
             <StyledUsageLabel>Amount Due</StyledUsageLabel>
-            <StyledUsageValue>{billDetails.charges.totalAmount.toFixed(2)}</StyledUsageValue>
+            <StyledUsageValue>{billDetails.charges.totalAmount}</StyledUsageValue>
           </StyledUsageItem>
         </StyledUsageContainer>
       </StyledCurrentUsage>
 
       <StyledChargesSection>
-        <StyledChargesTable>
-          <StyledChargeRow>
-            <span>Base Charge:</span>
-            <span>${billDetails.charges.baseCharge.toFixed(2)}</span>
-          </StyledChargeRow>
-          <StyledChargeRow>
-            <span>Excess Charge:</span>
-            <span>${billDetails.charges.excessCharge.toFixed(2)}</span>
-          </StyledChargeRow>
-          <StyledChargeRow>
-            <span>Late Fee:</span>
-            <span>${billDetails.charges.lateFee.toFixed(2)}</span>
-          </StyledChargeRow>
-          <StyledChargeRow>
-            <span>Other Charges:</span>
-            <span>${billDetails.charges.otherCharges.toFixed(2)}</span>
-          </StyledChargeRow>
-          <StyledChargeRow>
-            <span>Amount Outstanding:</span>
-            <span>${billDetails.charges.amountOutstanding.toFixed(2)}</span>
-          </StyledChargeRow>
-          <StyledChargeTotalRow>
-            <span>Total amount owing:</span>
-            <span>${billDetails.charges.totalAmount.toFixed(2)}</span>
-          </StyledChargeTotalRow>
-        </StyledChargesTable>
+        <div>
+          <StyledUsageTableTitle>This Month</StyledUsageTableTitle>
+          <StyledCurrentChargesTable>
+            <div>
+              <span>Base Charge:</span>
+              <span>{billDetails.charges.baseCharge}</span>
+            </div>
+            <div>
+              <span>Excess Charge:</span>
+              <span>${billDetails.charges.excessCharge.toFixed(2)}</span>
+            </div>
+            <div>
+              <span>Late Fee:</span>
+              <span>${billDetails.charges.lateFee.toFixed(2)}</span>
+            </div>
+            <div>
+              <span>Other Charges:</span>
+              <span>${billDetails.charges.otherCharges.toFixed(2)}</span>
+            </div>
+            <div>
+              <span>Amount Outstanding:</span>
+              <span>${billDetails.charges.amountOutstanding.toFixed(2)}</span>
+            </div>
+            <div>
+              <span>Total amount owing:</span>
+              <span>{billDetails.charges.totalAmount}</span>
+            </div>
+          </StyledCurrentChargesTable>
+        </div>
 
         <div>
-          <StyledUsageTableTitle>Monthly usage figures</StyledUsageTableTitle>
+          <StyledUsageTableTitle>Previous Monthly Usages</StyledUsageTableTitle>
           <StyledTable>
             <thead>
               <tr>
                 <th>Month</th>
-                <th>Start</th>
-                <th>End</th>
                 <th>Usage</th>
+                <th>Amount</th>
               </tr>
             </thead>
             <tbody>
-              {Object.entries(billDetails.monthlyUsageHistory).map(([month, usage], index) => (
-                <StyledTableRow key={month} isEven={index % 2 === 0}>
-                  <td>{month}</td>
-                  <td>{usage.start.toLocaleString()}</td>
-                  <td>{usage.end.toLocaleString()}</td>
-                  <td>{usage.usage.toLocaleString()}</td>
+              {billDetails.monthlyUsageHistory.map((monthlyUsage, index) => (
+                <StyledTableRow key={monthlyUsage.month} isEven={index % 2 === 0}>
+                  <td>{getMonthStrFromMonthIndex(monthlyUsage.month)}</td>
+                  <td>{monthlyUsage.gallonsUsed}</td>
+                  <td>{formatPenniesToDollars(monthlyUsage.amountInPennies)}</td>
                 </StyledTableRow>
               ))}
             </tbody>
