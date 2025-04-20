@@ -1,7 +1,5 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { db } from "../utils/db";
 import jwt from "jsonwebtoken";
-import AuditLog from "../models/AuditLogs";
 import { getActiveUserByPermissionAndUsername } from "../repositories/userRepository";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
@@ -49,27 +47,6 @@ export const validatePermission = async (username: string, permission: string): 
   }
 
   return;
-};
-
-export const updateAuditTableRecord = async (auditLog: AuditLog): Promise<AuditLog> => {
-  try {
-    await db`
-        UPDATE audit_log
-        set table_name       = ${auditLog.table_name},
-            record_id        = ${auditLog.record_id},
-            action_type      = ${auditLog.action_type},
-            old_data         = ${JSON.stringify(auditLog.old_data)},
-            new_data         = ${JSON.stringify(auditLog.new_data)},
-            action_by_id     = ${auditLog.action_by_id},
-            action_timestamp = ${auditLog.action_timestamp}
-        where id = ${auditLog.id}
-    `;
-
-    return auditLog;
-  } catch (e) {
-    console.log("Unable to update audit_log table");
-    throw new Error(`Could not update audit_log record: ${e instanceof Error ? e.message : "Unknown error"}`);
-  }
 };
 
 /**
