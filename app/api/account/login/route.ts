@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { getClientIPFromRequest, getUserAgentFromRequest, getUserByUsername } from "../../utils/utils";
+import { getClientIPFromRequest, getUserAgentFromRequest } from "../../utils/utils";
 import { db } from "../../utils/db";
+import { getUserByUsername } from "../../repositories/userRepository";
 
 const pwConcat = process.env.PASSWORD_CONCAT;
 const saltRounds = process.env.SALT_ROUNDS;

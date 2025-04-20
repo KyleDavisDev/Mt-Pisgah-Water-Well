@@ -1,6 +1,7 @@
 import { db } from "../../utils/db";
 import bcrypt from "bcrypt";
-import { addAuditTableRecord, getUserByUsername } from "../../utils/utils";
+import { addAuditTableRecord } from "../../utils/utils";
+import { getUserByUsername } from "../../repositories/userRepository";
 
 const pwConcat = process.env.PASSWORD_CONCAT;
 const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
