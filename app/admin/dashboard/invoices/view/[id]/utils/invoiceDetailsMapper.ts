@@ -1,4 +1,4 @@
-import { invoiceDTO, BillDetails, homeownerDTO, propertyDTO, historicalUsageDTO } from "../types";
+import { invoiceDTO, InvoiceDetails, homeownerDTO, propertyDTO, historicalUsageDTO } from "../types";
 import { formatISODateToUserFriendlyLocal, formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../../util";
 
 const WATER_COMPANY_INFO = {
@@ -12,12 +12,12 @@ const WATER_COMPANY_INFO = {
   email: "mduarte242yahoo.com"
 };
 
-export const generateBillDetails = (
+export const InvoiceDetailsMapper = (
   invoice: invoiceDTO,
   homeowner: homeownerDTO,
   property: propertyDTO,
   historicalUsage: historicalUsageDTO[]
-): BillDetails => {
+): InvoiceDetails => {
   const sortedMonthlyUsageHistory = historicalUsage.sort((a, b) =>
     b.year !== a.year ? b.year - a.year : b.month - a.month
   );
