@@ -2,7 +2,7 @@
 
 import React from "react";
 import { generateBillDetails } from "./utils/billGenerator";
-import { BillDetails, billDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
+import { BillDetails, invoiceDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
 import {
   StyledAccountInfo,
   StyledAddressSection,
@@ -26,7 +26,7 @@ import { formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util
 import Image from "next/image";
 
 export default function BillView({ params }: { params: { id: string } }) {
-  const [bill, setBill] = React.useState<billDTO | null>(null);
+  const [bill, setBill] = React.useState<invoiceDTO | null>(null);
   const [homeowner, setHomeowner] = React.useState<homeownerDTO | null>(null);
   const [property, setProperty] = React.useState<propertyDTO | null>(null);
   const [historicalUsage, setHistoricalUsage] = React.useState<historicalUsageDTO[] | null>(null);
