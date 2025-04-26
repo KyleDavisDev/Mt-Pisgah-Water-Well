@@ -41,7 +41,7 @@ const Page = () => {
       })
       .catch(error => {
         console.error("Error fetching data:", error);
-        setError("Failed to load bills. Please try again later.");
+        setError("Failed to load invoices. Please try again later.");
       })
       .finally(() => {
         setIsLoading(false);
@@ -60,8 +60,8 @@ const Page = () => {
     getInvoicesByHomeowner();
   };
 
-  const sortInvoicesByDate = (bills: invoiceDTO[]): invoiceDTO[] => {
-    return [...bills].sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
+  const sortInvoicesByDate = (invoices: invoiceDTO[]): invoiceDTO[] => {
+    return [...invoices].sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
   };
 
   if (isLoading) {
@@ -119,15 +119,15 @@ const Page = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {sortInvoicesByDate(property.invoices).map(bill => (
-                                <tr key={bill.id}>
-                                  <td>{formatISODateToUserFriendlyLocal(bill.dateCreated)}</td>
-                                  <td>{bill.gallonsUsed}</td>
-                                  <td>{formatPenniesToDollars(bill.amountInPennies)}</td>
+                              {sortInvoicesByDate(property.invoices).map(invoice => (
+                                <tr key={invoice.id}>
+                                  <td>{formatISODateToUserFriendlyLocal(invoice.dateCreated)}</td>
+                                  <td>{invoice.gallonsUsed}</td>
+                                  <td>{formatPenniesToDollars(invoice.amountInPennies)}</td>
                                   <td style={{ textAlign: "center" }}>
                                     <Button
                                       onClick={() => {
-                                        setActiveUsage(bill);
+                                        setActiveUsage(invoice);
                                         setShowModal(true);
                                       }}
                                     >
@@ -135,7 +135,7 @@ const Page = () => {
                                     </Button>
                                     <Button
                                       onClick={() => {
-                                        window.open(`/admin/dashboard/invoices/view/${bill.id}`, "_blank");
+                                        window.open(`/admin/dashboard/invoices/view/${invoice.id}`, "_blank");
                                       }}
                                     >
                                       Print Invoice
