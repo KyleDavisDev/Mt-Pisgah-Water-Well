@@ -13,11 +13,17 @@ export interface MonthlyUsage {
 
 export interface BillCharges {
   baseCharge: string;
-  excessCharge: number;
+  excessUsageCharge: number;
   lateFee: number;
   otherCharges: number;
   amountOutstanding: number;
   totalAmount: string;
+  formula: {
+    description: string;
+    baseFeeInPennies: number;
+    baseGallons: number;
+    usageRateInPennies: number;
+  };
 }
 
 export interface WaterCompanyInfo {
@@ -49,7 +55,7 @@ export interface BillDetails {
   waterCompany: WaterCompanyInfo;
   homeowner: HomeownerInfo;
   property: PropertyInfo;
-  charges: BillCharges;
+  bill: BillCharges;
   currentUsage: BillUsage;
   monthlyUsageHistory: MonthlyUsage[];
 }
@@ -57,8 +63,13 @@ export interface BillDetails {
 export interface billDTO {
   id: string;
   amountInPennies: number;
-  formula: any;
-  gallonsUsed: string;
+  formula: {
+    description: string;
+    baseFeeInPennies: number;
+    baseGallons: number;
+    usageRateInPennies: number;
+  };
+  gallonsUsed: number;
   month: number;
   year: number;
   isActive: boolean;
