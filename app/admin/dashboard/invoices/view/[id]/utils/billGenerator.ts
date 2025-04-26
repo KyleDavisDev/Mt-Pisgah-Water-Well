@@ -23,7 +23,10 @@ export const generateBillDetails = (
   );
 
   const baseCharge = invoice.formula.baseFeeInPennies;
-  const excessUsageCharge = (invoice.gallonsUsed - invoice.formula.baseGallons) * invoice.formula.usageRateInPennies;
+  const excessUsageCharge =
+    invoice.gallonsUsed > invoice.formula.baseGallons
+      ? (invoice.gallonsUsed - invoice.formula.baseGallons) * invoice.formula.usageRateInPennies
+      : 0;
   const lateFee = 0;
   const otherCharges = 0;
   const amountOutstanding = 0;
