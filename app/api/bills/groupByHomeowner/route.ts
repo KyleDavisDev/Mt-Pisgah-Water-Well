@@ -4,8 +4,8 @@ import Property from "../../models/Properties";
 import { cookies } from "next/headers";
 import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
 import { getAllActivePropertiesByHomeownerIdIn } from "../../repositories/propertiesRepository";
-import { getBillsByPropertyIds } from "../../repositories/billRepository";
-import UsageBill from "../../models/UsageBill";
+import { getInvoicesByPropertyIds } from "../../repositories/invoiceRepository";
+import Invoice from "../../models/Invoice";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
@@ -35,7 +35,7 @@ export async function GET(req: Request) {
 
     // Fetch latest usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const bills = await getBillsByPropertyIds(propertyIds);
+    const bills = await getInvoicesByPropertyIds(propertyIds);
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
@@ -53,8 +53,8 @@ export async function GET(req: Request) {
                 address: p.street,
                 description: p.description,
                 bills: bills
-                  .filter((u: UsageBill) => u.property_id === p.id)
-                  .map((u: UsageBill) => {
+                  .filter((u: Invoice) => u.property_id === p.id)
+                  .map((u: Invoice) => {
                     return {
                       id: u.id.toString(),
                       gallonsUsed: u.gallons_used.toString(),
