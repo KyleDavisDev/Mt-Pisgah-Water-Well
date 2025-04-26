@@ -22,8 +22,8 @@ export const generateBillDetails = (
     b.year !== a.year ? b.year - a.year : b.month - a.month
   );
 
-  const baseCharge = bill.amountInPennies;
-  const excessCharge = 0;
+  const baseCharge = bill.formula.baseFeeInPennies;
+  const excessUsageCharge = (bill.gallonsUsed - bill.formula.baseGallons) * bill.formula.usageRateInPennies;
   const lateFee = 0;
   const otherCharges = 0;
   const amountOutstanding = 0;
@@ -37,18 +37,24 @@ export const generateBillDetails = (
       name: homeowner.name
     },
     property: { ...property },
-    charges: {
-      totalAmount: formatPenniesToDollars(baseCharge + excessCharge + lateFee + otherCharges + amountOutstanding),
-      baseCharge: formatPenniesToDollars(bill.amountInPennies),
-      excessCharge,
+    bill: {
+      totalAmount: formatPenniesToDollars(baseCharge + excessUsageCharge + lateFee + otherCharges + amountOutstanding),
+      baseCharge: formatPenniesToDollars(bill.formula.baseFeeInPennies),
+      excessUsageCharge: excessUsageCharge,
       lateFee,
       otherCharges,
-      amountOutstanding
+      amountOutstanding,
+      formula: {
+        baseFeeInPennies: bill.formula.baseFeeInPennies,
+        baseGallons: bill.formula.baseGallons,
+        description: bill.formula.description,
+        usageRateInPennies: bill.formula.usageRateInPennies
+      }
     },
     currentUsage: {
       start: 0, // These would need to come from actual meter readings
-      end: parseInt(bill.gallonsUsed),
-      usage: parseInt(bill.gallonsUsed)
+      end: bill.gallonsUsed,
+      usage: bill.gallonsUsed
     },
     monthlyUsageHistory: sortedMonthlyUsageHistory
   };
