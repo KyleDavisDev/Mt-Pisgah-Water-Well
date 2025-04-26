@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { generateBillDetails } from "./utils/billGenerator";
-import { BillDetails, invoiceDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
+import { InvoiceDetailsMapper } from "./utils/invoiceDetailsMapper";
+import { InvoiceDetails, invoiceDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
 import {
   StyledAccountInfo,
   StyledAddressSection,
@@ -34,7 +34,7 @@ export default function BillView({ params }: { params: { id: string } }) {
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const fetchBillById = async () => {
+    const fetchInvoiceById = async () => {
       try {
         const response = await fetch(`/api/invoices/${params.id}`);
         if (!response.ok) {
@@ -53,7 +53,7 @@ export default function BillView({ params }: { params: { id: string } }) {
       }
     };
 
-    fetchBillById();
+    fetchInvoiceById();
   }, [params.id]);
 
   React.useEffect(() => {
@@ -63,14 +63,14 @@ export default function BillView({ params }: { params: { id: string } }) {
   }, [bill, isLoading, error]);
 
   if (isLoading) {
-    return <div>Loading bill details...</div>;
+    return <StyledBillTemplate>Loading bill details...</StyledBillTemplate>;
   }
 
   if (error || !bill || !homeowner || !property || !historicalUsage) {
-    return <div>Error loading bill: {error}</div>;
+    return <StyledBillTemplate>Error loading bill: {error}</StyledBillTemplate>;
   }
 
-  const billDetails: BillDetails = generateBillDetails(bill, homeowner, property, historicalUsage);
+  const billDetails: InvoiceDetails = InvoiceDetailsMapper(bill, homeowner, property, historicalUsage);
 
   return (
     <StyledBillTemplate>
