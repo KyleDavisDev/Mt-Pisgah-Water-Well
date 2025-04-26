@@ -27,15 +27,15 @@ const Dot = styled.span<{
   border-radius: 50%;
   width: ${props => props.size}px;
   height: ${props => props.size}px;
-
-  ${props =>
-    props.position &&
-    `
+  margin-right: 8px
+    ${props =>
+      props.position &&
+      `
     position: absolute;
     ${props.position.includes("top") ? "top: 0;" : "bottom: 0;"}
     ${props.position.includes("right") ? "right: 0;" : "left: 0;"}
     transform: translate(50%, -50%);
-  `}
+  `};
 `;
 
 export const NotificationDot: React.FC<NotificationDotProps> = ({
