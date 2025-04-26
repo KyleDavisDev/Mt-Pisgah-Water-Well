@@ -9,6 +9,10 @@ import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositori
 import { getAllActiveProperties } from "../../repositories/propertiesRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
 import { addAuditTableRecord } from "../../repositories/auditRepository";
+import {
+  getActiveInvoiceByYearAndMonthAndPropertyIn,
+  insertNewInvoiceAsTransactional
+} from "../../repositories/invoiceRepository";
 
 export async function POST(req: Request): Promise<Response> {
   if (req.method !== "POST") {
@@ -54,14 +58,9 @@ export async function POST(req: Request): Promise<Response> {
       const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
 
       // Check if bill already exists
-      const existing = await db`
-          SELECT *
-          FROM usage_bill
-          WHERE property_id = ${property.id}
-            AND billing_month = ${parseInt(month)}
-            AND billing_year = ${parseInt(year)}
-            AND is_active = true
-      `;
+      const existing = await getActiveInvoiceByYearAndMonthAndPropertyIn(parseInt(year), parseInt(month), [
+        property.id
+      ]);
 
       if (existing.length > 0) continue;
 
@@ -72,12 +71,12 @@ export async function POST(req: Request): Promise<Response> {
         billing_year: parseInt(year),
         gallons_used: gallonsUsed,
         amount_in_pennies: formula.calculate(gallonsUsed),
-        formula_used: `${formula.name}||${formula.description}`,
+        formula_used: `${formula.name}`,
         is_active: true
       };
 
       const auditLog = await addAuditTableRecord({
-        tableName: "usage_bill",
+        tableName: "invoices",
         recordId: 0,
         newData: JSON.stringify(newData),
         actionBy: username,
@@ -87,14 +86,7 @@ export async function POST(req: Request): Promise<Response> {
       if (!auditLog) continue;
 
       await db.begin(async db => {
-        const inserted = await db`
-            INSERT INTO usage_bill (property_id, billing_month, billing_year, gallons_used, amount_in_pennies,
-                                    formula_used, is_active)
-            VALUES (${newData.property_id}, ${newData.billing_month}, ${newData.billing_year},
-                    ${newData.gallons_used}, ${newData.amount_in_pennies},
-                    ${newData.formula_used}, ${newData.is_active})
-            RETURNING *;
-        `;
+        const inserted = await insertNewInvoiceAsTransactional(db, newData);
 
         await db`
             UPDATE audit_log
