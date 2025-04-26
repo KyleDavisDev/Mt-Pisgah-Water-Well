@@ -1,5 +1,7 @@
 export interface invoiceDTO {
   id: string;
+  month: number;
+  year: number;
   amountInPennies: number;
   dateCreated: string;
   gallonsUsed: string;
