@@ -1,5 +1,8 @@
+type invoiceStatusDTO = "PENDING" | "PAID" | "LATE" | "LATE_PAID" | "CANCELLED";
+
 export interface invoiceDTO {
   id: string;
+  status: invoiceStatusDTO;
   month: number;
   year: number;
   amountInPennies: number;
