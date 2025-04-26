@@ -81,7 +81,7 @@ const Page = () => {
           <StyledWellContainer>
             <Well>
               <h3>All Homeowners</h3>
-              <StyledFormContainer>Loading bill details...</StyledFormContainer>
+              <StyledFormContainer>Loading...</StyledFormContainer>
             </Well>
           </StyledWellContainer>
         </Article>
