@@ -15,7 +15,6 @@ export const StyledBillTemplate = styled.div`
   box-sizing: border-box;
 
   @media print {
-    padding: 40px;
     width: 100%;
     min-height: auto;
     box-shadow: none;
