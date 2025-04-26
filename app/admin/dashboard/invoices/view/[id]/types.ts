@@ -48,7 +48,7 @@ export interface PropertyInfo {
   zip: string;
 }
 
-export interface BillDetails {
+export interface InvoiceDetails {
   id: string;
   createdDate: string;
   billingPeriod: string;
