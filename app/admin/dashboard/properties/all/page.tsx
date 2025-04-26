@@ -97,6 +97,21 @@ const page = () => {
     getProperties();
   };
 
+  if (!initialized.current) {
+    return (
+      <StyledContainer>
+        <Article size="md">
+          <StyledWellContainer>
+            <Well>
+              <h3>All Properties</h3>
+              <StyledFormContainer>Loading...</StyledFormContainer>
+            </Well>
+          </StyledWellContainer>
+        </Article>
+      </StyledContainer>
+    );
+  }
+
   return (
     <StyledContainer>
       <Article size="lg">
