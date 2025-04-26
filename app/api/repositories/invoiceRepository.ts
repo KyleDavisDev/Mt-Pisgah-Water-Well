@@ -1,5 +1,5 @@
 import { db } from "../utils/db";
-import UsageBill from "../models/UsageBill";
+import Invoice from "../models/Invoice";
 
 /**
  * Retrieves all usage bills for the given list of property IDs.
@@ -7,17 +7,15 @@ import UsageBill from "../models/UsageBill";
  * @param propertyIds - An array of property IDs to filter by.
  * @returns A Promise resolving to an array of UsageBill records sorted by billing year and month (desc).
  */
-export const getBillsByPropertyIds = async (propertyIds: number[]): Promise<UsageBill[]> => {
+export const getInvoicesByPropertyIds = async (propertyIds: number[]): Promise<Invoice[]> => {
   if (!propertyIds || propertyIds.length === 0) return [];
 
-  const bills = await db<UsageBill[]>`
-      SELECT *
-      FROM usage_bill
+  return db<Invoice[]>`
+      SELECT *x
+      FROM invoices
       WHERE property_id IN ${db(propertyIds)}
       ORDER BY billing_year DESC, billing_month DESC;
   `;
-
-  return bills;
 };
 
 /**
@@ -27,18 +25,18 @@ export const getBillsByPropertyIds = async (propertyIds: number[]): Promise<Usag
  * @param {number} month - The billing month (1–12).
  * @param {number[]} propertyIds - List of property IDs to filter against.
  *
- * @returns {Promise<UsageBill[]>} A promise that resolves to an array of matching usage bills.
+ * @returns {Promise<Invoice[]>} A promise that resolves to an array of matching usage bills.
  */
-export const getActiveUsageBillsForYearAndMonthAndPropertyIn = async (
+export const getActiveInvoiceByYearAndMonthAndPropertyIn = async (
   year: number,
   month: number,
   propertyIds: number[]
-): Promise<UsageBill[]> => {
+): Promise<Invoice[]> => {
   if (!Array.isArray(propertyIds) || propertyIds.length === 0) return [];
 
-  const bills = await db<UsageBill[]>`
+  const bills = await db<Invoice[]>`
       SELECT *
-      FROM usage_bill
+      FROM invoices
       WHERE billing_year = ${year}
         AND billing_month = ${month}
         AND is_active = true
@@ -52,12 +50,12 @@ export const getActiveUsageBillsForYearAndMonthAndPropertyIn = async (
  * Retrieves a single usage bill by its unique identifier.
  *
  * @param {string} id - The unique identifier of the bill to retrieve.
- * @returns {Promise<UsageBill | null>} A promise that resolves to the usage bill if found, or null if not found.
+ * @returns {Promise<Invoice | null>} A promise that resolves to the usage bill if found, or null if not found.
  */
-export const getBillById = async (id: string): Promise<UsageBill | null> => {
+export const getInvoiceById = async (id: string): Promise<Invoice | null> => {
   if (!id) return null;
 
-  const [bill] = await db<UsageBill[]>`
+  const [bill] = await db<Invoice[]>`
       SELECT id,
              property_id,
              billing_month,
@@ -67,7 +65,7 @@ export const getBillById = async (id: string): Promise<UsageBill | null> => {
              amount_in_pennies,
              created_at,
              is_active
-      FROM usage_bill
+      FROM invoices
       WHERE id = ${id}
       LIMIT 1;
   `;
@@ -83,19 +81,19 @@ export const getBillById = async (id: string): Promise<UsageBill | null> => {
  * @param {number} limit - The maximum number of usage bills to retrieve.
  * @param {number} billingMonth - The cutoff billing month (1–12).
  * @param {number} billingYear - The cutoff billing year (e.g. 2025).
- * @returns {Promise<UsageBill[]>} A promise that resolves to an array of usage bills.
+ * @returns {Promise<Invoice[]>} A promise that resolves to an array of usage bills.
  */
-export const getRecentActiveBillsByPropertyBeforeBillingMonthYear = async (
+export const getRecentActiveInvoicesByPropertyBeforeBillingMonthYear = async (
   propertyId: number,
   limit: number,
   billingMonth: number,
   billingYear: number
-): Promise<UsageBill[]> => {
+): Promise<Invoice[]> => {
   if (!limit || limit <= 0 || billingMonth < 1 || billingMonth > 12 || billingYear < 0) return [];
 
-  const bills = await db<UsageBill[]>`
+  const bills = await db<Invoice[]>`
       SELECT *
-      FROM usage_bill
+      FROM invoices
       WHERE is_active = true
         AND property_id = ${propertyId}
         AND (
