@@ -3,11 +3,14 @@ import styled from "../../../../theme/styled-components";
 export const StyledSideBarContainer = styled.div`
   display: flex;
   flex-direction: column;
-
   width: 100%;
   max-width: 300px;
   background-color: ${props => props.theme.white};
   box-shadow: rgba(44, 51, 73, 0.1) 0px 0.5rem 1rem 0px;
+
+  @media print {
+    display: none !important;
+  }
 `;
 
 export const StyledIconContainer = styled.div`
