@@ -7,7 +7,6 @@ import {
 import { getHomeownerByPropertyId } from "../../repositories/homeownerRepository";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { getPropertyById } from "../../repositories/propertiesRepository";
-import { getLateFeesByUsageBillId } from "../../repositories/lateFeeRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
 
 export async function GET(req: Request, { params }: { params: { id: string } }): Promise<Response> {
@@ -37,7 +36,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
         bill.billing_month,
         bill.billing_year
       ),
-      getLateFeesByUsageBillId(bill.id)
+      Promise.resolve(() => 0) // TODO: late fees
     ]);
 
     if (!homeowner || !property) {
