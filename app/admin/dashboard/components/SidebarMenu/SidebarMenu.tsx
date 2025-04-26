@@ -66,10 +66,10 @@ const SidebarMenu = () => {
               <Link href={"/admin/dashboard/usages/add"}>Add By order</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <Link href={"/admin/dashboard/bills/all"}>View All Bills</Link>
+              <Link href={"/admin/dashboard/invoices/all"}>View All Bills</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <Link href={"/admin/dashboard/bills/add"}>Generate Monthly Bills</Link>
+              <Link href={"/admin/dashboard/invoices/add"}>Generate Monthly Bills</Link>
             </StyledSubMenuItemContainer>
           </>
         )}
