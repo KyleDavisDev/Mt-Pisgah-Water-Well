@@ -35,7 +35,7 @@ export async function GET(req: Request) {
 
     // Fetch latest usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const bills = await getInvoicesByPropertyIds(propertyIds);
+    const invoices = await getInvoicesByPropertyIds(propertyIds);
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
@@ -52,7 +52,7 @@ export async function GET(req: Request) {
                 id: p.id.toString(),
                 address: p.street,
                 description: p.description,
-                bills: bills
+                invoices: invoices
                   .filter((u: Invoice) => u.property_id === p.id)
                   .map((u: Invoice) => {
                     return {
