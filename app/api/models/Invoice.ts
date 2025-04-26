@@ -7,5 +7,6 @@ export default interface Invoice {
   formula_used: string;
   amount_in_pennies: number;
   created_at: string; // ISO 8601 timestamp
+  status: string;
   is_active: boolean;
 }
