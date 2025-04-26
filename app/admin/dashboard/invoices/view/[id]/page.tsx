@@ -36,7 +36,7 @@ export default function BillView({ params }: { params: { id: string } }) {
   React.useEffect(() => {
     const fetchBillById = async () => {
       try {
-        const response = await fetch(`/api/bills/${params.id}`);
+        const response = await fetch(`/api/invoices/${params.id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch bill");
         }

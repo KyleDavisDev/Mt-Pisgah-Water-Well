@@ -29,7 +29,7 @@ const Page = () => {
     setIsLoading(true);
     setError(null);
 
-    fetch(`/api/bills/groupByHomeowner`, { method: "GET" })
+    fetch(`/api/invoices/groupByHomeowner`, { method: "GET" })
       .then(response => {
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.statusText}`);
@@ -135,10 +135,10 @@ const Page = () => {
                                     </Button>
                                     <Button
                                       onClick={() => {
-                                        window.open(`/admin/dashboard/bills/view/${bill.id}`, "_blank");
+                                        window.open(`/admin/dashboard/invoices/view/${bill.id}`, "_blank");
                                       }}
                                     >
-                                      Print Bill
+                                      Print Invoice
                                     </Button>
                                   </td>
                                 </tr>

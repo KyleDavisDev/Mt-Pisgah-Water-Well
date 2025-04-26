@@ -80,7 +80,7 @@ const Page = () => {
         year: selectedYear
       };
 
-      const response = await fetch("/api/bills/add", {
+      const response = await fetch("/api/invoices/add", {
         method: "POST",
         body: JSON.stringify(body)
       });
