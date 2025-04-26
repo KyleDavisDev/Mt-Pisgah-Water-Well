@@ -10,6 +10,10 @@ const StyledDiv = styled.div`
   width: 100%;
   min-height: 100vh;
   color: ${props => props.theme.siteFontColor};
+
+  @media print {
+    background-color: white;
+  }
 `;
 
 interface LayoutProps {

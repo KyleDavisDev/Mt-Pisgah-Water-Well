@@ -16,7 +16,7 @@ export const StyledBillTemplate = styled.div`
 
   @media print {
     width: 100%;
-    min-height: auto;
+    min-height: 100vh;
     box-shadow: none;
   }
 `;

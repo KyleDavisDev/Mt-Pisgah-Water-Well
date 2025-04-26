@@ -40,6 +40,10 @@ const GlobalStyle = createGlobalStyle`
         background-color: rgb(237, 241, 247);
         font-family: AvenirNextReg;
         font-size: 16px;
+      
+      @media print {
+        background-color: white;
+      }
     }
 
     h1, h2, h3, h4, h5, h6 {
