@@ -41,6 +41,16 @@ export const getMonthStrFromMonthIndex = (index: number): string => {
 };
 
 /**
+ * Capitalizes the first letter of the given string.
+ *
+ * @param {string} word - The input string to modify.
+ * @returns {string} A new string with the first letter capitalized and the rest of the characters unchanged.
+ */
+export const capitalizeFirstLetterAndLowercaseRest = (word: string): string => {
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+};
+
+/**
  * Formats an amount in pennies into a dollar string.
  * Example: 12345 (pennies) -> "$123.45".
  *
