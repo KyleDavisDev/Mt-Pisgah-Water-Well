@@ -13,7 +13,7 @@ import {
 import Well from "../../../../components/Well/Well";
 import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
-import UsageEditModal from "./components/UsageEditModal/UsageEditModal";
+import InvoiceEditModal from "./components/InvoiceEditModal/InvoiceEditModal";
 import { invoiceDTO, homeownerData } from "./types";
 import { formatISODateToUserFriendlyLocal, formatPenniesToDollars } from "../../util";
 
@@ -131,14 +131,14 @@ const Page = () => {
                                         setShowModal(true);
                                       }}
                                     >
-                                      View Details
+                                      Edit
                                     </Button>
                                     <Button
                                       onClick={() => {
                                         window.open(`/admin/dashboard/invoices/view/${invoice.id}`, "_blank");
                                       }}
                                     >
-                                      Print Invoice
+                                      View Invoice
                                     </Button>
                                   </td>
                                 </tr>
@@ -157,7 +157,7 @@ const Page = () => {
               )}
 
               {showModal && activeUsage && (
-                <UsageEditModal showModal={showModal} usage={{ ...activeUsage }} onModalClose={onModalClose} />
+                <InvoiceEditModal showModal={showModal} invoice={{ ...activeUsage }} onModalClose={onModalClose} />
               )}
             </StyledFormContainer>
           </Well>

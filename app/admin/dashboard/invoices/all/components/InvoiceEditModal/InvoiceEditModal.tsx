@@ -4,23 +4,22 @@ import React from "react";
 
 import { StyledFooterDivs } from "../../../../homeowners/all/pageStyle";
 import { invoiceDTO } from "../../types";
-import { TextInput } from "../../../../../../components/TextInput/TextInput";
 import { Button } from "../../../../../../components/Button/Button";
 import { Modal } from "../../../../../../components/Modal/Modal";
 import { FlashMessage, FlashMessageProps } from "../../../../../../components/FlashMessage/FlashMessage";
 import { RadioButton } from "../../../../../../components/RadioButton/RadioButton";
 import Label from "../../../../../../components/Label/Label";
 
-export interface UsageEditModalProps {
+export interface InvoiceEditModalProps {
   showModal: boolean;
-  usage: invoiceDTO;
+  invoice: invoiceDTO;
   onModalClose: () => void;
 }
 
-const UsageEditModal = (props: UsageEditModalProps) => {
-  const [id, setId] = React.useState(props.usage.id);
-  const [gallons, setGallons] = React.useState(props.usage.gallonsUsed);
-  const [isActive, setIsActive] = React.useState(props.usage.isActive);
+const InvoiceEditModal = (props: InvoiceEditModalProps) => {
+  const [id, setId] = React.useState(props.invoice.id);
+  const [gallons, setGallons] = React.useState(props.invoice.gallonsUsed);
+  const [isActive, setIsActive] = React.useState(props.invoice.isActive);
   const [loading, setLoading] = React.useState(false);
 
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
@@ -97,17 +96,7 @@ const UsageEditModal = (props: UsageEditModalProps) => {
         )}
 
         <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-          <TextInput
-            onChange={e => setGallons(e.target.value)}
-            value={gallons}
-            type={"text"}
-            id={"gallons"}
-            showLabel={true}
-            label={"Gallons"}
-            name={"gallons"}
-            required={false}
-          />
-
+          What should be editable?
           <Label>Active</Label>
           <RadioButton
             onClick={() => setIsActive("true")}
@@ -125,7 +114,6 @@ const UsageEditModal = (props: UsageEditModalProps) => {
             label={"No"}
             value={"No"}
           />
-
           <StyledFooterDivs>
             <Button type="submit" fullWidth disabled={loading}>
               {loading ? "Saving..." : "Save"}
@@ -137,4 +125,4 @@ const UsageEditModal = (props: UsageEditModalProps) => {
   );
 };
 
-export default UsageEditModal;
+export default InvoiceEditModal;
