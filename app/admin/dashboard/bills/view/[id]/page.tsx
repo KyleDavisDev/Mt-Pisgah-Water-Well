@@ -2,7 +2,7 @@
 
 import React from "react";
 import { generateBillDetails } from "./utils/billGenerator";
-import { billDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
+import { BillDetails, billDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
 import {
   StyledAccountInfo,
   StyledAddressSection,
@@ -70,7 +70,7 @@ export default function BillView({ params }: { params: { id: string } }) {
     return <div>Error loading bill: {error}</div>;
   }
 
-  const billDetails = generateBillDetails(bill, homeowner, property, historicalUsage);
+  const billDetails: BillDetails = generateBillDetails(bill, homeowner, property, historicalUsage);
 
   return (
     <StyledBillTemplate>
@@ -90,6 +90,7 @@ export default function BillView({ params }: { params: { id: string } }) {
         </StyledCompanyInfo>
         <StyledAccountInfo>
           <p>Invoice Created On: {billDetails.createdDate}</p>
+          <p>Invoice Number: {billDetails.id}</p>
         </StyledAccountInfo>
       </StyledHeader>
 
@@ -115,7 +116,7 @@ export default function BillView({ params }: { params: { id: string } }) {
           </StyledUsageItem>
           <StyledUsageItem>
             <StyledUsageLabel>Amount Due</StyledUsageLabel>
-            <StyledUsageValue>{billDetails.charges.totalAmount}</StyledUsageValue>
+            <StyledUsageValue>{billDetails.bill.totalAmount}</StyledUsageValue>
           </StyledUsageItem>
         </StyledUsageContainer>
       </StyledCurrentUsage>
@@ -125,28 +126,28 @@ export default function BillView({ params }: { params: { id: string } }) {
           <StyledUsageTableTitle>This Month</StyledUsageTableTitle>
           <StyledCurrentChargesTable>
             <div>
-              <span>Base Charge:</span>
-              <span>{billDetails.charges.baseCharge}</span>
+              <span>Base Charge ({billDetails.bill.formula.baseGallons}):</span>
+              <span>{billDetails.bill.baseCharge}</span>
             </div>
             <div>
               <span>Excess Charge:</span>
-              <span>${billDetails.charges.excessCharge.toFixed(2)}</span>
+              <span>${billDetails.bill.excessUsageCharge.toFixed(2)}</span>
             </div>
             <div>
               <span>Late Fee:</span>
-              <span>${billDetails.charges.lateFee.toFixed(2)}</span>
+              <span>${billDetails.bill.lateFee.toFixed(2)}</span>
             </div>
             <div>
               <span>Other Charges:</span>
-              <span>${billDetails.charges.otherCharges.toFixed(2)}</span>
+              <span>${billDetails.bill.otherCharges.toFixed(2)}</span>
             </div>
             <div>
               <span>Amount Outstanding:</span>
-              <span>${billDetails.charges.amountOutstanding.toFixed(2)}</span>
+              <span>${billDetails.bill.amountOutstanding.toFixed(2)}</span>
             </div>
             <div>
               <span>Total amount owing:</span>
-              <span>{billDetails.charges.totalAmount}</span>
+              <span>{billDetails.bill.totalAmount}</span>
             </div>
           </StyledCurrentChargesTable>
         </div>
