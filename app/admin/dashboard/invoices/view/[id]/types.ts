@@ -60,7 +60,7 @@ export interface BillDetails {
   monthlyUsageHistory: MonthlyUsage[];
 }
 
-export interface billDTO {
+export interface invoiceDTO {
   id: string;
   amountInPennies: number;
   formula: {
