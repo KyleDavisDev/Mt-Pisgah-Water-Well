@@ -7,6 +7,7 @@ import Well from "../../../../components/Well/Well";
 import { Button } from "../../../../components/Button/Button";
 import { Article } from "../../../../components/Article/Article";
 import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
+import { StyledBillTemplate } from "../../invoices/view/[id]/pageStyle";
 
 export interface homeownerVM {
   name: string;
@@ -73,6 +74,21 @@ const Page = () => {
     }
   }, []);
 
+  if (!initialized.current) {
+    return (
+      <StyledContainer>
+        <Article size="md">
+          <StyledWellContainer>
+            <Well>
+              <h3>All Homeowners</h3>
+              <StyledFormContainer>Loading bill details...</StyledFormContainer>
+            </Well>
+          </StyledWellContainer>
+        </Article>
+      </StyledContainer>
+    );
+  }
+
   return (
     <StyledContainer>
       <Article size="md">
@@ -87,7 +103,7 @@ const Page = () => {
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Address</th>
+                        <th>Mailing Address</th>
                         <th>Email</th>
                         <th></th>
                       </tr>
@@ -129,7 +145,7 @@ const Page = () => {
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Address</th>
+                        <th>Mailing Address</th>
                         <th>Email</th>
                         <th></th>
                       </tr>
