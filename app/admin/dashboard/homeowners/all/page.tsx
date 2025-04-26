@@ -6,6 +6,7 @@ import HomeownerEditModal from "./components/HomeownerEditModal/HomeownerEditMod
 import Well from "../../../../components/Well/Well";
 import { Button } from "../../../../components/Button/Button";
 import { Article } from "../../../../components/Article/Article";
+import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
 
 export interface homeownerVM {
   name: string;
@@ -96,16 +97,7 @@ const Page = () => {
                         return (
                           <tr key={`tr__${ind}__${homeowner.id}`}>
                             <td>
-                              <span
-                                style={{
-                                  height: 10,
-                                  width: 10,
-                                  backgroundColor: homeowner.isActive === "true" ? "green" : "red",
-                                  borderRadius: 50,
-                                  display: "inline-block",
-                                  marginRight: 8
-                                }}
-                              ></span>
+                              <NotificationDot variant={"success"} />
                               {homeowner.name}
                             </td>
                             <td>{homeowner.mailingAddress}</td>
@@ -147,16 +139,7 @@ const Page = () => {
                         return (
                           <tr key={`tr__${ind}__${homeowner.id}`}>
                             <td>
-                              <span
-                                style={{
-                                  height: 10,
-                                  width: 10,
-                                  backgroundColor: homeowner.isActive === "true" ? "green" : "red",
-                                  borderRadius: 50,
-                                  display: "inline-block",
-                                  marginRight: 8
-                                }}
-                              ></span>
+                              <NotificationDot variant={"danger"} />
                               {homeowner.name}
                             </td>
                             <td>{homeowner.mailingAddress}</td>
