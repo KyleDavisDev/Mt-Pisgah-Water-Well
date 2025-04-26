@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
 import { getAllActiveProperties } from "../../repositories/propertiesRepository";
 import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
-import { getActiveUsageBillsForYearAndMonthAndPropertyIn } from "../../repositories/billRepository";
+import { getActiveInvoiceByYearAndMonthAndPropertyIn } from "../../repositories/invoiceRepository";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
@@ -46,7 +46,7 @@ export async function GET(req: Request) {
       endOfNextMonth,
       propertyIds
     );
-    const alreadyCreatedBills = await getActiveUsageBillsForYearAndMonthAndPropertyIn(
+    const alreadyCreatedBills = await getActiveInvoiceByYearAndMonthAndPropertyIn(
       parseInt(year[0], 10),
       parseInt(month[0], 10),
       propertyIds
