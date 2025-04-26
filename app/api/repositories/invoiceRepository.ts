@@ -1,5 +1,6 @@
 import { db } from "../utils/db";
 import Invoice from "../models/Invoice";
+import postgres from "postgres";
 
 /**
  * Retrieves all usage bills for the given list of property IDs.
@@ -11,7 +12,7 @@ export const getInvoicesByPropertyIds = async (propertyIds: number[]): Promise<I
   if (!propertyIds || propertyIds.length === 0) return [];
 
   return db<Invoice[]>`
-      SELECT *x
+      SELECT *
       FROM invoices
       WHERE property_id IN ${db(propertyIds)}
       ORDER BY billing_year DESC, billing_month DESC;
@@ -106,3 +107,38 @@ export const getRecentActiveInvoicesByPropertyBeforeBillingMonthYear = async (
 
   return bills ?? [];
 };
+
+/**
+ * Asynchronously inserts a new invoice record into the database within a transactional context.
+ *
+ * @param {postgres.TransactionSql<Record<string, postgres.PostgresType>>} db - The transactional PostgreSQL client to use for the query.
+ * @param {Object} newData - An object containing invoice data to be inserted into the database.
+ * @param {number} newData.property_id - The identifier of the property associated with the invoice.
+ * @param {number} newData.billing_month - The month associated with the billing period.
+ * @param {number} newData.billing_year - The year associated with the billing period.
+ * @param {number} newData.gallons_used - The number of gallons used during the billing period.
+ * @param {number} newData.amount_in_pennies - The invoiced amount in pennies.
+ * @param {string} newData.formula_used - The formula or method used to calculate the invoiced amount.
+ * @param {boolean} newData.is_active - Indicates whether the invoice is active.
+ * @returns {Promise<Invoice[]>} Resolves to the newly created invoice record.
+ */
+export const insertNewInvoiceAsTransactional = async (
+  db: postgres.TransactionSql<Record<string, postgres.PostgresType> extends {} ? {} : any>,
+  newData: {
+    property_id: number;
+    billing_month: number;
+    billing_year: number;
+    gallons_used: number;
+    amount_in_pennies: number;
+    formula_used: string;
+    is_active: boolean;
+  }
+): Promise<Invoice[]> =>
+  await db`
+      INSERT INTO invoices (property_id, billing_month, billing_year, gallons_used, amount_in_pennies,
+                            formula_used, is_active)
+      VALUES (${newData.property_id}, ${newData.billing_month}, ${newData.billing_year},
+              ${newData.gallons_used}, ${newData.amount_in_pennies},
+              ${newData.formula_used}, ${newData.is_active})
+      RETURNING *;
+  `;
