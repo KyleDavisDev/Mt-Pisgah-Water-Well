@@ -3,7 +3,7 @@
 import React from "react";
 
 import { StyledFooterDivs } from "../../../../homeowners/all/pageStyle";
-import { invoiceDTO } from "../../page";
+import { invoiceDTO } from "../../types";
 import { TextInput } from "../../../../../../components/TextInput/TextInput";
 import { Button } from "../../../../../../components/Button/Button";
 import { Modal } from "../../../../../../components/Modal/Modal";
@@ -13,7 +13,7 @@ import Label from "../../../../../../components/Label/Label";
 
 export interface UsageEditModalProps {
   showModal: boolean;
-  usage: billVM;
+  usage: invoiceDTO;
   onModalClose: () => void;
 }
 
