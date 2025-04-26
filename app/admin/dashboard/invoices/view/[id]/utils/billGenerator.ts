@@ -1,4 +1,4 @@
-import { billDTO, BillDetails, homeownerDTO, propertyDTO, historicalUsageDTO } from "../types";
+import { invoiceDTO, BillDetails, homeownerDTO, propertyDTO, historicalUsageDTO } from "../types";
 import { formatISODateToUserFriendlyLocal, formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../../util";
 
 const WATER_COMPANY_INFO = {
@@ -13,7 +13,7 @@ const WATER_COMPANY_INFO = {
 };
 
 export const generateBillDetails = (
-  bill: billDTO,
+  invoice: invoiceDTO,
   homeowner: homeownerDTO,
   property: propertyDTO,
   historicalUsage: historicalUsageDTO[]
@@ -22,16 +22,16 @@ export const generateBillDetails = (
     b.year !== a.year ? b.year - a.year : b.month - a.month
   );
 
-  const baseCharge = bill.formula.baseFeeInPennies;
-  const excessUsageCharge = (bill.gallonsUsed - bill.formula.baseGallons) * bill.formula.usageRateInPennies;
+  const baseCharge = invoice.formula.baseFeeInPennies;
+  const excessUsageCharge = (invoice.gallonsUsed - invoice.formula.baseGallons) * invoice.formula.usageRateInPennies;
   const lateFee = 0;
   const otherCharges = 0;
   const amountOutstanding = 0;
 
   return {
-    id: bill.id,
-    createdDate: formatISODateToUserFriendlyLocal(bill.createdAt),
-    billingPeriod: `${getMonthStrFromMonthIndex(bill.month)} ${bill.year}`,
+    id: invoice.id,
+    createdDate: formatISODateToUserFriendlyLocal(invoice.createdAt),
+    billingPeriod: `${getMonthStrFromMonthIndex(invoice.month)} ${invoice.year}`,
     waterCompany: WATER_COMPANY_INFO,
     homeowner: {
       name: homeowner.name
@@ -39,22 +39,22 @@ export const generateBillDetails = (
     property: { ...property },
     bill: {
       totalAmount: formatPenniesToDollars(baseCharge + excessUsageCharge + lateFee + otherCharges + amountOutstanding),
-      baseCharge: formatPenniesToDollars(bill.formula.baseFeeInPennies),
+      baseCharge: formatPenniesToDollars(invoice.formula.baseFeeInPennies),
       excessUsageCharge: excessUsageCharge,
       lateFee,
       otherCharges,
       amountOutstanding,
       formula: {
-        baseFeeInPennies: bill.formula.baseFeeInPennies,
-        baseGallons: bill.formula.baseGallons,
-        description: bill.formula.description,
-        usageRateInPennies: bill.formula.usageRateInPennies
+        baseFeeInPennies: invoice.formula.baseFeeInPennies,
+        baseGallons: invoice.formula.baseGallons,
+        description: invoice.formula.description,
+        usageRateInPennies: invoice.formula.usageRateInPennies
       }
     },
     currentUsage: {
       start: 0, // These would need to come from actual meter readings
-      end: bill.gallonsUsed,
-      usage: bill.gallonsUsed
+      end: invoice.gallonsUsed,
+      usage: invoice.gallonsUsed
     },
     monthlyUsageHistory: sortedMonthlyUsageHistory
   };
