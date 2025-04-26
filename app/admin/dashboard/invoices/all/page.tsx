@@ -15,7 +15,7 @@ import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import InvoiceEditModal from "./components/InvoiceEditModal/InvoiceEditModal";
 import { invoiceDTO, homeownerData } from "./types";
-import { formatISODateToUserFriendlyLocal, formatPenniesToDollars } from "../../util";
+import { formatISODateToUserFriendlyLocal, formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../util";
 
 const Page = () => {
   const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
@@ -61,7 +61,12 @@ const Page = () => {
   };
 
   const sortInvoicesByDate = (invoices: invoiceDTO[]): invoiceDTO[] => {
-    return [...invoices].sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
+    return invoices.sort((a, b) => {
+      if (a.year !== b.year) {
+        return b.year - a.year; // Newer year first
+      }
+      return b.month - a.month; // Same year → newer month first
+    });
   };
 
   if (isLoading) {
@@ -112,6 +117,7 @@ const Page = () => {
                           <StyledTable>
                             <thead>
                               <tr>
+                                <th>Pay Period</th>
                                 <th>Date Created</th>
                                 <th>Gallons Used</th>
                                 <th>Amount</th>
@@ -121,6 +127,7 @@ const Page = () => {
                             <tbody>
                               {sortInvoicesByDate(property.invoices).map(invoice => (
                                 <tr key={invoice.id}>
+                                  <td>{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
                                   <td>{formatISODateToUserFriendlyLocal(invoice.dateCreated)}</td>
                                   <td>{invoice.gallonsUsed}</td>
                                   <td>{formatPenniesToDollars(invoice.amountInPennies)}</td>
