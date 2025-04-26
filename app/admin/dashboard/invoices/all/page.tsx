@@ -14,18 +14,18 @@ import Well from "../../../../components/Well/Well";
 import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import UsageEditModal from "./components/UsageEditModal/UsageEditModal";
-import { billVM, homeownerData } from "./types";
+import { invoiceDTO, homeownerData } from "./types";
 import { formatISODateToUserFriendlyLocal, formatPenniesToDollars } from "../../util";
 
 const Page = () => {
   const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
-  const [activeUsage, setActiveUsage] = React.useState<billVM | null>(null);
+  const [activeUsage, setActiveUsage] = React.useState<invoiceDTO | null>(null);
   const [showModal, setShowModal] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const initialized = React.useRef(false);
 
-  const getBillsByHomeowner = () => {
+  const getInvoicesByHomeowner = () => {
     setIsLoading(true);
     setError(null);
 
@@ -51,16 +51,16 @@ const Page = () => {
   React.useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-      getBillsByHomeowner();
+      getInvoicesByHomeowner();
     }
   }, []);
 
   const onModalClose = () => {
     setShowModal(false);
-    getBillsByHomeowner();
+    getInvoicesByHomeowner();
   };
 
-  const sortBillsByDate = (bills: billVM[]): billVM[] => {
+  const sortInvoicesByDate = (bills: invoiceDTO[]): invoiceDTO[] => {
     return [...bills].sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
   };
 
@@ -70,7 +70,7 @@ const Page = () => {
         <Article size="lg">
           <StyledWellContainer>
             <Well>
-              <h3>Loading bills...</h3>
+              <h3>Loading invoices...</h3>
             </Well>
           </StyledWellContainer>
         </Article>
@@ -86,7 +86,7 @@ const Page = () => {
             <Well>
               <h3>Error</h3>
               <p>{error}</p>
-              <Button onClick={getBillsByHomeowner}>Retry</Button>
+              <Button onClick={getInvoicesByHomeowner}>Retry</Button>
             </Well>
           </StyledWellContainer>
         </Article>
@@ -99,7 +99,7 @@ const Page = () => {
       <Article size="lg">
         <StyledWellContainer>
           <Well>
-            <h3>View Bills</h3>
+            <h3>Invoices</h3>
             <StyledFormContainer>
               {homeowners.length > 0 ? (
                 homeowners.map(homeowner => (
@@ -108,7 +108,7 @@ const Page = () => {
                     {homeowner.properties.map(property => (
                       <StyledTableContainer key={property.id}>
                         <StyledTableHeader>{property.address}</StyledTableHeader>
-                        {property.bills && property.bills.length > 0 ? (
+                        {property.invoices && property.invoices.length > 0 ? (
                           <StyledTable>
                             <thead>
                               <tr>
@@ -119,7 +119,7 @@ const Page = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {sortBillsByDate(property.bills).map(bill => (
+                              {sortInvoicesByDate(property.invoices).map(bill => (
                                 <tr key={bill.id}>
                                   <td>{formatISODateToUserFriendlyLocal(bill.dateCreated)}</td>
                                   <td>{bill.gallonsUsed}</td>
@@ -146,7 +146,7 @@ const Page = () => {
                             </tbody>
                           </StyledTable>
                         ) : (
-                          <p style={{ padding: "1rem" }}>No bills found for this property</p>
+                          <p style={{ padding: "1rem" }}>No invoices found for this property</p>
                         )}
                       </StyledTableContainer>
                     ))}

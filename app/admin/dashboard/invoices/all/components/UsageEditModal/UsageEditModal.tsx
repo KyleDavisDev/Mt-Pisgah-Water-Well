@@ -3,7 +3,7 @@
 import React from "react";
 
 import { StyledFooterDivs } from "../../../../homeowners/all/pageStyle";
-import { billVM } from "../../page";
+import { invoiceDTO } from "../../page";
 import { TextInput } from "../../../../../../components/TextInput/TextInput";
 import { Button } from "../../../../../../components/Button/Button";
 import { Modal } from "../../../../../../components/Modal/Modal";
