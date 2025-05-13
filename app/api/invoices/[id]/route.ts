@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 
 import {
   getInvoiceById,
-  getRecentActiveInvoicesByPropertyBeforeBillingMonthYear
+  getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear
 } from "../../repositories/invoiceRepository";
 import { getHomeownerByPropertyId } from "../../repositories/homeownerRepository";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
@@ -30,11 +30,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
     const [homeowner, property, historicalUsages, lateFees] = await Promise.all([
       getHomeownerByPropertyId(bill.property_id),
       getPropertyById(bill.property_id),
-      getRecentActiveInvoicesByPropertyBeforeBillingMonthYear(
+      getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
         bill.property_id,
         12,
-        bill.billing_month,
-        bill.billing_year
+        bill.metadata.billing_month,
+        bill.metadata.billing_year
       ),
       Promise.resolve(() => 0) // TODO: late fees
     ]);
@@ -43,7 +43,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
       return Response.json({ error: "Homeowner and Property info not found" }, { status: 404 });
     }
 
-    const formula = PRICING_FORMULAS[bill.formula_used];
+    const formula = PRICING_FORMULAS[bill.metadata.formula_used];
 
     return Response.json({
       bill: {
@@ -55,18 +55,18 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
           baseGallons: formula.baseGallons,
           usageRateInPennies: formula.usageRateInPennies
         },
-        gallonsUsed: bill.gallons_used,
-        month: bill.billing_month,
-        year: bill.billing_year,
+        gallonsUsed: bill.metadata.gallons_used,
+        month: bill.metadata.billing_month,
+        year: bill.metadata.billing_year,
         createdAt: bill.created_at,
         isActive: bill.is_active
       },
       homeowner: { name: homeowner.name },
       property: { street: property.street, city: property.city, state: property.state, zip: property.zip },
       historicalUsage: historicalUsages.map(h => ({
-        month: h.billing_month,
-        year: h.billing_year,
-        gallonsUsed: h.gallons_used,
+        month: h.metadata.billing_month,
+        year: h.metadata.billing_year,
+        gallonsUsed: h.metadata.gallons_used,
         amountInPennies: h.amount_in_pennies
       }))
     });

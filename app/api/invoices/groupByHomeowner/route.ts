@@ -4,7 +4,7 @@ import Property from "../../models/Properties";
 import { cookies } from "next/headers";
 import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
 import { getAllActivePropertiesByHomeownerIdIn } from "../../repositories/propertiesRepository";
-import { getInvoicesByPropertyIds } from "../../repositories/invoiceRepository";
+import { getInvoicesByPropertyIdsAndType } from "../../repositories/invoiceRepository";
 import Invoice from "../../models/Invoice";
 
 export async function GET(req: Request) {
@@ -33,9 +33,9 @@ export async function GET(req: Request) {
       });
     }
 
-    // Fetch latest usages for all properties in a single query
+    // Fetch the latest water usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const invoices = await getInvoicesByPropertyIds(propertyIds);
+    const invoices = await getInvoicesByPropertyIdsAndType(propertyIds, "WATER_USAGE");
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
@@ -57,10 +57,9 @@ export async function GET(req: Request) {
                   .map((u: Invoice) => {
                     return {
                       id: u.id.toString(),
-                      status: u.status,
-                      month: u.billing_month,
-                      year: u.billing_year,
-                      gallonsUsed: u.gallons_used.toString(),
+                      month: u.metadata.gallons_used,
+                      year: u.metadata.billing_year,
+                      gallonsUsed: u.metadata.gallons_used.toString(),
                       dateCreated: u.created_at,
                       amountInPennies: u.amount_in_pennies,
                       isActive: u.is_active.toString()

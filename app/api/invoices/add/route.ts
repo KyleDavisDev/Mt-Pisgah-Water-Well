@@ -13,6 +13,7 @@ import {
   getActiveInvoiceByYearAndMonthAndPropertyIn,
   insertNewInvoiceAsTransactional
 } from "../../repositories/invoiceRepository";
+import Invoice, { InvoiceCreate } from "../../models/Invoice";
 
 export async function POST(req: Request): Promise<Response> {
   if (req.method !== "POST") {
@@ -65,13 +66,16 @@ export async function POST(req: Request): Promise<Response> {
       if (existing.length > 0) continue;
 
       const formula = PRICING_FORMULAS["tiered_2025_v1"];
-      const newData = {
+      const newData: InvoiceCreate = {
         property_id: property.id,
-        billing_month: parseInt(month),
-        billing_year: parseInt(year),
-        gallons_used: gallonsUsed,
+        metadata: {
+          billing_month: parseInt(month),
+          billing_year: parseInt(year),
+          gallons_used: gallonsUsed,
+          formula_used: `${formula.name}`
+        },
+        type: "WATER_USAGE",
         amount_in_pennies: formula.calculate(gallonsUsed),
-        formula_used: `${formula.name}`,
         is_active: true
       };
 

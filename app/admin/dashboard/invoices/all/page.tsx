@@ -15,13 +15,7 @@ import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import InvoiceEditModal from "./components/InvoiceEditModal/InvoiceEditModal";
 import { invoiceDTO, homeownerData } from "./types";
-import {
-  capitalizeFirstLetterAndLowercaseRest,
-  formatISODateToUserFriendlyLocal,
-  formatPenniesToDollars,
-  getMonthStrFromMonthIndex
-} from "../../util";
-import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
+import { formatISODateToUserFriendlyLocal, formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../util";
 
 const Page = () => {
   const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
@@ -105,25 +99,6 @@ const Page = () => {
     );
   }
 
-  const renderStatusColumn = (invoice: invoiceDTO) => {
-    let badge = null;
-    if (invoice.status === "PAID") {
-      badge = <NotificationDot variant={"success"} />;
-    } else if (invoice.status === "CANCELLED" || invoice.isActive === "false") {
-      badge = <NotificationDot variant={"danger"} />;
-    } else if (invoice.status === "LATE") {
-      badge = <NotificationDot variant={"warning"} />;
-    } else if (invoice.status === "PENDING") {
-      badge = <NotificationDot variant={"primary"} />;
-    }
-
-    return (
-      <>
-        {badge}
-        {capitalizeFirstLetterAndLowercaseRest(invoice.status)}
-      </>
-    );
-  };
   return (
     <StyledContainer>
       <Article size="lg">
@@ -154,7 +129,6 @@ const Page = () => {
                               {sortInvoicesByDate(property.invoices).map(invoice => (
                                 <tr key={invoice.id}>
                                   <td>{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
-                                  <td>{renderStatusColumn(invoice)}</td>
                                   <td>{formatISODateToUserFriendlyLocal(invoice.dateCreated)}</td>
                                   <td>{invoice.gallonsUsed}</td>
                                   <td>{formatPenniesToDollars(invoice.amountInPennies)}</td>

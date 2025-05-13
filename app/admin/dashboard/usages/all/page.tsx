@@ -15,14 +15,6 @@ import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import UsageEditModal from "./components/UsageEditModal/UsageEditModal";
 
-export interface propertyVM {
-  address: string;
-  description: string;
-  isActive: string;
-  id: string;
-  homeowner: string;
-}
-
 export interface usagesVM {
   id: string;
   gallons: string;

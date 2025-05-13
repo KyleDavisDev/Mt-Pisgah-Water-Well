@@ -1,21 +1,24 @@
 import { db } from "../utils/db";
-import Invoice from "../models/Invoice";
+import Invoice, { InvoiceCreate } from "../models/Invoice";
 import postgres from "postgres";
 
 /**
  * Retrieves all usage bills for the given list of property IDs.
  *
  * @param propertyIds - An array of property IDs to filter by.
+ * @param type - The type of usage bill to retrieve.
  * @returns A Promise resolving to an array of UsageBill records sorted by billing year and month (desc).
  */
-export const getInvoicesByPropertyIds = async (propertyIds: number[]): Promise<Invoice[]> => {
+export const getInvoicesByPropertyIdsAndType = async (propertyIds: number[], type: string): Promise<Invoice[]> => {
   if (!propertyIds || propertyIds.length === 0) return [];
 
   return db<Invoice[]>`
-      SELECT *
-      FROM invoices
-      WHERE property_id IN ${db(propertyIds)}
-      ORDER BY billing_year DESC, billing_month DESC;
+    SELECT *
+    FROM invoices
+    WHERE property_id IN ${db(propertyIds)}
+      AND type = ${type}
+    ORDER BY (metadata ->> 'billing_year')::INT DESC,
+             (metadata ->> 'billing_month')::INT DESC;
   `;
 };
 
@@ -36,12 +39,13 @@ export const getActiveInvoiceByYearAndMonthAndPropertyIn = async (
   if (!Array.isArray(propertyIds) || propertyIds.length === 0) return [];
 
   const bills = await db<Invoice[]>`
-      SELECT *
-      FROM invoices
-      WHERE billing_year = ${year}
-        AND billing_month = ${month}
-        AND is_active = true
-        AND property_id IN ${db(propertyIds)}
+    SELECT *
+    FROM invoices
+    WHERE type = 'WATER_USAGE'
+      AND (metadata ->> 'billing_year')::INT = ${year}
+      AND (metadata ->> 'billing_month')::INT = ${month}
+      AND is_active = true
+      AND property_id IN ${db(propertyIds)}
   `;
 
   return bills ?? [];
@@ -57,18 +61,10 @@ export const getInvoiceById = async (id: string): Promise<Invoice | null> => {
   if (!id) return null;
 
   const [bill] = await db<Invoice[]>`
-      SELECT id,
-             property_id,
-             billing_month,
-             billing_year,
-             gallons_used,
-             formula_used,
-             amount_in_pennies,
-             created_at,
-             is_active
-      FROM invoices
-      WHERE id = ${id}
-      LIMIT 1;
+    SELECT *
+    FROM invoices
+    WHERE id = ${id}
+    LIMIT 1;
   `;
 
   return bill ?? null;
@@ -84,7 +80,7 @@ export const getInvoiceById = async (id: string): Promise<Invoice | null> => {
  * @param {number} billingYear - The cutoff billing year (e.g. 2025).
  * @returns {Promise<Invoice[]>} A promise that resolves to an array of usage bills.
  */
-export const getRecentActiveInvoicesByPropertyBeforeBillingMonthYear = async (
+export const getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear = async (
   propertyId: number,
   limit: number,
   billingMonth: number,
@@ -93,52 +89,49 @@ export const getRecentActiveInvoicesByPropertyBeforeBillingMonthYear = async (
   if (!limit || limit <= 0 || billingMonth < 1 || billingMonth > 12 || billingYear < 0) return [];
 
   const bills = await db<Invoice[]>`
-      SELECT *
-      FROM invoices
-      WHERE is_active = true
-        AND property_id = ${propertyId}
-        AND (
-          billing_year < ${billingYear} OR
-          (billing_year = ${billingYear} AND billing_month < ${billingMonth})
-          )
-      ORDER BY billing_year DESC, billing_month DESC
-      LIMIT ${limit};
+    SELECT *
+    FROM invoices
+    WHERE is_active = true
+      AND property_id = ${propertyId}
+      AND type = 'WATER_USAGE'
+      AND (
+      (metadata ->> 'billing_year')::INT < ${billingYear} OR
+      ((metadata ->> 'billing_year')::INT = ${billingYear} AND (metadata ->> 'billing_month')::INT < ${billingMonth})
+      )
+    ORDER BY (metadata ->> 'billing_year')::INT DESC, (metadata ->> 'billing_month')::INT DESC
+    LIMIT ${limit};
   `;
 
   return bills ?? [];
 };
 
 /**
- * Asynchronously inserts a new invoice record into the database within a transactional context.
+ * Inserts a new invoice record into the database within a transactional context.
  *
- * @param {postgres.TransactionSql<Record<string, postgres.PostgresType>>} db - The transactional PostgreSQL client to use for the query.
- * @param {Object} newData - An object containing invoice data to be inserted into the database.
- * @param {number} newData.property_id - The identifier of the property associated with the invoice.
- * @param {number} newData.billing_month - The month associated with the billing period.
- * @param {number} newData.billing_year - The year associated with the billing period.
- * @param {number} newData.gallons_used - The number of gallons used during the billing period.
- * @param {number} newData.amount_in_pennies - The invoiced amount in pennies.
- * @param {string} newData.formula_used - The formula or method used to calculate the invoiced amount.
- * @param {boolean} newData.is_active - Indicates whether the invoice is active.
- * @returns {Promise<Invoice[]>} Resolves to the newly created invoice record.
+ * @param {postgres.TransactionSql<any>} db - The transactional PostgreSQL client to execute the query.
+ * @param {InvoiceCreate} newData - The invoice data to insert.
+ *
+ * @returns {Promise<Invoice[]>} Resolves to the newly created invoice record(s).
  */
 export const insertNewInvoiceAsTransactional = async (
-  db: postgres.TransactionSql<Record<string, postgres.PostgresType> extends {} ? {} : any>,
-  newData: {
-    property_id: number;
-    billing_month: number;
-    billing_year: number;
-    gallons_used: number;
-    amount_in_pennies: number;
-    formula_used: string;
-    is_active: boolean;
-  }
-): Promise<Invoice[]> =>
-  await db`
-      INSERT INTO invoices (property_id, billing_month, billing_year, gallons_used, amount_in_pennies,
-                            formula_used, is_active)
-      VALUES (${newData.property_id}, ${newData.billing_month}, ${newData.billing_year},
-              ${newData.gallons_used}, ${newData.amount_in_pennies},
-              ${newData.formula_used}, ${newData.is_active})
-      RETURNING *;
+  db: postgres.TransactionSql<any>,
+  newData: InvoiceCreate
+): Promise<Invoice[]> => {
+  return db<Invoice[]>`
+    INSERT INTO invoices (
+      property_id,
+      amount_in_pennies,
+      type,
+      metadata,
+      is_active
+    )
+    VALUES (
+      ${newData.property_id},
+      ${newData.amount_in_pennies},
+      ${newData.type},
+      ${db.json(newData.metadata)},
+      ${newData.is_active}
+    )
+    RETURNING *;
   `;
+};

@@ -35,7 +35,7 @@ export async function GET(req: Request) {
 
     // Fetch latest usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const usages = await findAllActiveByPropertyIdInAndLimitBy(propertyIds, 12);
+    const usages = await findAllActiveByPropertyIdInAndLimitBy(propertyIds, 100);
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
