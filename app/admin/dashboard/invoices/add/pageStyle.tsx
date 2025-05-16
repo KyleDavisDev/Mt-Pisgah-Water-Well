@@ -9,19 +9,14 @@ export const StyledContainer = styled.div`
 export const StyledWellContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  min-height: 100vh;
 `;
 
 export const StyledFormContainer = styled.div`
   padding: 1.5rem;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
-
-  > div {
-    width: 100%;
-    padding-bottom: 25px;
-  }
 `;
 
 export const StyledTableContainer = styled.div`
