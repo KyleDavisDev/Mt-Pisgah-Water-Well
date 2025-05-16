@@ -57,7 +57,7 @@ export async function GET(req: Request) {
                   .map((u: Invoice) => {
                     return {
                       id: u.id.toString(),
-                      month: u.metadata.gallons_used,
+                      month: u.metadata.billing_month,
                       year: u.metadata.billing_year,
                       gallonsUsed: u.metadata.gallons_used.toString(),
                       dateCreated: u.created_at,
