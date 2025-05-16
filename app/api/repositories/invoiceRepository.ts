@@ -1,6 +1,6 @@
 import { db } from "../utils/db";
 import Invoice, { InvoiceCreate } from "../models/Invoice";
-import postgres from "postgres";
+import { addAuditTableRecord } from "./auditRepository";
 
 /**
  * Retrieves all usage bills for the given list of property IDs.
@@ -108,30 +108,50 @@ export const getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear = asyn
 /**
  * Inserts a new invoice record into the database within a transactional context.
  *
- * @param {postgres.TransactionSql<any>} db - The transactional PostgreSQL client to execute the query.
+ * @param {String} user - The user who is doing the inserting.
  * @param {InvoiceCreate} newData - The invoice data to insert.
  *
- * @returns {Promise<Invoice[]>} Resolves to the newly created invoice record(s).
+ * @returns {Promise<Invoice | null>} Resolves to the newly created invoice record.
  */
 export const insertNewInvoiceAsTransactional = async (
-  db: postgres.TransactionSql<any>,
+  user: string,
   newData: InvoiceCreate
-): Promise<Invoice[]> => {
-  return db<Invoice[]>`
-    INSERT INTO invoices (
-      property_id,
-      amount_in_pennies,
-      type,
-      metadata,
-      is_active
-    )
-    VALUES (
-      ${newData.property_id},
-      ${newData.amount_in_pennies},
-      ${newData.type},
-      ${db.json(newData.metadata)},
-      ${newData.is_active}
-    )
-    RETURNING *;
-  `;
+): Promise<Invoice | null> => {
+  const auditLog = await addAuditTableRecord({
+    tableName: "invoices",
+    recordId: 0,
+    newData: JSON.stringify(newData),
+    actionBy: user,
+    actionType: "INSERT"
+  });
+
+  if (!auditLog) return null;
+
+  let savedInvoice: Invoice | null = null;
+  await db.begin(async db => {
+    const justInsertedInvoice = await db<Invoice[]>`
+      INSERT INTO invoices (property_id,
+                            amount_in_pennies,
+                            type,
+                            metadata,
+                            is_active)
+      VALUES (${newData.property_id},
+              ${newData.amount_in_pennies},
+              ${newData.type},
+              ${db.json(newData.metadata)},
+              ${newData.is_active})
+      RETURNING *;
+    `;
+
+    await db`
+      UPDATE audit_log
+      SET is_complete = true,
+          record_id   = ${justInsertedInvoice[0].id}
+      WHERE id = ${auditLog.id};
+    `;
+
+    savedInvoice = justInsertedInvoice[0];
+  });
+
+  return savedInvoice;
 };
