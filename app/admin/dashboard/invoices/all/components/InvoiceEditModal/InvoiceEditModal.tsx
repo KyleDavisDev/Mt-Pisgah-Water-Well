@@ -13,7 +13,7 @@ import Label from "../../../../../../components/Label/Label";
 export interface InvoiceEditModalProps {
   showModal: boolean;
   invoice: invoiceDTO;
-  onModalClose: () => void;
+  onModalClose: (refreshData: boolean) => void;
 }
 
 const InvoiceEditModal = (props: InvoiceEditModalProps) => {
@@ -54,7 +54,7 @@ const InvoiceEditModal = (props: InvoiceEditModalProps) => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/usages/update", {
+      const response = await fetch("/api/invoices/update", {
         method: "PUT",
         body: JSON.stringify({
           gallons: gallons,
@@ -71,7 +71,7 @@ const InvoiceEditModal = (props: InvoiceEditModalProps) => {
         });
         setGallons("");
 
-        props.onModalClose();
+        props.onModalClose(true);
       }
     } catch (err: any) {
       console.log(err);
@@ -87,7 +87,7 @@ const InvoiceEditModal = (props: InvoiceEditModalProps) => {
   };
 
   return (
-    <Modal isActive={props.showModal} onClose={props.onModalClose}>
+    <Modal isActive={props.showModal} onClose={() => props.onModalClose(false)}>
       <>
         {flashMessage.isVisible && (
           <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
