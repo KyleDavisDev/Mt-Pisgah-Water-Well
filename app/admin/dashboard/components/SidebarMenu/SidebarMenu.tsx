@@ -15,6 +15,7 @@ const SidebarMenu = () => {
   const [showHomeowners, setShowHomeowners] = useState<boolean>(false);
   const [showProperties, setShowProperties] = useState<boolean>(false);
   const [showUsage, setShowUsage] = useState<boolean>(false);
+  const [showInvoices, setShowInvoices] = useState<boolean>(false);
   const [showPayments, setShowPayments] = useState<boolean>(false);
 
   return (
@@ -65,6 +66,14 @@ const SidebarMenu = () => {
             <StyledSubMenuItemContainer>
               <Link href={"/admin/dashboard/usages/add"}>Add By order</Link>
             </StyledSubMenuItemContainer>
+          </>
+        )}
+      </StyledMenuItemContainer>
+
+      <StyledMenuItemContainer>
+        <StyledMenuItem onClick={() => setShowInvoices(!showInvoices)}>Invoices</StyledMenuItem>
+        {showInvoices && (
+          <>
             <StyledSubMenuItemContainer>
               <Link href={"/admin/dashboard/invoices/all"}>View All Invoices</Link>
             </StyledSubMenuItemContainer>
