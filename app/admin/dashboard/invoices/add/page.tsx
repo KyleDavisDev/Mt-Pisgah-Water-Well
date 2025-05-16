@@ -16,6 +16,7 @@ import Select from "../../../../components/Select/Select";
 import { Badge } from "../../../../components/Badge/Badge";
 import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
 import { MONTHS, YEARS } from "../../appConstants";
+import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 
 interface Property {
   id: string;
@@ -38,6 +39,11 @@ const Page = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = React.useState<string>("Jan");
   const [selectedYear, setSelectedYear] = React.useState<string>("2025");
+  const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
+    isVisible: false,
+    text: "",
+    type: undefined
+  });
 
   // Prefixes a "0" to the single-digit month if needed.
   const getPrefixedMonthValue = (numericMonth: number) => {
@@ -89,11 +95,11 @@ const Page = () => {
         throw new Error("Failed to create bills");
       }
 
-      // setFlashMessage({
-      //   isVisible: true,
-      //   text: data.message,
-      //   type: "success"
-      // });
+      setFlashMessage({
+        isVisible: true,
+        text: "Invoices created successfully!",
+        type: "success"
+      });
       fetchAmountUsedByMonthAndYear(); // Refresh data after creating bills
     } catch (error) {
       console.error("Error creating usage bills:", error);
@@ -101,6 +107,15 @@ const Page = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const onFlashClose = () => {
+    // clear flash message if was shown
+    setFlashMessage({
+      isVisible: false,
+      text: "",
+      type: undefined
+    });
   };
 
   const renderTotalUsedCell = (property: Property) => {
@@ -128,7 +143,12 @@ const Page = () => {
           <Well>
             <h3>Create Usage Bills</h3>
             <StyledFormContainer>
-              <div style={{ display: "flex", flexDirection: "row", alignItems: "last baseline" }}>
+              {flashMessage.isVisible && (
+                <FlashMessage type={flashMessage.type} isVisible={flashMessage.isVisible} onClose={onFlashClose}>
+                  {flashMessage.text}
+                </FlashMessage>
+              )}
+              <div style={{ display: "flex", flexDirection: "row", alignItems: "last baseline", width: "100%" }}>
                 <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
                   <Select
                     id={"month"}
@@ -161,7 +181,7 @@ const Page = () => {
               </div>
               {homeowners.length > 0 ? (
                 homeowners.map(homeowner => (
-                  <div key={homeowner.id}>
+                  <div key={homeowner.id} style={{ width: "100%" }}>
                     <h3>{homeowner.name}</h3>
                     {homeowner.properties.map(property => (
                       <StyledTableContainer key={property.id}>
