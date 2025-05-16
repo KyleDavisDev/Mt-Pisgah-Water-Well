@@ -55,9 +55,12 @@ const Page = () => {
     }
   }, []);
 
-  const onModalClose = () => {
+  const onModalClose = (refreshData: boolean) => {
     setShowModal(false);
-    getInvoicesByHomeowner();
+
+    if (refreshData) {
+      getInvoicesByHomeowner();
+    }
   };
 
   const sortInvoicesByDate = (invoices: invoiceDTO[]): invoiceDTO[] => {
@@ -118,7 +121,7 @@ const Page = () => {
                             <thead>
                               <tr>
                                 <th>Pay Period</th>
-                                <th>Status</th>
+                                <th>Active</th>
                                 <th>Date Created</th>
                                 <th>Gallons Used</th>
                                 <th>Amount</th>
@@ -129,6 +132,7 @@ const Page = () => {
                               {sortInvoicesByDate(property.invoices).map(invoice => (
                                 <tr key={invoice.id}>
                                   <td>{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
+                                  <td>{invoice.isActive}</td>
                                   <td>{formatISODateToUserFriendlyLocal(invoice.dateCreated)}</td>
                                   <td>{invoice.gallonsUsed}</td>
                                   <td>{formatPenniesToDollars(invoice.amountInPennies)}</td>
@@ -155,6 +159,7 @@ const Page = () => {
                             </tbody>
                           </StyledTable>
                         ) : (
+                          // TODO: Allow pagination so not all invoices are shown at once
                           <p style={{ padding: "1rem" }}>No invoices found for this property</p>
                         )}
                       </StyledTableContainer>
