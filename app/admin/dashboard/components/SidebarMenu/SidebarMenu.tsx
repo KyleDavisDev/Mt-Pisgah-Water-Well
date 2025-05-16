@@ -85,11 +85,11 @@ const SidebarMenu = () => {
       </StyledMenuItemContainer>
 
       <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowPayments(!showPayments)}>Account Balances</StyledMenuItem>
+        <StyledMenuItem onClick={() => setShowPayments(!showPayments)}>Show Payments</StyledMenuItem>
         {showPayments && (
           <>
             <StyledSubMenuItemContainer>
-              <Link href={"/admin/dashboard/balances/all"}>View All</Link>
+              <Link href={"/admin/dashboard/payments/all"}>View All</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
               <Link href={"/admin/dashboard/payments/add"}>Add Payment</Link>
