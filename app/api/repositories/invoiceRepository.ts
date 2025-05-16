@@ -155,3 +155,45 @@ export const insertNewInvoiceAsTransactional = async (
 
   return savedInvoice;
 };
+
+/**
+ * Inserts a new invoice record into the database within a transactional context.
+ *
+ * @param {String} user - The user who is doing the inserting.
+ * @param {Invoice} oldData - The old invoice.
+ * @param {Invoice} newData - The new invoice.
+ *
+ * @returns {Promise<Invoice | null>} Resolves to the newly created invoice record.
+ */
+export const updateInvoiceAsTransactional = async (
+  user: string,
+  oldData: Invoice,
+  newData: Invoice
+): Promise<Invoice | null> => {
+  const auditLog = await addAuditTableRecord({
+    tableName: "invoices",
+    recordId: oldData.id,
+    oldData: JSON.stringify(oldData),
+    newData: JSON.stringify(newData),
+    actionBy: user,
+    actionType: "UPDATE"
+  });
+
+  if (!auditLog) return null;
+
+  await db.begin(async db => {
+    await db`
+      UPDATE invoices
+      set is_active = ${newData.is_active}
+      WHERE id = ${oldData.id};
+    `;
+
+    await db`
+      UPDATE audit_log
+      SET is_complete= true
+      WHERE id = ${auditLog.id};
+    `;
+  });
+
+  return newData;
+};
