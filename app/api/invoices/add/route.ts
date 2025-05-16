@@ -1,4 +1,3 @@
-import { db } from "../../utils/db";
 import {
   getStartAndEndOfProvidedMonthAndNextMonth,
   getUsernameFromCookie,
@@ -8,12 +7,11 @@ import { cookies } from "next/headers";
 import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
 import { getAllActiveProperties } from "../../repositories/propertiesRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
 import {
   getActiveInvoiceByYearAndMonthAndPropertyIn,
   insertNewInvoiceAsTransactional
 } from "../../repositories/invoiceRepository";
-import Invoice, { InvoiceCreate } from "../../models/Invoice";
+import { InvoiceCreate } from "../../models/Invoice";
 
 export async function POST(req: Request): Promise<Response> {
   if (req.method !== "POST") {
@@ -24,7 +22,7 @@ export async function POST(req: Request): Promise<Response> {
     const cookieStore = cookies();
     const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
-    await validatePermission(username, "CREATE_BILLS");
+    await validatePermission(username, "CREATE_INVOICE");
 
     // TODO: Data validation
     const { month, year } = await req.json();
@@ -39,8 +37,8 @@ export async function POST(req: Request): Promise<Response> {
     );
 
     const properties = await getAllActiveProperties();
-    const propertyIds = properties.map((p: any) => p.id);
 
+    const propertyIds = properties.map((p: any) => p.id);
     const startingUsages = await getFirstUsageByDateCollectedRangeAndPropertyIn(startOfMonth, endOfMonth, propertyIds);
     const endingUsages = await getFirstUsageByDateCollectedRangeAndPropertyIn(
       startOfNextMonth,
@@ -79,28 +77,8 @@ export async function POST(req: Request): Promise<Response> {
         is_active: true
       };
 
-      const auditLog = await addAuditTableRecord({
-        tableName: "invoices",
-        recordId: 0,
-        newData: JSON.stringify(newData),
-        actionBy: username,
-        actionType: "INSERT"
-      });
-
-      if (!auditLog) continue;
-
-      await db.begin(async db => {
-        const inserted = await insertNewInvoiceAsTransactional(db, newData);
-
-        await db`
-            UPDATE audit_log
-            SET is_complete = true,
-                record_id   = ${inserted[0].id}
-            WHERE id = ${auditLog.id};
-        `;
-
-        createdBillsCount++;
-      });
+      await insertNewInvoiceAsTransactional(username, newData);
+      createdBillsCount++;
     }
 
     console.log(`${createdBillsCount} bill(s) created.`);
