@@ -69,7 +69,7 @@ const SidebarMenu = () => {
               <Link href={"/admin/dashboard/invoices/all"}>View All Invoices</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <Link href={"/admin/dashboard/invoices/add"}>Generate Monthly Bills</Link>
+              <Link href={"/admin/dashboard/invoices/add"}>Generate Monthly Invoices</Link>
             </StyledSubMenuItemContainer>
           </>
         )}
