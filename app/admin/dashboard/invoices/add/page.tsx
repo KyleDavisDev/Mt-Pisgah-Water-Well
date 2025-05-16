@@ -59,6 +59,7 @@ const Page = () => {
     const formattedMonth = getPrefixedMonthValue(numericMonth);
 
     setLoading(true);
+    onFlashClose();
 
     fetch(`/api/usages/amount_used?month=${formattedMonth}&year=${selectedYear}`, { method: "GET" })
       .then(response => response.json())
@@ -208,8 +209,8 @@ const Page = () => {
                     ))}
 
                     {homeowner.properties.length > 1 ? (
-                      <p>
-                        <i>Total Gallons Used (All Properties):</i>{" "}
+                      <p style={{ marginTop: 0, marginBottom: "30px" }}>
+                        <i>Total Gallons Used (all properties):</i>{" "}
                         {homeowner.properties.reduce(
                           (sum, property) =>
                             sum + (isNaN(parseInt(property.gallonsUsed, 10)) ? 0 : parseInt(property.gallonsUsed, 10)),
