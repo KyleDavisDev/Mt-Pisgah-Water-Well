@@ -3,6 +3,7 @@ import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Property from "../../models/Properties";
 import { cookies } from "next/headers";
 import { addAuditTableRecord } from "../../repositories/auditRepository";
+import { getPropertyById } from "../../repositories/propertiesRepository";
 
 export async function PUT(req: Request) {
   if (req.method !== "PUT") {
@@ -15,15 +16,15 @@ export async function PUT(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "UPDATE_PROPERTY");
 
-    const { description, id, isActive, homeownerId, address } = await req.json();
+    const { description, id, isActive, homeownerId, street } = await req.json();
 
-    if (!id || !homeownerId || !isActive || !address) {
+    if (!id || !homeownerId || !isActive || !street) {
       return new Response("Missing required fields", { status: 400 });
     }
 
     if (
       typeof description !== "string" ||
-      typeof address !== "string" ||
+      typeof street !== "string" ||
       typeof id !== "number" ||
       typeof homeownerId !== "string" ||
       typeof isActive !== "string"
@@ -32,24 +33,21 @@ export async function PUT(req: Request) {
     }
 
     // Find record to be edited
-    const oldRecords = await db<Property[]>`
-        SELECT *
-        FROM properties
-        where id = ${id}
-    `;
+    const oldRecord = await getPropertyById(id);
 
-    if (!oldRecords) {
+    if (!oldRecord) {
       return new Response("Cannot find property record", { status: 404 });
     }
 
     // Get new record data
-    const newObj = { ...oldRecords[0], description, id, homeownerId, address, is_active: isActive === "true" };
+    const newObj = { ...oldRecord, description, id, homeownerId, street, is_active: isActive === "true" };
 
+    // TODO: move this to repository
     // log intent
     const auditRecord = await addAuditTableRecord({
-      oldData: JSON.stringify(oldRecords[0]),
+      oldData: JSON.stringify(oldRecord),
       newData: JSON.stringify(newObj),
-      recordId: oldRecords[0].id,
+      recordId: oldRecord.id,
       tableName: "properties",
       actionType: "UPDATE",
       actionBy: username
@@ -61,7 +59,7 @@ export async function PUT(req: Request) {
           UPDATE properties
           SET description  = ${newObj.description},
               homeowner_id = ${homeownerId},
-              address      = ${address},
+              street      = ${street},
               is_active    = ${newObj.is_active}
           WHERE id = ${id};
       `;
