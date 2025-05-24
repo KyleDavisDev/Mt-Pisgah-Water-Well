@@ -22,7 +22,7 @@ export async function GET(req: Request) {
       properties: records
         ? records.map(record => {
             return {
-              address: record.address,
+              street: record.street,
               description: record.description,
               isActive: record.is_active ? "true" : "false",
               id: record.id as string,
