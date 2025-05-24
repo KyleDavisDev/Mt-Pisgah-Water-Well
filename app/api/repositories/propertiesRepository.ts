@@ -33,7 +33,7 @@ export const getAllActivePropertiesByHomeownerIdIn = async (homeownerIds: number
 };
 
 /**
- * Retrieves a single active property record from the database by the provided propertyId.
+ * Retrieves a single property record from the database by the provided propertyId.
  * @param {number} propertyId - The ID of the property to search for.
  * @returns {Promise<Property | null>} A promise that resolves to a single Property record or null.
  */
@@ -42,7 +42,6 @@ export const getPropertyById = async (propertyId: number): Promise<Property | nu
       SELECT *
       FROM properties
       WHERE id = ${propertyId}
-        AND is_active = true
       limit 1;
   `;
 
