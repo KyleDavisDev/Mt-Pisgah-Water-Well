@@ -24,7 +24,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
   const [id, setId] = React.useState(props.property.id);
   const [description, setDescription] = React.useState(props.property.description);
   const [isActive, setIsActive] = React.useState(props.property.isActive);
-  const [address, setAddress] = React.useState(props.property.address);
+  const [street, setStreet] = React.useState(props.property.street);
   const homeowner = props.homeowners.find(h => h.name === props.property.homeowner);
   const activeId = homeowner?.id ? homeowner.id.toString() : "";
   const [activeHomeownerId, setActiveHomeownerId] = React.useState(activeId);
@@ -50,7 +50,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
 
     if (loading) return; // Prevent duplicate submissions
 
-    if (!address || !id || !activeHomeownerId) {
+    if (!street || !id || !activeHomeownerId) {
       setFlashMessage({
         isVisible: true,
         text: "Missing address",
@@ -65,7 +65,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
       const response = await fetch("/api/properties/update", {
         method: "PUT",
         body: JSON.stringify({
-          address,
+          address: street,
           description,
           id,
           isActive,
@@ -80,7 +80,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
           type: undefined
         });
         setDescription("");
-        setAddress("");
+        setStreet("");
 
         props.onModalClose();
       }
@@ -114,8 +114,8 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
 
         <form onKeyUp={e => onKeyUpEvent(e)} onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
           <TextInput
-            onChange={e => setAddress(e.target.value)}
-            value={address}
+            onChange={e => setStreet(e.target.value)}
+            value={street}
             type={"text"}
             id={"address"}
             showLabel={true}
