@@ -17,6 +17,7 @@ import { Badge } from "../../../../components/Badge/Badge";
 import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
 import { MONTHS, YEARS } from "../../appConstants";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
+import { formatNumberWithCommas } from "../../util";
 
 interface Property {
   id: string;
@@ -132,7 +133,7 @@ const Page = () => {
 
     return (
       <>
-        {property.gallonsUsed} {badge}
+        {formatNumberWithCommas(property.gallonsUsed)} {badge}
       </>
     );
   };
@@ -197,8 +198,8 @@ const Page = () => {
                           </thead>
                           <tbody>
                             <tr>
-                              <td>{property.startingGallons || "---"}</td>
-                              <td>{property.endingGallons || "---"}</td>
+                              <td>{formatNumberWithCommas(property.startingGallons.toString()) || "---"}</td>
+                              <td>{formatNumberWithCommas(property.endingGallons.toString()) || "---"}</td>
                               <td>
                                 <strong>{renderTotalUsedCell(property)}</strong>
                               </td>
