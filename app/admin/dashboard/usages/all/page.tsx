@@ -14,6 +14,7 @@ import Well from "../../../../components/Well/Well";
 import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import UsageEditModal from "./components/UsageEditModal/UsageEditModal";
+import { formatNumberWithCommas } from "../../util";
 
 export interface usagesVM {
   id: string;
@@ -112,7 +113,7 @@ const Page = () => {
                               <thead>
                                 <tr>
                                   <th>Date Collected</th>
-                                  <th>Gallons</th>
+                                  <th style={{ textAlign: "right" }}>Gallons</th>
                                   <th>Difference</th>
                                   <th></th>
                                 </tr>
@@ -123,7 +124,7 @@ const Page = () => {
                                     return (
                                       <tr>
                                         <td>{formatDate(usage.dateCollected)}</td>
-                                        <td>{usage.gallons}</td>
+                                        <td style={{ textAlign: "right" }}>{formatNumberWithCommas(usage.gallons)}</td>
                                         <td>
                                           {ind < property.usages.length - 1
                                             ? renderDifference(

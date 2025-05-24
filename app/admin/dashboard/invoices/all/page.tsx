@@ -15,7 +15,12 @@ import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import InvoiceEditModal from "./components/InvoiceEditModal/InvoiceEditModal";
 import { invoiceDTO, homeownerData } from "./types";
-import { formatISODateToUserFriendlyLocal, formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../util";
+import {
+  formatISODateToUserFriendlyLocal,
+  formatNumberWithCommas,
+  formatPenniesToDollars,
+  getMonthStrFromMonthIndex
+} from "../../util";
 
 const Page = () => {
   const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
@@ -134,7 +139,7 @@ const Page = () => {
                                   <td>{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
                                   <td>{invoice.isActive}</td>
                                   <td>{formatISODateToUserFriendlyLocal(invoice.dateCreated)}</td>
-                                  <td>{invoice.gallonsUsed}</td>
+                                  <td>{formatNumberWithCommas(invoice.gallonsUsed)}</td>
                                   <td>{formatPenniesToDollars(invoice.amountInPennies)}</td>
                                   <td style={{ textAlign: "center" }}>
                                     <Button

@@ -16,6 +16,7 @@ import { Article } from "../../../../components/Article/Article";
 import { TextInput } from "../../../../components/TextInput/TextInput";
 import Select from "../../../../components/Select/Select";
 import Checkbox from "../../../../components/Checkbox/Checkbox";
+import { formatNumberWithCommas } from "../../util";
 
 interface UsageVM {
   id: string;
@@ -330,7 +331,7 @@ const Page = () => {
                                 else if (!property.usages[0]) value = "0";
                                 else value = property.usages[0].gallons;
 
-                                return <div key={`previous_usage_${index}`}>{value}</div>;
+                                return <div key={`previous_usage_${index}`}>{formatNumberWithCommas(value)}</div>;
                               })}
                             </StyledTd>
                             <StyledTd>
