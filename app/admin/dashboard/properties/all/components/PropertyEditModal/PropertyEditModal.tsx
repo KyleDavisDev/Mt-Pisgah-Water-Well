@@ -53,7 +53,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
     if (!street || !id || !activeHomeownerId) {
       setFlashMessage({
         isVisible: true,
-        text: "Missing address",
+        text: "Missing street",
         type: "alert"
       });
       return;
@@ -65,7 +65,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
       const response = await fetch("/api/properties/update", {
         method: "PUT",
         body: JSON.stringify({
-          address: street,
+          street,
           description,
           id,
           isActive,
@@ -117,10 +117,10 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
             onChange={e => setStreet(e.target.value)}
             value={street}
             type={"text"}
-            id={"address"}
+            id={"street"}
             showLabel={true}
-            label={"Address"}
-            name={"address"}
+            label={"Street"}
+            name={"street"}
             required={true}
             disabled={false}
           />
