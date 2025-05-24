@@ -9,7 +9,7 @@ import { Article } from "../../../../components/Article/Article";
 import { homeownerVM } from "../../homeowners/all/page";
 
 export interface propertyVM {
-  address: string;
+  street: string;
   description: string;
   isActive: string;
   id: string;
@@ -146,7 +146,7 @@ const page = () => {
                                   marginRight: 8
                                 }}
                               ></span>
-                              {property.address}
+                              {property.street}
                             </td>
                             <td>{property.description}</td>
                             <td>{property.homeowner}</td>
@@ -195,7 +195,7 @@ const page = () => {
                                   marginRight: 8
                                 }}
                               ></span>
-                              {property.address}
+                              {property.street}
                             </td>
                             <td>{property.description}</td>
                             <td>{property.homeowner}</td>
