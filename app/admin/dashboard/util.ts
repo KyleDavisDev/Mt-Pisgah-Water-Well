@@ -65,3 +65,14 @@ export const formatPenniesToDollars = (amountInPennies: number): string => {
   }
   return `$${(amountInPennies / 100).toFixed(2)}`;
 };
+
+export const formatNumberWithCommas = (input: string | number): string => {
+  // Convert the input to a string, regardless of its original type
+  const inputAsString = String(input);
+
+  if (!/^\d+$/.test(inputAsString)) {
+    return inputAsString; // Return the original string if it contains non-digits
+  }
+
+  return inputAsString.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
