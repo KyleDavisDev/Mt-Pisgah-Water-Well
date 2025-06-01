@@ -59,12 +59,6 @@ export const StyledTd = styled.td`
   padding: 0 !important;
   border-bottom: 0 !important;
 
-  div input {
-    width: 50%;
-    margin-bottom: 0;
-    margin-top: 0;
-  }
-
   > div {
     display: flex;
     justify-content: center;
@@ -72,6 +66,15 @@ export const StyledTd = styled.td`
     height: 55px;
     padding: 8px;
     border-bottom: 1px solid #dddddd;
+
+    > div {
+      width: 66%;
+    }
+    input {
+      width: 100%;
+      margin-bottom: 0;
+      margin-top: 0;
+    }
   }
 
   > div:last-child {
