@@ -1,5 +1,5 @@
 import { db } from "../utils/db";
-import Invoice, { InvoiceCreate } from "../models/Invoice";
+import Invoice, { InvoiceCreate, InvoiceTotal } from "../models/Invoice";
 import { addAuditTableRecord } from "./auditRepository";
 
 /**
@@ -197,3 +197,18 @@ export const updateInvoiceAsTransactional = async (
 
   return newData;
 };
+
+export class InvoiceRepository {
+  static async findActiveTotalByPropertyIds(propertyIds: number[]): Promise<InvoiceTotal[]> {
+    const payments = await db<InvoiceTotal[]>`
+      SELECT property_id,
+             COALESCE(SUM(i.amount_in_pennies), 0) AS amount_in_pennies
+      FROM invoices i
+      WHERE i.property_id IN ${db(propertyIds)}
+      AND i.is_active = true
+      GROUP BY i.property_id;
+    `;
+
+    return payments ?? [];
+  }
+}
