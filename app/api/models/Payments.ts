@@ -7,3 +7,8 @@ export default interface Payment {
   transaction_issued_by?: string | null;
   transaction_id?: string | null;
 }
+
+export interface PaymentTotal {
+  property_id: number;
+  amount_in_pennies: number;
+}
