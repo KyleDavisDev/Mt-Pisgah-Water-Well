@@ -8,6 +8,8 @@ export default interface Payment {
   transaction_id?: string | null;
 }
 
+export type PaymentCreate = Omit<Payment, "id">;
+
 export interface PaymentTotal {
   property_id: number;
   amount_in_pennies: number;
