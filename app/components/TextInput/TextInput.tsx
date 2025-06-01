@@ -16,7 +16,8 @@ export interface TextInputProps {
   disabled?: boolean;
   requirementText?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
+  onFocus?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   value?: string | number;
   style?: React.CSSProperties;
 }
@@ -35,6 +36,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = props => {
     requirementText,
     onChange,
     onBlur,
+    onFocus,
     value,
     name,
     style
@@ -61,6 +63,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = props => {
         disabled={disabled}
         aria-disabled={disabled}
         onBlur={onBlur}
+        onFocus={onFocus}
       />
 
       {requirementText && <p>{requirementText}</p>}
