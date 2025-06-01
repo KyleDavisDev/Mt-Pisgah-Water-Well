@@ -15,6 +15,7 @@ import { Button } from "../../../../components/Button/Button";
 import { Article } from "../../../../components/Article/Article";
 import { formatPenniesToDollars } from "../../util";
 import MoneyInput from "../../../../components/MoneyInput/MoneyInput";
+import Select from "../../../../components/Select/Select";
 
 type propertyVM = {
   id: string;
@@ -32,7 +33,7 @@ interface HomeownerVM {
 interface PaymentVM {
   propertyId: string;
   amountInPennies: number;
-  type: string;
+  method: string;
 }
 
 const Page = () => {
@@ -69,7 +70,7 @@ const Page = () => {
               return {
                 propertyId: p.id,
                 amountInPennies: 0,
-                type: "CHECK"
+                method: "CHECK"
               };
             });
           })
@@ -111,9 +112,7 @@ const Page = () => {
     try {
       const response = await fetch("/api/payments/add", {
         method: "POST",
-        body: JSON.stringify({
-          payments
-        })
+        body: JSON.stringify({ payments: payments.filter(x => !(x.amountInPennies === 0)) })
       });
 
       if (response.ok) {
@@ -143,12 +142,12 @@ const Page = () => {
   const renderMoneyInput = (property: propertyVM) => {
     const payment = payments.find(x => x.propertyId === property.id);
 
-    const value = payment ? payment.amountInPennies : 0;
+    const valueInPennies = payment ? payment.amountInPennies : 0;
 
     return (
       <MoneyInput
         id={`payment_${property.id}`}
-        value={value}
+        valueInPennies={valueInPennies}
         onChange={amtInPennies => {
           const updatedPayments = payments.map(x => {
             if (x.propertyId === property.id) {
@@ -185,6 +184,7 @@ const Page = () => {
                       <th>Property</th>
                       <th>Account Balance</th>
                       <th>Payment Amount</th>
+                      <th>Payment Method</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -212,6 +212,21 @@ const Page = () => {
                             <StyledTd>
                               {homeowner.properties.map((property, index) => {
                                 return <div key={`payment_amount_${index}`}>{renderMoneyInput(property)}</div>;
+                              })}
+                            </StyledTd>
+                            <StyledTd>
+                              {homeowner.properties.map((property, index) => {
+                                return (
+                                  <div key={`payment_type_${index}`}>
+                                    <Select
+                                      id={`payment_type_${index}`}
+                                      selectedValue={"check"}
+                                      onSelect={() => {}}
+                                      options={[{ name: "Check", value: "check" }]}
+                                      required={false}
+                                    />
+                                  </div>
+                                );
                               })}
                             </StyledTd>
                           </tr>
