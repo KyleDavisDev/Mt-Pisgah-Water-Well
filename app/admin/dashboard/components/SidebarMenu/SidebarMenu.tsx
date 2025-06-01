@@ -85,7 +85,7 @@ const SidebarMenu = () => {
       </StyledMenuItemContainer>
 
       <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowPayments(!showPayments)}>Show Payments</StyledMenuItem>
+        <StyledMenuItem onClick={() => setShowPayments(!showPayments)}>Payments</StyledMenuItem>
         {showPayments && (
           <>
             <StyledSubMenuItemContainer>
