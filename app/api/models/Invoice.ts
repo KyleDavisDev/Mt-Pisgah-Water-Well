@@ -11,3 +11,8 @@ export default interface Invoice {
 }
 
 export type InvoiceCreate = Omit<Invoice, "id" | "created_at">;
+
+export interface InvoiceTotal {
+  property_id: number;
+  amount_in_pennies: number;
+}
