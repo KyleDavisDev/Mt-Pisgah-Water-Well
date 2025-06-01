@@ -1,9 +1,6 @@
 import { cookies } from "next/headers";
-import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import { getUsageById } from "../../repositories/usageRepository";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
-import { getInvoiceById, updateInvoiceAsTransactional } from "../../repositories/invoiceRepository";
+import { InvoiceRepository } from "../../repositories/invoiceRepository";
 
 export async function PUT(req: Request) {
   if (req.method !== "PUT") {
@@ -22,13 +19,13 @@ export async function PUT(req: Request) {
     }
 
     // Find the invoice to be edited
-    const oldInvoice = await getInvoiceById(id);
+    const oldInvoice = await InvoiceRepository.getInvoiceById(id);
     if (!oldInvoice) return new Response("Cannot find invoice record", { status: 404 });
 
     // Set the new record data
     const newUsage = { ...oldInvoice, is_active: isActive === "true" };
 
-    const updatedRecord = await updateInvoiceAsTransactional(username, oldInvoice, newUsage);
+    const updatedRecord = await InvoiceRepository.updateInvoiceAsTransactional(username, oldInvoice, newUsage);
 
     if (!updatedRecord) return new Response("Failed to update invoice record", { status: 500 });
 

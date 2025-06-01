@@ -1,9 +1,6 @@
 import { cookies } from "next/headers";
 
-import {
-  getInvoiceById,
-  getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear
-} from "../../repositories/invoiceRepository";
+import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { getHomeownerByPropertyId } from "../../repositories/homeownerRepository";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { getPropertyById } from "../../repositories/propertiesRepository";
@@ -21,7 +18,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_BILLS");
 
-    const bill = await getInvoiceById(params.id);
+    const bill = await InvoiceRepository.getInvoiceById(params.id);
     if (!bill) {
       return Response.json({ error: "Bill not found" }, { status: 404 });
     }
@@ -30,7 +27,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
     const [homeowner, property, historicalUsages, lateFees] = await Promise.all([
       getHomeownerByPropertyId(bill.property_id),
       getPropertyById(bill.property_id),
-      getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
+      InvoiceRepository.getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
         bill.property_id,
         12,
         bill.metadata.billing_month,

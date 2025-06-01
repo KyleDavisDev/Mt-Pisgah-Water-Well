@@ -4,8 +4,9 @@ import Property from "../../models/Properties";
 import { cookies } from "next/headers";
 import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
 import { getAllActivePropertiesByHomeownerIdIn } from "../../repositories/propertiesRepository";
-import { getInvoicesByPropertyIdsAndType } from "../../repositories/invoiceRepository";
+
 import Invoice from "../../models/Invoice";
+import { InvoiceRepository } from "../../repositories/invoiceRepository";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
@@ -35,7 +36,7 @@ export async function GET(req: Request) {
 
     // Fetch the latest water usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const invoices = await getInvoicesByPropertyIdsAndType(propertyIds, "WATER_USAGE");
+    const invoices = await InvoiceRepository.getInvoicesByPropertyIdsAndType(propertyIds, "WATER_USAGE");
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {

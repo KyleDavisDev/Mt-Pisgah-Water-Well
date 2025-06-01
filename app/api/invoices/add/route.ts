@@ -7,10 +7,7 @@ import { cookies } from "next/headers";
 import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
 import { getAllActiveProperties } from "../../repositories/propertiesRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
-import {
-  getActiveInvoiceByYearAndMonthAndPropertyIn,
-  insertNewInvoiceAsTransactional
-} from "../../repositories/invoiceRepository";
+import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { InvoiceCreate } from "../../models/Invoice";
 
 export async function POST(req: Request): Promise<Response> {
@@ -57,9 +54,11 @@ export async function POST(req: Request): Promise<Response> {
       const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
 
       // Check if bill already exists
-      const existing = await getActiveInvoiceByYearAndMonthAndPropertyIn(parseInt(year), parseInt(month), [
-        property.id
-      ]);
+      const existing = await InvoiceRepository.getActiveInvoiceByYearAndMonthAndPropertyIn(
+        parseInt(year),
+        parseInt(month),
+        [property.id]
+      );
 
       if (existing.length > 0) continue;
 
@@ -77,7 +76,7 @@ export async function POST(req: Request): Promise<Response> {
         is_active: true
       };
 
-      await insertNewInvoiceAsTransactional(username, newData);
+      await InvoiceRepository.insertNewInvoiceAsTransactional(username, newData);
       createdBillsCount++;
     }
 
