@@ -58,12 +58,71 @@ export const capitalizeFirstLetterAndLowercaseRest = (word: string): string => {
  * @returns A formatted string representing the amount in dollars (e.g., "$123.45").
  *          Returns "$0.00" if the input is not a valid non-negative number.
  */
-export const formatPenniesToDollars = (amountInPennies: number): string => {
+export const formatPenniesToDollars = (amountInPennies: number | null | undefined): string => {
   if (typeof amountInPennies !== "number" || isNaN(amountInPennies) || amountInPennies < 0) {
     console.error("Invalid amount provided:", amountInPennies);
     return "$0.00";
   }
   return `$${(amountInPennies / 100).toFixed(2)}`;
+};
+
+/**
+ * Parses a dollar string (e.g., "$123.45") into an amount in pennies (e.g., 12345).
+ * Assumes US-style formatting (dot as decimal separator, comma as thousands separator).
+ *
+ * @param dollarString - The money amount as a string. Can be null or undefined.
+ * @returns The amount in pennies as an integer (e.g., 12345), or 0 if the input is not a valid money string.
+ */
+export const formatDollarsToPennies = (dollarString: string | null | undefined): number => {
+  if (dollarString === null || dollarString === undefined) {
+    return 0;
+  }
+
+  // Remove currency symbols, thousands commas, and any other non-numeric characters except '.' and negative sign
+  let cleanedString = dollarString.replace(/[^0-9.-]/g, "");
+
+  // Make sure there is ~something~ to parse through
+  if (cleanedString.length === 0) return 0;
+
+  // More than one negative sign
+  if ((cleanedString.match(/-/g) || []).length > 1) {
+    return 0;
+  }
+  // Negative sign not at the beginning
+  if (cleanedString.indexOf("-") > 0) {
+    return 0;
+  }
+
+  // More than one decimal point
+  if ((cleanedString.match(/\./g) || []).length > 1) {
+    return 0;
+  }
+  if (cleanedString.includes(".")) {
+    // Too few digits after the decimal. Add zeros
+    if (cleanedString.split(".")[1].length === 0) {
+      cleanedString = cleanedString + "00";
+    }
+    if (cleanedString.split(".")[1].length === 1) {
+      cleanedString = cleanedString + "0";
+    }
+
+    // Too many digits after the decimal. Chop the rest off!
+    if (cleanedString.split(".")[1].length > 2) {
+      cleanedString = cleanedString.slice(0, cleanedString.indexOf(".") + 3);
+    }
+  } else {
+    // Tack on decimals for uniformity
+    cleanedString = cleanedString + ".00";
+  }
+
+  // remove decimal
+  if (cleanedString.includes(".")) {
+    cleanedString = cleanedString.replace(".", "");
+  }
+
+  if (cleanedString === "000") return 0;
+
+  return parseInt(cleanedString, 10);
 };
 
 export const formatNumberWithCommas = (input: string | number): string => {
