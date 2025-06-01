@@ -49,6 +49,12 @@ export const validatePermission = async (username: string, permission: string): 
   return;
 };
 
+export const validatePermissions = async (username: string, permissions: string[]): Promise<void> => {
+  await Promise.all(permissions.map(x => validatePermission(username, x)));
+
+  return;
+};
+
 /**
  * Extracts the client's IP address from a Next Request object, using common proxy headers.
  * Falls back to a default IP if not found. Also handles IPv4-mapped IPv6 addresses like "::ffff:127.0.0.1".
