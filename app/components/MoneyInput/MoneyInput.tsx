@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { formatDollarsToPennies, formatPenniesToDollars } from "../../admin/dashboard/util";
-import TextInput from "../TextInput/TextInput";
+import { TextInput } from "../TextInput/TextInput";
 
 interface MoneyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "id"> {
   id: string;
@@ -61,7 +61,7 @@ const MoneyInput: React.FunctionComponent<MoneyInputProps> = ({ id, valueInPenni
       id={id}
       type="text"
       value={displayValue}
-      onChange={e => handleChange(e)}
+      onChange={handleChange}
       onBlur={handleBlur}
       onFocus={handleFocus}
       aria-label="money input"
