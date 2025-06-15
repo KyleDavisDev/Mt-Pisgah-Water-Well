@@ -13,6 +13,7 @@ const toModelAdapter = (payments: any): PaymentCreate[] => {
         property_id: parseInt(payment.propertyId, 10),
         amount_in_pennies: payment.amountInPennies,
         method: payment.method,
+        created_at: payment.createdAt,
         is_active: true
       };
     })
