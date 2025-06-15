@@ -41,12 +41,14 @@ export class PaymentRepository {
         INSERT INTO payments (amount_in_pennies,
                               method,
                               property_id,
+                              created_at,
                               is_active,
                               transaction_issued_by,
                               transaction_id)
         VALUES (${record.amount_in_pennies},
                 ${record.method},
                 ${record.property_id},
+                ${record.created_at},
                 ${true}, null, null)
         RETURNING *;
       `;
