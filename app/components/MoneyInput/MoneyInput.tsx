@@ -6,6 +6,9 @@ interface MoneyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElemen
   id: string;
   valueInPennies: number;
   onChange: (value: number | null) => void;
+  name?: string;
+  label?: string;
+  showLabel?: boolean;
 }
 
 /**
@@ -26,7 +29,14 @@ const parseMoneyToPennies = (formattedValue: string): number => {
   return formatDollarsToPennies(formattedValue);
 };
 
-const MoneyInput: React.FunctionComponent<MoneyInputProps> = ({ id, valueInPennies, onChange }) => {
+const MoneyInput: React.FunctionComponent<MoneyInputProps> = ({
+  id,
+  valueInPennies,
+  onChange,
+  name,
+  showLabel,
+  label
+}) => {
   const [internalValueInPennies, setInternalValueInPennies] = React.useState<number>(valueInPennies);
   const [displayValue, setDisplayValue] = React.useState<string>(formatMoney(valueInPennies));
 
@@ -65,6 +75,9 @@ const MoneyInput: React.FunctionComponent<MoneyInputProps> = ({ id, valueInPenni
       onBlur={handleBlur}
       onFocus={handleFocus}
       aria-label="money input"
+      name={name}
+      label={label}
+      showLabel={showLabel}
     />
   );
 };
