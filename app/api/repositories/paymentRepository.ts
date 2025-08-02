@@ -17,6 +17,37 @@ export class PaymentRepository {
   }
 
   /**
+   * Retrieves the most recent active payment records for each property ID, limited to `limit` per property.
+   * @param propertyIds list of property IDs to filter by
+   * @param limit the number of records to return per property
+   *
+   * @returns Promise resolving to an array of Payment records
+   */
+  static findAllActiveByPropertyIdInAndLimitBy = async (propertyIds: number[], limit: number): Promise<Payment[]> => {
+    const usages = await db<Payment[]>`
+    WITH payments_by_property AS (SELECT id,
+                                  amount_in_pennies,
+                                  method,
+                                  property_id,
+                                  created_at,
+                                  is_active,
+                                  ROW_NUMBER() OVER (
+                                    PARTITION BY property_id
+                                    ORDER BY created_at DESC
+                                    ) AS row_number
+                           FROM payments
+                           WHERE property_id IN ${db(propertyIds)}
+                             AND is_active = true)
+    SELECT *
+    FROM payments_by_property
+    WHERE row_number <= ${limit}
+    ORDER BY property_id, created_at DESC;
+  `;
+
+    return usages ?? [];
+  };
+
+  /**
    * Inserts new payment record within a transactional context.
    *
    * @param {String} user - The user who is doing the inserting.
@@ -35,35 +66,35 @@ export class PaymentRepository {
 
     if (!auditLog) return null;
 
-    let savedInvoice: Payment | null = null;
+    let savedPayment: Payment | null = null;
     await db.begin(async db => {
-      const justInsertedInvoice = await db<Payment[]>`
+      const justInsertedPayment = await db<Payment[]>`
         INSERT INTO payments (amount_in_pennies,
                               method,
                               property_id,
-                              created_at,
                               is_active,
                               transaction_issued_by,
                               transaction_id)
         VALUES (${record.amount_in_pennies},
                 ${record.method},
                 ${record.property_id},
-                ${record.created_at},
-                ${true}, null, null)
+                ${true},
+                null,
+                null)
         RETURNING *;
       `;
 
       await db`
         UPDATE audit_log
         SET is_complete = true,
-            record_id   = ${justInsertedInvoice[0].id}
+            record_id   = ${justInsertedPayment[0].id}
         WHERE id = ${auditLog.id};
       `;
 
-      savedInvoice = justInsertedInvoice[0];
+      savedPayment = justInsertedPayment[0];
     });
 
-    return savedInvoice;
+    return savedPayment;
   };
 
   /**
