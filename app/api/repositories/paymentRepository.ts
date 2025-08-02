@@ -1,8 +1,22 @@
 import Payment, { PaymentCreate, PaymentTotal } from "../models/Payments";
 import { db } from "../utils/db";
 import { addAuditTableRecord } from "./auditRepository";
+import Invoice from "../models/Invoice";
 
 export class PaymentRepository {
+  static async findById(id: string): Promise<Payment | null> {
+    if (!id) return null;
+
+    const [payment] = await db<Payment[]>`
+      SELECT *
+      FROM payments
+      WHERE id = ${id}
+      LIMIT 1;
+    `;
+
+    return payment ?? null;
+  }
+
   static async findActiveTotalByPropertyIds(propertyIds: number[]): Promise<PaymentTotal[]> {
     const payments = await db<PaymentTotal[]>`
       SELECT property_id,
@@ -116,5 +130,43 @@ export class PaymentRepository {
 
       return returnVal;
     });
+  };
+
+  /**
+   * Updates a payment record into the database within a transactional context.
+   *
+   * @param {String} user - The user who is doing the inserting.
+   * @param {Payment} oldData - The old payment.
+   * @param {Payment} newData - The new payment.
+   *
+   * @returns {Promise<Invoice | null>} Resolves to the newly updated payment record.
+   */
+  static updateAsTransactional = async (user: string, oldData: Payment, newData: Payment): Promise<Payment | null> => {
+    const auditLog = await addAuditTableRecord({
+      tableName: "payments",
+      recordId: oldData.id,
+      oldData: JSON.stringify(oldData),
+      newData: JSON.stringify(newData),
+      actionBy: user,
+      actionType: "UPDATE"
+    });
+
+    if (!auditLog) return null;
+
+    await db.begin(async db => {
+      await db`
+      UPDATE payments
+      set is_active = ${newData.is_active}
+      WHERE id = ${oldData.id};
+    `;
+
+      await db`
+      UPDATE audit_log
+      SET is_complete= true
+      WHERE id = ${auditLog.id};
+    `;
+    });
+
+    return newData;
   };
 }
