@@ -7,7 +7,7 @@ const toModelAdapter = (payments: any): PaymentCreate[] => {
   if (!payments) throw Error("Could not map payments object");
   if (!Array.isArray(payments)) throw Error("Payments must be an array");
 
-  const tmp = payments
+  return payments
     .map((payment: any) => {
       return {
         property_id: parseInt(payment.propertyId, 10),
@@ -17,12 +17,9 @@ const toModelAdapter = (payments: any): PaymentCreate[] => {
         is_active: true
       };
     })
-
-    .filter(x => !(x.amount_in_pennies === 0))
-    .filter(x => !(x.property_id === 0))
-    .filter(x => !(x.method !== "CHECK"));
-  console.log(tmp);
-  return tmp;
+    .filter(x => x.amount_in_pennies !== 0)
+    .filter(x => x.property_id !== 0)
+    .filter(x => x.method === "CHECK" || x.method === "CASH");
 };
 
 export async function POST(req: Request) {
@@ -39,15 +36,12 @@ export async function POST(req: Request) {
 
     // TODO: Data validation
     const { payments } = await req.json();
-    const paymentCreates = toModelAdapter(payments);
-    console.log(paymentCreates);
+    const paymentsToSave = toModelAdapter(payments);
 
-    const newPayments = await PaymentRepository.insertMany(username, paymentCreates);
-    console.log(newPayments.length);
+    const savedPayments = await PaymentRepository.insertMany(username, paymentsToSave);
 
     return Response.json({ message: "Success!" });
   } catch (error) {
-    console.log(error);
     return new Response("Invalid username or password.", { status: 403 });
   }
 
