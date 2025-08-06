@@ -5,21 +5,18 @@ import {
   StyledContainer,
   StyledFooterDivs,
   StyledFormContainer,
-  StyledTable,
-  StyledTd,
+  StyledHeaderContainer,
   StyledTile,
   StyledTileContainer,
+  StyledTopContainer,
   StyledWellContainer
 } from "./pageStyle";
 import Well from "../../../../components/Well/Well";
-import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { Button } from "../../../../components/Button/Button";
 import { Article } from "../../../../components/Article/Article";
 import { TextInput } from "../../../../components/TextInput/TextInput";
 import Select from "../../../../components/Select/Select";
-import Checkbox from "../../../../components/Checkbox/Checkbox";
 import { formatNumberWithCommas } from "../../util";
-import MoneyInput from "../../../../components/MoneyInput/MoneyInput";
 
 interface propertyVM {
   id: string;
@@ -43,21 +40,13 @@ interface usersWhoCanGatherVM {
 }
 
 const Page = () => {
-  const _defaultErrorMessage = "There was a problem saving the usage. Please refresh your page and try again!";
-
   const [properties, setProperties] = React.useState<propertyVM[]>([]);
   const [usersWhoCanGather, setUsersWhoCanGather] = React.useState<usersWhoCanGatherVM[]>([]);
   const [activeGatheredUser, setActiveGatheredUser] = React.useState<string>("");
   const [usages, setUsages] = React.useState<{ [key: string]: { previous: string; new: string } }>({});
   const [deltas, setDeltas] = React.useState<{ [key: string]: number }>({});
   const [dateCollected, setDateCollected] = React.useState("");
-  const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
-    isVisible: false,
-    text: "",
-    type: undefined
-  });
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [allowNegativeInputs, setAllowNegativeInputs] = React.useState<boolean>(false);
   const initialized = React.useRef(false);
 
   const getUsagesByWalkableOrder = () => {
@@ -82,7 +71,7 @@ const Page = () => {
 
           if (usagesCollector[property.id.toString()] === undefined) {
             usagesCollector[property.id.toString()] = {
-              previous: property.usages[0] ? property.usages[0].gallons : 0,
+              previous: property.usages[0].gallons,
               new: ""
             };
             deltasCollector[property.id.toString()] = 0;
@@ -131,15 +120,6 @@ const Page = () => {
     }
   }, []);
 
-  const onFlashClose = () => {
-    // clear flash message if was shown
-    setFlashMessage({
-      isVisible: false,
-      text: "",
-      type: undefined
-    });
-  };
-
   const safeParseStr = (str: string) => {
     try {
       const num = parseInt(str, 10); // Parse the string to an integer with base 10
@@ -168,73 +148,38 @@ const Page = () => {
     const previousUsage = safeParseStr(usages[id].previous);
     newDeltas[id] = newUsage - previousUsage;
     setDeltas(newDeltas);
-    setFlashMessage({
-      isVisible: false,
-      text: "",
-      type: undefined
-    });
   };
 
-  const onSubmit = async (event: React.FormEvent): Promise<any> => {
+  const onSubmit = async (event: React.FormEvent, id: string): Promise<any> => {
     event.preventDefault();
 
+    let usage = usages[id];
+
+    if (deltas[id] <= 0) return false;
     if (loading) return false;
-
-    if (!allowNegativeInputs) {
-      for (const key in deltas) {
-        const delta = deltas[key];
-
-        if (delta < 0) {
-          setFlashMessage({
-            isVisible: true,
-            text: "Cannot have a negative usage.",
-            type: "alert"
-          });
-          return;
-        }
-      }
-    }
 
     setLoading(true);
 
     try {
+      const data = {
+        id: id,
+        gallons: usage.new,
+        dateCollected: dateCollected,
+        recordedById: activeGatheredUser
+      };
+
       const response = await fetch("/api/usages/add", {
         method: "POST",
         body: JSON.stringify({
-          usages: Object.keys(usages)
-            .filter(key => {
-              return safeParseStr(usages[key].new) > 0;
-            })
-            .map(key => {
-              return {
-                id: key,
-                gallons: usages[key].new,
-                dateCollected: dateCollected,
-                recordedById: activeGatheredUser
-              };
-            })
+          usages: [data]
         })
       });
 
       if (response.ok) {
-        const data = await response.json();
-
-        setFlashMessage({
-          isVisible: true,
-          text: data.message,
-          type: "success"
-        });
-
         getUsagesByWalkableOrder();
       }
     } catch (err: any) {
       console.log(err);
-      // Create warning flash
-      setFlashMessage({
-        isVisible: true,
-        text: err.response?.data?.msg || _defaultErrorMessage,
-        type: "warning"
-      });
     } finally {
       setLoading(false);
     }
@@ -247,12 +192,6 @@ const Page = () => {
           <Well>
             <h3>Add water usage</h3>
             <StyledFormContainer>
-              {flashMessage.isVisible && (
-                <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
-                  {flashMessage.text}
-                </FlashMessage>
-              )}
-
               <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
                   <TextInput
@@ -280,26 +219,10 @@ const Page = () => {
                       return setActiveGatheredUser(e.target.value);
                     }}
                     id={"userWhoGathered"}
-                    label={"Who Collected the Data?"}
+                    label={"Who Collected?"}
                     required={true}
                     showLabel={true}
                     selectedValue={activeGatheredUser}
-                  />
-                </div>
-                <div
-                  style={{
-                    maxWidth: "380px",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center"
-                  }}
-                >
-                  <Checkbox
-                    id={"ckbxOverrideRestrictions"}
-                    isChecked={allowNegativeInputs}
-                    onChange={() => setAllowNegativeInputs(!allowNegativeInputs)}
-                    label={"Allow negative usages"}
                   />
                 </div>
               </div>
@@ -308,11 +231,23 @@ const Page = () => {
                 {properties.map(property => {
                   return (
                     <StyledTile>
-                      <h3>{property.address}</h3>
-                      <h4>{property.homeowner.name}</h4>
-                      <form>
+                      <StyledTopContainer>
+                        <StyledHeaderContainer>
+                          <h2>{property.address}</h2>
+                          <h4>{property.homeowner.name}</h4>
+                        </StyledHeaderContainer>
+                      </StyledTopContainer>
+                      Previous reading: {formatNumberWithCommas(property.usages[0].gallons)}
+                      <br />
+                      Delta:{" "}
+                      {
+                        <span style={{ fontWeight: "bold", color: deltas[property.id] >= 0 ? "green" : "red" }}>
+                          {deltas[property.id]}
+                        </span>
+                      }
+                      <form onSubmit={e => onSubmit(e, property.id)} style={{ width: "100%" }}>
                         <TextInput
-                          key={`new_usage_${property.id}`}
+                          key={`new_single_usage_${property.id}`}
                           id={property.id}
                           value={usages[property.id].new}
                           onChange={e => {
@@ -327,48 +262,16 @@ const Page = () => {
                           }}
                           onBlur={() => updateDeltas(property.id)}
                         />
-                        <Button type={"submit"} onClick={() => {}} fullWidth={true}>
-                          Save
+                        <Button type="submit" fullWidth disabled={loading}>
+                          {loading ? "Saving..." : "Save Usages"}
                         </Button>
                       </form>
-                      <p>
-                        Previous reading: {formatNumberWithCommas(property.usages[property.usages.length - 1].gallons)}
-                      </p>
                     </StyledTile>
                   );
                 })}
-
-                <StyledTile>
-                  <h3>235 Mt Pisgah</h3>
-                  <h4>John Smith</h4>
-                  <MoneyInput
-                    id={"123"}
-                    valueInPennies={0}
-                    onChange={function (value: number | null): void {
-                      throw new Error("Function not implemented.");
-                    }}
-                  />
-                  <p>Previous reading: {formatNumberWithCommas(123131)}</p>
-                </StyledTile>
-                <StyledTile>
-                  <h3>235 Mt Pisgah</h3>
-                  <h4>John Smith</h4>
-                  <MoneyInput
-                    id={"123"}
-                    valueInPennies={0}
-                    onChange={function (value: number | null): void {
-                      throw new Error("Function not implemented.");
-                    }}
-                  />
-                  <p>Previous reading: {formatNumberWithCommas(123131)}</p>
-                </StyledTile>
               </StyledTileContainer>
 
-              <StyledFooterDivs>
-                {/*<Button type="submit" fullWidth disabled={loading}>*/}
-                {/*  {loading ? "Saving..." : "Save Usages"}*/}
-                {/*</Button>*/}
-              </StyledFooterDivs>
+              <StyledFooterDivs></StyledFooterDivs>
             </StyledFormContainer>
           </Well>
         </StyledWellContainer>
