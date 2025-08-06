@@ -13,10 +13,14 @@ export const StyledWellContainer = styled.div`
 `;
 
 export const StyledFormContainer = styled.div`
-  padding: 1.5rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+
+  @media (min-width: ${props => props.theme.smToMd}) {
+    padding: 1.5rem;
+  }
 `;
 
 export const StyledFooterDivs = styled.div`
@@ -32,54 +36,6 @@ export const StyledFooterDivs = styled.div`
   }
 `;
 
-export const StyledTable = styled.table`
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse;
-
-  thead {
-    border-collapse: collapse;
-  }
-
-  th,
-  td {
-    border: 1px solid #dddddd;
-    padding: 8px;
-    display: table-cell;
-    border-collapse: collapse;
-    text-align: center;
-  }
-
-  tr {
-    border-bottom: 1px solid #ddd;
-  }
-`;
-
-export const StyledTd = styled.td`
-  padding: 0 !important;
-  border-bottom: 0 !important;
-
-  div input {
-    width: 50%;
-    margin-bottom: 0;
-    margin-top: 0;
-  }
-
-  > div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 55px;
-    padding: 8px;
-    border-bottom: 1px solid #dddddd;
-  }
-
-  > div:last-child {
-    padding: 8px;
-    border-bottom: 0;
-  }
-`;
-
 export const StyledTileContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -92,13 +48,27 @@ export const StyledTile = styled.div`
   max-width: 100%;
   width: 100%;
   padding: 15px;
-  margin: 10px;
+  margin: 0 0 20px 0;
+  border-bottom: 1px solid grey;
   box-sizing: border-box;
 
   @media (min-width: ${props => props.theme.smToMd}) {
     width: calc(50% - 20px); // Subtract total margin (10px left + 10px right)
+    margin: 10px;
   }
   @media (min-width: ${props => props.theme.mdToLg}) {
     width: calc(33.333% - 20px); // Subtract total margin (10px left + 10px right)
   }
+`;
+
+export const StyledTopContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+`;
+
+export const StyledHeaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
