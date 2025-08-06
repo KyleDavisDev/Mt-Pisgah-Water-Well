@@ -6,11 +6,10 @@ interface HamburgerIconProps {
   onClick: any;
   size?: number;
   color?: string;
-  className?: string;
 }
 
 // Alternative spring-loaded hamburger variant
-const HamburgerIcon = ({ isOpen, onClick, size = 24, color = "#333", className = "" }: HamburgerIconProps) => {
+const HamburgerIcon = ({ isOpen, onClick, size = 24, color = "#333" }: HamburgerIconProps) => {
   return (
     <StyledButton
       onClick={onClick}
