@@ -10,6 +10,7 @@ export const StyledButton = styled.button`
   justify-content: center;
   align-items: center;
   position: relative;
+  margin-right: 10px;
 `;
 
 export const StyledBar = styled.span`
