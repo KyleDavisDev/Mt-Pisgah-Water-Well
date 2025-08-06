@@ -5,20 +5,30 @@ import {
   StyledMenuItem,
   StyledMenuItemContainer,
   StyledSideBarContainer,
-  StyledSubMenuItemContainer
+  StyledSubMenuItemContainer,
+  StyledTopBarToggleContainer
 } from "./SidebarMenuStyle";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { HamburgerIcon } from "../../../../components/HamburgerIcon/HamburgerIcon";
+import { isDesktopHook, isMobileHook, isTabletHook } from "../../../../components/hooks/useMediaQuery";
 
 const SidebarMenu = () => {
+  const [isMenuExpandedForMobile, setIsMenuExpandedForMobile] = useState<boolean>(false);
   const [showHomeowners, setShowHomeowners] = useState<boolean>(false);
   const [showProperties, setShowProperties] = useState<boolean>(false);
   const [showUsage, setShowUsage] = useState<boolean>(false);
   const [showInvoices, setShowInvoices] = useState<boolean>(false);
   const [showPayments, setShowPayments] = useState<boolean>(false);
 
-  return (
+  const isMobile = isMobileHook();
+  const isTablet = isTabletHook();
+  const isDesktop = isDesktopHook();
+
+  console.log(isDesktop);
+
+  const renderMenuItems = () => (
     <StyledSideBarContainer>
       <StyledIconContainer>
         <Link href={"/admin/dashboard"}>
@@ -64,7 +74,7 @@ const SidebarMenu = () => {
               <Link href={"/admin/dashboard/usages/add"}>Add Usage</Link>
             </StyledSubMenuItemContainer>
             <StyledSubMenuItemContainer>
-              <Link href={"/admin/dashboard/usages/add"}>Add By order</Link>
+              <Link href={"/admin/dashboard/usages/addSingle"}>Add Individually</Link>
             </StyledSubMenuItemContainer>
           </>
         )}
@@ -98,6 +108,34 @@ const SidebarMenu = () => {
         )}
       </StyledMenuItemContainer>
     </StyledSideBarContainer>
+  );
+
+  const renderMobileMenu = () => {
+    return (
+      <>
+        <StyledTopBarToggleContainer>
+          <HamburgerIcon
+            isOpen={isMenuExpandedForMobile}
+            onClick={() => setIsMenuExpandedForMobile(!isMenuExpandedForMobile)}
+            size={40}
+            color="#000"
+          />
+        </StyledTopBarToggleContainer>
+        {isMenuExpandedForMobile && renderMenuItems()}
+      </>
+    );
+  };
+
+  const renderDesktopMenu = () => {
+    return <>{renderMenuItems()}</>;
+  };
+
+  return (
+    <>
+      {isMobile && renderMobileMenu()}
+      {isTablet && renderDesktopMenu()}
+      {isDesktop && renderDesktopMenu()}
+    </>
   );
 };
 
