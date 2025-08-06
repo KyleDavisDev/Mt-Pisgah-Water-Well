@@ -8,6 +8,7 @@ export const StyledTopBarToggleContainer = styled.div`
   max-width: 100%;
   background-color: ${props => props.theme.white};
   box-shadow: rgba(44, 51, 73, 0.1) 0px 0.5rem 1rem 0px;
+  border-bottom: 1px solid grey;
 
   @media print {
     display: none !important;
