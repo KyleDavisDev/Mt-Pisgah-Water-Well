@@ -117,7 +117,7 @@ const SidebarMenu = () => {
           <HamburgerIcon
             isOpen={isMenuExpandedForMobile}
             onClick={() => setIsMenuExpandedForMobile(!isMenuExpandedForMobile)}
-            size={40}
+            size={30}
             color="#000"
           />
         </StyledTopBarToggleContainer>
