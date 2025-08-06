@@ -57,7 +57,7 @@ const Page = () => {
 
   const getUsagesByHomeowner = () => {
     // Fetch data from the API using a GET request
-    fetch("/api/usages/groupByHomeowner", { method: "GET" })
+    fetch("/api/usages/get?groupBy=HOMEOWNER", { method: "GET" })
       .then(response => {
         // Check if the response is successful
         if (!response.ok) {
