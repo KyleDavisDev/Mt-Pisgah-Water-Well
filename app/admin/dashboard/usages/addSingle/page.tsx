@@ -219,7 +219,7 @@ const Page = () => {
                       return setActiveGatheredUser(e.target.value);
                     }}
                     id={"userWhoGathered"}
-                    label={"Who Collected?"}
+                    label={"Collected By"}
                     required={true}
                     showLabel={true}
                     selectedValue={activeGatheredUser}
@@ -263,7 +263,7 @@ const Page = () => {
                           onBlur={() => updateDeltas(property.id)}
                         />
                         <Button type="submit" fullWidth disabled={loading}>
-                          {loading ? "Saving..." : "Save Usages"}
+                          {loading ? "Saving..." : "Save Usage"}
                         </Button>
                       </form>
                     </StyledTile>
