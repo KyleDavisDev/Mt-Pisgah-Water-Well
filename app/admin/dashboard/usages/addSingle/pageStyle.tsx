@@ -47,7 +47,7 @@ export const StyledTileContainer = styled.div`
 export const StyledTile = styled.div`
   max-width: 100%;
   width: 100%;
-  padding: 15px;
+  padding: 30px 0;
   margin: 0 0 20px 0;
   border-bottom: 1px solid grey;
   box-sizing: border-box;
