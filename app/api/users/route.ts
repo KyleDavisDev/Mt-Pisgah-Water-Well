@@ -1,6 +1,9 @@
-import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
 import { cookies } from "next/headers";
+import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
 import { getAllActiveUsersByPermission, getAllUsers } from "../repositories/userRepository";
+
+// NextJS quirk to make the route dynamic
+const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {

@@ -1,11 +1,14 @@
+import { cookies } from "next/headers";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Homeowners from "../../models/Homeowners";
 import Property from "../../models/Properties";
 import Usages from "../../models/Usages";
-import { cookies } from "next/headers";
 import { findAllActiveByPropertyIdInAndLimitBy } from "../../repositories/usageRepository";
 import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
 import { getAllActivePropertiesByHomeownerIdIn } from "../../repositories/propertiesRepository";
+
+// NextJS quirk to make the route dynamic
+const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {

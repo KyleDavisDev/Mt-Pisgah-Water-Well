@@ -3,6 +3,9 @@ import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { PaymentCreate } from "../../models/Payments";
 import { PaymentRepository } from "../../repositories/paymentRepository";
 
+// NextJS quirk to make the route dynamic
+const dynamic = "force-dynamic";
+
 const toModelAdapter = (payments: any): PaymentCreate[] => {
   if (!payments) throw Error("Could not map payments object");
   if (!Array.isArray(payments)) throw Error("Payments must be an array");
