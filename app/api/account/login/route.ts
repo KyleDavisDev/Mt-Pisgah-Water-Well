@@ -6,7 +6,7 @@ import { db } from "../../utils/db";
 import { getUserByUsername } from "../../repositories/userRepository";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 const pwConcat = process.env.PASSWORD_CONCAT;
 const saltRounds = process.env.SALT_ROUNDS;

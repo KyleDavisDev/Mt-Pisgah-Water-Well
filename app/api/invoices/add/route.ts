@@ -11,7 +11,7 @@ import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { InvoiceCreate } from "../../models/Invoice";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request): Promise<Response> {
   if (req.method !== "POST") {

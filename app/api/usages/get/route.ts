@@ -10,7 +10,7 @@ import Usage from "../../models/Usages";
 import Homeowner from "../../models/Homeowners";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 const homeownerGrouping = (homeowners: Homeowner[], properties: Property[], usages: Usage[]) => {
   return Response.json({

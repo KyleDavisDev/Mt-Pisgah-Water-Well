@@ -3,7 +3,7 @@ import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 export async function PUT(req: Request) {
   if (req.method !== "PUT") {
