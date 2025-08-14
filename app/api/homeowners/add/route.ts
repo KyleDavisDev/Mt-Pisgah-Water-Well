@@ -1,8 +1,10 @@
 import { cookies } from "next/headers";
-
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { addAuditTableRecord } from "../../repositories/auditRepository";
+
+// NextJS quirk to make the route dynamic
+const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   if (req.method !== "POST") {
