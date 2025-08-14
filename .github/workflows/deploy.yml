@@ -1,0 +1,43 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]  # Triggers when code is merged to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js (adjust for your stack)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            cd /var/www/mtpisgahapp/Mt-Pisgah-Water-Well
+            git pull origin main
+            npm install
+            npm run build
+            
+            pm2 stop nextjs-app || true
+            pm2 delete nextjs-app || true
+            
+            pm2 start npm --name "nextjs-app" -- start
+            pm2 save
+            
+            sudo systemctl reload caddy
