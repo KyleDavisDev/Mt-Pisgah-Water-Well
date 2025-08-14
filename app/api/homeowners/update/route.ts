@@ -1,8 +1,11 @@
+import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Homeowner from "../../models/Homeowners";
-import { cookies } from "next/headers";
 import { addAuditTableRecord } from "../../repositories/auditRepository";
+
+// NextJS quirk to make the route dynamic
+const dynamic = "force-dynamic";
 
 export async function PUT(req: Request) {
   if (req.method !== "PUT") {

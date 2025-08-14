@@ -4,6 +4,9 @@ import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { getUsageById } from "../../repositories/usageRepository";
 import { addAuditTableRecord } from "../../repositories/auditRepository";
 
+// NextJS quirk to make the route dynamic
+const dynamic = "force-dynamic";
+
 export async function PUT(req: Request) {
   if (req.method !== "PUT") {
     return new Response("Method Not Allowed", { status: 405 });

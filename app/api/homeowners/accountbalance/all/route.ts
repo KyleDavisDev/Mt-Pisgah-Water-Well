@@ -1,13 +1,14 @@
-import { getUsernameFromCookie, validatePermission, validatePermissions } from "../../../utils/utils";
+import { cookies } from "next/headers";
+import { getUsernameFromCookie, validatePermissions } from "../../../utils/utils";
 import Homeowners from "../../../models/Homeowners";
 import Property from "../../../models/Properties";
-import Usages from "../../../models/Usages";
-import { cookies } from "next/headers";
-import { findAllActiveByPropertyIdInAndLimitBy } from "../../../repositories/usageRepository";
 import { getAllActiveHomeowners } from "../../../repositories/homeownerRepository";
 import { getAllActivePropertiesByHomeownerIdIn } from "../../../repositories/propertiesRepository";
 import { PaymentRepository } from "../../../repositories/paymentRepository";
 import { InvoiceRepository } from "../../../repositories/invoiceRepository";
+
+// NextJS quirk to make the route dynamic
+const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
