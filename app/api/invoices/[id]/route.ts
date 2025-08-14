@@ -7,7 +7,7 @@ import { getPropertyById } from "../../repositories/propertiesRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 export async function GET(req: Request, { params }: { params: { id: string } }): Promise<Response> {
   if (req.method !== "GET") {

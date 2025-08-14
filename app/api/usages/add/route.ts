@@ -5,7 +5,7 @@ import Usage from "../../models/Usages";
 import { addAuditTableRecord } from "../../repositories/auditRepository";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 const toModelAdapter = (usages: any): Usage[] => {
   if (!usages) throw Error("Could not map usages object");

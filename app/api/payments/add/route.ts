@@ -4,7 +4,7 @@ import { PaymentCreate } from "../../models/Payments";
 import { PaymentRepository } from "../../repositories/paymentRepository";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 const toModelAdapter = (payments: any): PaymentCreate[] => {
   if (!payments) throw Error("Could not map payments object");
