@@ -3,7 +3,7 @@ import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from
 import { getAllActiveUsersByPermission, getAllUsers } from "../repositories/userRepository";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {

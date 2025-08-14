@@ -11,7 +11,7 @@ import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 
 // NextJS quirk to make the route dynamic
-const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   if (req.method !== "GET") {
