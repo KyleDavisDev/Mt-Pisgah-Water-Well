@@ -3,6 +3,9 @@ import { db } from "../utils/db";
 import Homeowners from "../models/Homeowners";
 import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 
+// NextJS quirk to make the route dynamic
+const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
