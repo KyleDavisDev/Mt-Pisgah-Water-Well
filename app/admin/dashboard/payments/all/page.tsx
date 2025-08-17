@@ -56,8 +56,6 @@ const Page = () => {
       })
       .then(data => {
         // Update state with the fetched data
-        console.log(data);
-
         setHomeowners(data.homeowners);
       })
       .catch(error => {

@@ -26,8 +26,6 @@ const SidebarMenu = () => {
   const isTablet = isTabletHook();
   const isDesktop = isDesktopHook();
 
-  console.log(isDesktop);
-
   const renderMenuItems = () => (
     <StyledSideBarContainer>
       <StyledIconContainer>
