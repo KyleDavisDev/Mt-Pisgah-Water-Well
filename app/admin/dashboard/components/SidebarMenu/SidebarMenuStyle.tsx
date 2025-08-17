@@ -1,3 +1,5 @@
+"use client";
+
 import styled from "../../../../theme/styled-components";
 
 export const StyledTopBarToggleContainer = styled.div`
