@@ -62,8 +62,6 @@ const Page = () => {
       })
       .then(data => {
         // Update state with the fetched data
-        console.log(data);
-
         const usagesCollector: { [key: string]: { previous: string; new: string } } = {};
         const deltasCollector: { [key: string]: number } = {};
         for (let i = 0; i < data.properties.length; i++) {
