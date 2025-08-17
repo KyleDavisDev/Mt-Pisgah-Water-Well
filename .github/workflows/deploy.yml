@@ -36,6 +36,3 @@ jobs:
             pm2 delete nextjs-app || true
             
             pm2 start npm --name "nextjs-app" -- start
-            pm2 save
-            
-            sudo systemctl reload caddy
