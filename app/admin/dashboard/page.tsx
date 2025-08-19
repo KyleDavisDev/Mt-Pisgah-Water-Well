@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import styled from "../../theme/styled-components";
-import { Article } from "../../components/Article/Article";
+import Article from "../../components/Article/Article";
 import Well from "../../components/Well/Well";
 
 const StyledContainer = styled.div`
