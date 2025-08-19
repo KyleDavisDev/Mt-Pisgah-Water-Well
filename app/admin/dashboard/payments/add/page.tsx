@@ -12,7 +12,7 @@ import {
 import Well from "../../../../components/Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { Button } from "../../../../components/Button/Button";
-import { Article } from "../../../../components/Article/Article";
+import Article from "../../../../components/Article/Article";
 import { formatPenniesToDollars } from "../../util";
 import MoneyInput from "../../../../components/MoneyInput/MoneyInput";
 import Select from "../../../../components/Select/Select";

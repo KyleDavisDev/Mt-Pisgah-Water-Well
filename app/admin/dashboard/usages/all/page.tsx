@@ -11,7 +11,7 @@ import {
   StyledTableHeader
 } from "./pageStyle";
 import Well from "../../../../components/Well/Well";
-import { Article } from "../../../../components/Article/Article";
+import Article from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import UsageEditModal from "./components/UsageEditModal/UsageEditModal";
 import { formatNumberWithCommas } from "../../util";

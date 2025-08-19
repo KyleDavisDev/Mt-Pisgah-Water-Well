@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { FlashMessage, FlashMessageProps } from "../../components/FlashMessage/FlashMessage";
-import { Article } from "../../components/Article/Article";
+import Article from "../../components/Article/Article";
 import { StyledContainer, StyledFooterDivs, StyledFormContainer } from "./pageStyle";
 import Well from "../../components/Well/Well";
 import TextInput from "../../components/TextInput/TextInput";

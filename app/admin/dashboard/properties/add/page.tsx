@@ -7,7 +7,7 @@ import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMes
 import { TextInput } from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
 import Select from "../../../../components/Select/Select";
-import { Article } from "../../../../components/Article/Article";
+import Article from "../../../../components/Article/Article";
 
 const page = () => {
   const _defaultErrorMessage = "There was a problem saving the property. Please refresh your page and try again!";

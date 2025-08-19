@@ -5,7 +5,7 @@ import { StyledWellContainer, StyledFormContainer, StyledTable, StyledContainer 
 import Well from "../../../../components/Well/Well";
 import { Button } from "../../../../components/Button/Button";
 import PropertyEditModal from "./components/PropertyEditModal/PropertyEditModal";
-import { Article } from "../../../../components/Article/Article";
+import Article from "../../../../components/Article/Article";
 import { homeownerVM } from "../../homeowners/all/page";
 
 export interface propertyVM {

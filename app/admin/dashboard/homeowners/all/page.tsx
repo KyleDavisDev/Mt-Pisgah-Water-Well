@@ -5,7 +5,7 @@ import { StyledWellContainer, StyledFormContainer, StyledTable, StyledContainer 
 import HomeownerEditModal from "./components/HomeownerEditModal/HomeownerEditModal";
 import Well from "../../../../components/Well/Well";
 import { Button } from "../../../../components/Button/Button";
-import { Article } from "../../../../components/Article/Article";
+import Article from "../../../../components/Article/Article";
 import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
 import { StyledBillTemplate } from "../../invoices/view/[id]/pageStyle";
 
