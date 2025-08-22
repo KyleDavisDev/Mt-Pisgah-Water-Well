@@ -13,7 +13,7 @@ import Well from "../../../../components/Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { Button } from "../../../../components/Button/Button";
 import Article from "../../../../components/Article/Article";
-import { TextInput } from "../../../../components/TextInput/TextInput";
+import TextInput from "../../../../components/TextInput/TextInput";
 import Select from "../../../../components/Select/Select";
 import Checkbox from "../../../../components/Checkbox/Checkbox";
 import { formatNumberWithCommas } from "../../util";

@@ -14,7 +14,7 @@ import {
 import Well from "../../../../components/Well/Well";
 import { Button } from "../../../../components/Button/Button";
 import Article from "../../../../components/Article/Article";
-import { TextInput } from "../../../../components/TextInput/TextInput";
+import TextInput from "../../../../components/TextInput/TextInput";
 import Select from "../../../../components/Select/Select";
 import { formatNumberWithCommas } from "../../util";
 

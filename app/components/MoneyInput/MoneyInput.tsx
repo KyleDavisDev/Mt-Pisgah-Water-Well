@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { formatDollarsToPennies, formatPenniesToDollars } from "../../admin/dashboard/util";
-import { TextInput } from "../TextInput/TextInput";
+import TextInput from "../TextInput/TextInput";
 
 interface MoneyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "id"> {
   id: string;

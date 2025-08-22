@@ -4,7 +4,7 @@ import { homeownerVM } from "../../page";
 
 import { FlashMessage, FlashMessageProps } from "../../../../../../components/FlashMessage/FlashMessage";
 import { RadioButton } from "../../../../../../components/RadioButton/RadioButton";
-import { TextInput } from "../../../../../../components/TextInput/TextInput";
+import TextInput from "../../../../../../components/TextInput/TextInput";
 import { Button } from "../../../../../../components/Button/Button";
 import { Modal } from "../../../../../../components/Modal/Modal";
 import Label from "../../../../../../components/Label/Label";

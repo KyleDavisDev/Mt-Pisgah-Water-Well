@@ -2,7 +2,7 @@
 
 import React from "react";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
-import { TextInput } from "../../../../components/TextInput/TextInput";
+import TextInput from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
 import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 

@@ -4,7 +4,7 @@ import React from "react";
 import { StyledContainer, StyledWellContainer, StyledFooterDivs, StyledFormContainer } from "./pageStyle";
 import Well from "../../../../components/Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
-import { TextInput } from "../../../../components/TextInput/TextInput";
+import TextInput from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
 import Select from "../../../../components/Select/Select";
 import Article from "../../../../components/Article/Article";

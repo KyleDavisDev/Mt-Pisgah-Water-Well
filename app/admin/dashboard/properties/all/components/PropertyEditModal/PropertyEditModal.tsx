@@ -5,7 +5,7 @@ import { propertyVM } from "../../page";
 import { homeownerVM } from "../../../../homeowners/all/page";
 import { StyledFooterDivs } from "../../../../homeowners/all/pageStyle";
 
-import { TextInput } from "../../../../../../components/TextInput/TextInput";
+import TextInput from "../../../../../../components/TextInput/TextInput";
 import { Button } from "../../../../../../components/Button/Button";
 import { Modal } from "../../../../../../components/Modal/Modal";
 import { FlashMessage, FlashMessageProps } from "../../../../../../components/FlashMessage/FlashMessage";
