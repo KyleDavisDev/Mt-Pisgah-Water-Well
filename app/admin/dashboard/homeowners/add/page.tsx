@@ -1,12 +1,9 @@
 "use client";
 
 import React from "react";
-import { StyledFooterDivs, StyledFormContainer } from "./pageStyle";
-import Well from "../../../../components/Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { TextInput } from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
-import Article from "../../../../components/Article/Article";
 import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 const Page = () => {
@@ -85,7 +82,7 @@ const Page = () => {
   return (
     <ArticleHolder>
       <h3>Add Homeowner</h3>
-      <StyledFormContainer>
+      <div className={"p-4 flex flex-row flex-wrap"}>
         {flashMessage.isVisible && (
           <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
             {flashMessage.text}
@@ -131,13 +128,18 @@ const Page = () => {
             name={"mailingAddress"}
             required={true}
           />
-          <StyledFooterDivs>
+
+          {/*  > div > label {*/}
+          {/*  font-size: 0.85rem;*/}
+          {/*  text-transform: inherit;*/}
+          {/*}*/}
+          <div className={"flex flex-row justify-around align-center mt-4"}>
             <Button type="submit" fullWidth disabled={loading}>
               {loading ? "Adding..." : "Add Homeowner"}
             </Button>
-          </StyledFooterDivs>
+          </div>
         </form>
-      </StyledFormContainer>
+      </div>
     </ArticleHolder>
   );
 };
