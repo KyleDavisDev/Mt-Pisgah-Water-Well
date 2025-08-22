@@ -8,11 +8,9 @@ interface ArticleHolderProps {
 
 export const ArticleHolder = ({ children }: ArticleHolderProps) => {
   return (
-    <div className={"w-full h-screen overflow-scroll"}>
-      <Article size="lg">
-        <div className={"flex flex-col overflow-scroll"}>
-          <Well>{children}</Well>
-        </div>
+    <div className={"w-full h-screen overflow-scroll mt-15"}>
+      <Article size="lg" className={"flex flex-col overflow-scroll rounded-md border border-inputBorder"}>
+        <Well>{children}</Well>
       </Article>
     </div>
   );
