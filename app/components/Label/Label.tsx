@@ -9,20 +9,17 @@ export interface LabelProps {
   onClick?: () => void;
 }
 
-const StyledLabel = styled.label`
-  color: #676767;
-  display: block;
-  clear: both;
-  font-family: FuturaMedium;
-`;
-
 const Label: React.FC<LabelProps> = props => {
   const { htmlFor, className, children, onClick } = props;
 
   return (
-    <StyledLabel htmlFor={htmlFor} className={className} onClick={onClick}>
+    <label
+      htmlFor={htmlFor}
+      className={`text-black block clear-both font-(family-name:FuturaMedium) ${className}`}
+      onClick={onClick}
+    >
       {children}
-    </StyledLabel>
+    </label>
   );
 };
 
