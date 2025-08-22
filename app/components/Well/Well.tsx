@@ -11,11 +11,9 @@ const Well: React.FC<WellProps> = props => {
     <div
       className="
         max-w-[2000px] w-full mx-0
-        border-1 border-white bg-white rounded-5
+       bg-white
         flex flex-col justify-start
-        transition-all duration-200 ease-linear
-        p-4 box-border
-        [&>a:last-child]:mt-auto [&>a:last-child]:mx-auto [&>a:last-child]:mb-0
+        p-4
       "
       style={props.style}
     >
