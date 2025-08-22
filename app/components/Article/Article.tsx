@@ -2,8 +2,6 @@
 
 import * as React from "react";
 
-import styled from "../../theme/styled-components";
-
 export interface ArticleProps {
   children: any;
   className?: string;
@@ -27,7 +25,7 @@ const Article: React.FunctionComponent<ArticleProps> = props => {
 
   return (
     <article
-      className={`${getMaxWidth(props.size)} w-full mx-auto font-avenir px-[15px] box-border [&>div]:mb-14 [&>div]:mt-14 sm:px-0 sm:[&>div]:mb-14`}
+      className={`${getMaxWidth(props.size)} w-full mx-auto font-avenir px-[15px] box-border sm:px-0 ${props.className}`}
       style={props.style}
     >
       {props.children}
