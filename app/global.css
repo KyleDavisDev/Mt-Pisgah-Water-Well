@@ -1,58 +1,66 @@
 @import 'tailwindcss';
 
-/*@font-face {*/
-/*    font-family: FuturaMedium;*/
-/*    src: url('/public/fonts/Futura-Medium.ttf') format('truetype');*/
-/*    font-weight: normal;*/
-/*    font-style: normal;*/
-/*}*/
+@font-face {
+    font-family: FuturaMedium;
+    src: url('../public/fonts/Futura-Medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 
-/*@font-face {*/
-/*    font-family: AvenirNextReg;*/
-/*    src: url('/public/fonts/AvenirNext-Regular.ttf') format('truetype');*/
-/*    font-weight: normal;*/
-/*    font-style: normal;*/
-/*}*/
+@font-face {
+    font-family: AvenirNextReg;
+    src: url('../public/fonts/AvenirNext-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 
-/*!* Define the "system" font family *!*/
-/*@font-face {*/
-/*    font-family: System;*/
-/*    font-style: normal;*/
-/*    font-weight: 300;*/
-/*    src: local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"), local(".LucidaGrandeUI"), local("Ubuntu Light"), local("Segoe UI Light"), local("Roboto-Light"), local("DroidSans"), local("Tahoma");*/
-/*}*/
+/* Define the "system" font family */
+@font-face {
+    font-family: System;
+    font-style: normal;
+    font-weight: 300;
+    src: local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"), local(".LucidaGrandeUI"), local("Ubuntu Light"), local("Segoe UI Light"), local("Roboto-Light"), local("DroidSans"), local("Tahoma");
+}
 
-/*body {*/
-/*    margin: 0;*/
-/*    min-height: 100vh;*/
-/*}*/
+@theme {
+    --color-primaryThemeColor: oklch(0.5699 0.2367 260.77);
+    --color-primaryDarkThemeColor: oklch(0.4295 0.1899 261.36);
+    --color-black: oklch(0.3211 0 0);
+    --color-lightGrey: oklch(0.8452 0 0);
+    --color-inputBorder: oklch(0.7412 0 0);
+}
 
-/*a {*/
-/*    font-family: AvenirNextReg !important;*/
-/*}*/
+body {
+    margin: 0;
+    min-height: 100vh;
+}
 
-/*html {*/
-/*    background-color: rgb(237, 241, 247);*/
-/*    font-family: AvenirNextReg;*/
-/*    font-size: 16px;*/
+a {
+    font-family: AvenirNextReg !important;
+}
 
-/*    @media print {*/
-/*        background-color: white;*/
-/*    }*/
-/*}*/
+html {
+    background-color: rgb(237, 241, 247);
+    font-family: AvenirNextReg;
+    font-size: 16px;
 
-/*h1, h2, h3, h4, h5, h6 {*/
-/*    margin: 0;*/
-/*    font-family: FuturaMedium;*/
-/*}*/
+    @media print {
+        background-color: white;
+    }
+}
 
-/*#__next {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    justify-content: flex-start;*/
-/*    min-height: 100vh;*/
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: FuturaMedium;
+}
 
-/*    footer {*/
-/*        margin-top: auto;*/
-/*    }*/
-/*}*/
+#__next {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 100vh;
+
+    footer {
+        margin-top: auto;
+    }
+}
