@@ -1,5 +1,4 @@
 import * as React from "react";
-import styled from "../../theme/styled-components";
 
 export interface ButtonProps {
   children: string | React.JSX.Element | Array<string | React.JSX.Element>;
