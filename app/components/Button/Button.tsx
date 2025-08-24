@@ -23,7 +23,7 @@ const Button: React.FunctionComponent<ButtonProps> = props => {
 
     const variantClasses =
       props.displayType === "outline"
-        ? "border-primaryThemeColor bg-transparent  text-primaryThemeColor"
+        ? "border-primaryThemeColor bg-transparent text-primaryThemeColor"
         : "border-primaryThemeColor bg-primaryThemeColor text-white";
 
     const hoverClasses =
