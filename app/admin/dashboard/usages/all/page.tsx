@@ -116,7 +116,10 @@ const Page = () => {
                           {property.usages &&
                             property.usages.map((usage, ind) => {
                               return (
-                                <tr className={"border-b border-tableBorder even:bg-gray-200"}>
+                                <tr
+                                  className={"border-b border-tableBorder even:bg-gray-200"}
+                                  key={`${usage.id}_${ind}`}
+                                >
                                   <td
                                     className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
                                   >
