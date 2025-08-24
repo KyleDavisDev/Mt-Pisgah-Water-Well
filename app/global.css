@@ -23,11 +23,13 @@
 }
 
 @theme {
-    --color-primaryThemeColor: oklch(0.5699 0.2367 260.77);
-    --color-primaryDarkThemeColor: oklch(0.4295 0.1899 261.36);
-    --color-black: oklch(0.3211 0 0);
-    --color-lightGrey: oklch(0.8452 0 0);
-    --color-inputBorder: oklch(0.7412 0 0);
+    --color-primaryThemeColor: oklch(0.5699 0.2367 260.77); /* #0969ff */
+    --color-primaryDarkThemeColor: oklch(0.4295 0.1899 261.36); /* #0043b5 */
+    --color-black: oklch(0.3211 0 0); /* #333333 */
+    --color-lightGrey: oklch(0.8452 0 0); /* #cccccc */
+    --color-inputBorder: oklch(0.7412 0 0); /* #ababab */
+    --color-tableBorder: oklch(0.8975 0 0); /* #dddddd */
+    --color-translucentBackground: oklch(0 0 0 / 35%); /* rgba(0, 0, 0, 0.35) */
 }
 
 body {
