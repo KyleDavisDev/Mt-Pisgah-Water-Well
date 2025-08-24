@@ -39,10 +39,9 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
 
     // Find the DOM element that was clicked on
     const elementAtMouse = document.elementFromPoint(mouseX, mouseY);
-    const clickedOnElement = findDOMNode(elementAtMouse);
-    if (!clickedOnElement) return;
+    if (!elementAtMouse) return;
 
-    const label = (clickedOnElement as Element).attributes.getNamedItem("aria-labelledby")?.value;
+    const label = (elementAtMouse as Element).attributes.getNamedItem("aria-labelledby")?.value;
     if (label === "Close Modal") {
       props.onClose();
     }
