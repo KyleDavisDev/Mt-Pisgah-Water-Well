@@ -234,11 +234,11 @@ const Page = () => {
                       })}
                   </tbody>
                 </StyledTable>
-                <StyledFooterDivs>
+                <div className={"flex flex-row justify-around align-center mt-4"}>
                   <Button type="submit" fullWidth disabled={loading}>
                     {loading ? "Saving..." : "Save All"}
                   </Button>
-                </StyledFooterDivs>
+                </div>
               </form>
             </StyledFormContainer>
           </Well>

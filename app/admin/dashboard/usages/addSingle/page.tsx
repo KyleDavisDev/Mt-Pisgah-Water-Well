@@ -268,8 +268,6 @@ const Page = () => {
                   );
                 })}
               </StyledTileContainer>
-
-              <StyledFooterDivs></StyledFooterDivs>
             </StyledFormContainer>
           </Well>
         </StyledWellContainer>
