@@ -10,7 +10,7 @@ export async function PUT(req: Request) {
     return new Response("Method Not Allowed", { status: 405 });
   }
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "UPDATE_INVOICE");

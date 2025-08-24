@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
     if (!jwtCookie) {
       return new Response("Unauthorized", { status: 401 });

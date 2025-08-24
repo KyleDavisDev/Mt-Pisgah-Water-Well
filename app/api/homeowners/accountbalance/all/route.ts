@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermissions(username, ["READ_PAYMENT", "READ_INVOICE"]);
