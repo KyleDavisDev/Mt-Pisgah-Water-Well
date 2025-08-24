@@ -33,7 +33,7 @@ const Select: React.FC<SelectProps> = props => {
       `}
       >
         <select
-          className={`w-full bg-white border-inputBorder cursor-pointer 
+          className={`w-full bg-white border border-inputBorder cursor-pointer 
             inline-block relative transition-[background-color,color,border] 
             duration-300 ease-in-out align-middle h-[38px] py-0 pr-[40px] pl-[15px] text-base
         `}
