@@ -1,5 +1,4 @@
 import * as React from "react";
-import styled from "styled-components";
 import Label from "../Label/Label";
 
 export interface RadioButtonProps {
@@ -14,9 +13,14 @@ export interface RadioButtonProps {
 
 const RadioButton: React.FC<RadioButtonProps> = props => {
   return (
-    <div className={props.className}>
-      <Label htmlFor={props.id} onClick={() => props.onClick(props.id)}>
+    <div className={`inline-block pt-0 pr-[30px] pb-[10px] pl-0 box-border ${props.className}`}>
+      <Label
+        className={"pt-[10px] pr-[10px] pb-[10px] pl-0 text-black"}
+        htmlFor={props.id}
+        onClick={() => props.onClick(props.id)}
+      >
         <input
+          className={"mr-[10px]"}
           checked={props.isChecked}
           type="radio"
           name={props.name}
@@ -31,21 +35,4 @@ const RadioButton: React.FC<RadioButtonProps> = props => {
   );
 };
 
-const StyledRadioButton = styled(RadioButton)`
-  display: inline-block;
-  padding: 0 30px 10px 0;
-  box-sizing: border-box;
-
-  input {
-    margin-right: 10px;
-  }
-
-  label {
-    padding: 10px 10px 10px 0;
-
-    color: ${props => props.theme.siteFontColor};
-  }
-`;
-
-export { StyledRadioButton as RadioButton };
-export default RadioButton;
+export { RadioButton };
