@@ -1,13 +1,11 @@
 "use client";
 
 import React from "react";
-import { StyledContainer, StyledWellContainer, StyledFooterDivs, StyledFormContainer } from "./pageStyle";
-import Well from "../../../../components/Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import TextInput from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
 import Select from "../../../../components/Select/Select";
-import Article from "../../../../components/Article/Article";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 const page = () => {
   const _defaultErrorMessage = "There was a problem saving the property. Please refresh your page and try again!";
@@ -116,78 +114,72 @@ const page = () => {
   };
 
   return (
-    <StyledContainer>
-      <Article size="md">
-        <StyledWellContainer>
-          <Well>
-            <h3>Add Property</h3>
-            <StyledFormContainer>
-              {flashMessage.isVisible && (
-                <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
-                  {flashMessage.text}
-                </FlashMessage>
-              )}
+    <ArticleHolder>
+      <h3>Add Property</h3>
+      <div className={"p-4 flex flex-row flex-wrap"}>
+        {flashMessage.isVisible && (
+          <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
+            {flashMessage.text}
+          </FlashMessage>
+        )}
 
-              <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-                <TextInput
-                  onChange={e => setAddress(e.target.value)}
-                  value={address}
-                  type={"text"}
-                  id={"address"}
-                  showLabel={true}
-                  label={"Address"}
-                  name={"address"}
-                  required={true}
-                />
-                <TextInput
-                  onChange={e => setDescription(e.target.value)}
-                  value={description}
-                  type={"text"}
-                  id={"description"}
-                  showLabel={true}
-                  label={"Description"}
-                  name={"description"}
-                />
-                {homeowners.length === 0 ? (
-                  <Select
-                    id="tmp"
-                    showLabel={true}
-                    label={"Property belongs to"}
-                    name={"tmp"}
-                    options={[{ name: "Loading ...", value: "0" }]}
-                    onSelect={() => {}}
-                    selectedValue={""}
-                    required={true}
-                  />
-                ) : (
-                  <Select
-                    id="homeowner"
-                    showLabel={true}
-                    label={"Property belongs to"}
-                    name={"homeowner"}
-                    options={homeowners.map(h => ({
-                      name: h.name,
-                      value: h.id
-                    }))}
-                    onSelect={e => {
-                      return setHomeowner(e.target.value);
-                    }}
-                    selectedValue={homeowner}
-                    required={true}
-                  />
-                )}
+        <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
+          <TextInput
+            onChange={e => setAddress(e.target.value)}
+            value={address}
+            type={"text"}
+            id={"address"}
+            showLabel={true}
+            label={"Address"}
+            name={"address"}
+            required={true}
+          />
+          <TextInput
+            onChange={e => setDescription(e.target.value)}
+            value={description}
+            type={"text"}
+            id={"description"}
+            showLabel={true}
+            label={"Description"}
+            name={"description"}
+          />
+          {homeowners.length === 0 ? (
+            <Select
+              id="tmp"
+              showLabel={true}
+              label={"Property belongs to"}
+              name={"tmp"}
+              options={[{ name: "Loading ...", value: "0" }]}
+              onSelect={() => {}}
+              selectedValue={""}
+              required={true}
+            />
+          ) : (
+            <Select
+              id="homeowner"
+              showLabel={true}
+              label={"Property belongs to"}
+              name={"homeowner"}
+              options={homeowners.map(h => ({
+                name: h.name,
+                value: h.id
+              }))}
+              onSelect={e => {
+                return setHomeowner(e.target.value);
+              }}
+              selectedValue={homeowner}
+              required={true}
+            />
+          )}
 
-                <StyledFooterDivs>
-                  <Button type="submit" fullWidth disabled={loading}>
-                    {loading ? "Adding..." : "Add Property"}
-                  </Button>
-                </StyledFooterDivs>
-              </form>
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+          <div className={"flex flex-row justify-around align-center mt-4"}>
+            <Button type="submit" fullWidth disabled={loading}>
+              {loading ? "Adding..." : "Add Property"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </ArticleHolder>
   );
 };
 
