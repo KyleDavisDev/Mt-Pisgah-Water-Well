@@ -121,7 +121,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
           />
           <TextInput
             onChange={e => setEmail(e.target.value)}
-            value={email}
+            value={email ?? ""}
             type={"text"}
             id={"email"}
             showLabel={true}
@@ -130,7 +130,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
           />
           <TextInput
             onChange={e => setPhone(e.target.value)}
-            value={phone}
+            value={phone ?? ""}
             type={"text"}
             id={"phone"}
             showLabel={true}
