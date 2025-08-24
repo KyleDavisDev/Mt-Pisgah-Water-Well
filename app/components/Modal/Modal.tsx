@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Button } from "../Button/Button";
-import { findDOMNode } from "react-dom";
 
 export interface ModalProps {
   children: string | React.JSX.Element | Array<string | React.JSX.Element>;
