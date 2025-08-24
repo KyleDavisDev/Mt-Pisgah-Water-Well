@@ -6,13 +6,14 @@ export interface LinkProps {
   href: string;
   inverseColors?: boolean;
   style?: React.CSSProperties | undefined;
+  className?: string;
 }
 
 const LinkComponent: React.FunctionComponent<LinkProps> = (props: LinkProps) => {
   return (
     <>
       <Link
-        className={`decoration-0 font-(family-name:FuturaMedium)`}
+        className={`decoration-0 font-(family-name:FuturaMedium) ${props.className}`}
         href={props.href}
         legacyBehavior
         style={{ ...props.style }}
