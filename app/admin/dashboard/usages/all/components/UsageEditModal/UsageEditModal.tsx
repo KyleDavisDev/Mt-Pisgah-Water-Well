@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import { StyledFooterDivs } from "../../../../homeowners/all/pageStyle";
 import { usagesVM } from "../../page";
 import TextInput from "../../../../../../components/TextInput/TextInput";
 import { Button } from "../../../../../../components/Button/Button";
@@ -126,11 +125,11 @@ const UsageEditModal = (props: UsageEditModalProps) => {
             value={"No"}
           />
 
-          <StyledFooterDivs>
+          <div className={"flex flex-row justify-around align-center mt-4"}>
             <Button type="submit" fullWidth disabled={loading}>
-              {loading ? "Saving..." : "Save"}
+              {loading ? "Adding..." : "Add Homeowner"}
             </Button>
-          </StyledFooterDivs>
+          </div>
         </form>
       </>
     </Modal>

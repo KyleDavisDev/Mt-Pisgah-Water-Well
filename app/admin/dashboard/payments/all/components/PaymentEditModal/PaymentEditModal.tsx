@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import { StyledFooterDivs } from "../../../../homeowners/all/pageStyle";
 import { paymentData } from "../../page";
 import { Button } from "../../../../../../components/Button/Button";
 import { Modal } from "../../../../../../components/Modal/Modal";
@@ -111,11 +110,11 @@ const PaymentEditModal = (props: PaymentEditModalProps) => {
             value={"No"}
           />
 
-          <StyledFooterDivs>
+          <div className={"flex flex-row justify-around align-center mt-4"}>
             <Button type="submit" fullWidth disabled={loading}>
-              {loading ? "Saving..." : "Save"}
+              {loading ? "Adding..." : "Add Homeowner"}
             </Button>
-          </StyledFooterDivs>
+          </div>
         </form>
       </>
     </Modal>
