@@ -8,8 +8,8 @@ import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 export interface homeownerVM {
   name: string;
-  email?: string;
-  phone?: string;
+  email?: string | null;
+  phone?: string | null;
   mailingAddress: string;
   isActive: string;
   id: number;
