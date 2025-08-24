@@ -3,25 +3,11 @@ import styled from "../../theme/styled-components";
 import { Link } from "../Link/Link";
 import { Button } from "../Button/Button";
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-
-  width: 100%;
-  margin-bottom: 15px;
-`;
-
-const StyledDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-`;
-
-const StyledContent = styled.div`
-  max-width: 90%;
-  width: 100%;
-`;
+const variantStyles: Record<string, { bg: string; borderLeft: string; textColor: string; linkColor: string }> = {
+  success: { bg: "#dff0d8", borderLeft: "#d0e9c6", textColor: "#3c763d", linkColor: "#2a522a" },
+  warning: { bg: "#fcf8e3", borderLeft: "#faf2cc", textColor: "#8a6d3b", linkColor: "#8a6d3b" },
+  default: { bg: "#f2dede", borderLeft: "#ebcccc", textColor: "#a94442", linkColor: "#a94442" }
+};
 
 export interface FlashMessageProps {
   className?: string;
@@ -34,85 +20,76 @@ export interface FlashMessageProps {
   onClose?: () => void;
 }
 
-const FlashMessage: React.FC<FlashMessageProps> = (props) => {
+const FlashMessage: React.FC<FlashMessageProps> = props => {
   const [isVisible, setIsVisible] = React.useState(props.isVisible);
-  const { slug, slugText, text, children, className, onClose } = props;
+  const { slug, slugText, text, children, onClose } = props;
 
   if (!isVisible) {
     return null;
   }
 
+  const getContainerStyles = (type: FlashMessageProps["type"]) => {
+    const baseline = "flex flex-row w-full mb-[15px] pt-[10px] pb-[15px] box-border ";
+
+    let backGroundColor = `bg-[${variantStyles["default"].bg}"]`;
+    if (type === "success" || type === "warning") {
+      backGroundColor = `bg-[${variantStyles[type].bg}"]`;
+    }
+
+    let borderLeft = `border border-l-7 border-l-[${variantStyles["default"].borderLeft}"]`;
+    if (type === "success" || type === "warning") {
+      borderLeft = `border border-l-7 border-l-[${variantStyles[type].borderLeft}"]`;
+    }
+
+    let textColor = `text-[${variantStyles["default"].textColor}"]`;
+    if (type === "success" || type === "warning") {
+      textColor = `text-[${variantStyles[type].textColor}"]`;
+    }
+
+    return `${baseline} ${backGroundColor} ${borderLeft} ${textColor}`;
+  };
+
+  const getLinkStyles = (type: FlashMessageProps["type"]) => {
+    const base = `bold decoration-1 transition-all duration-200 ease-out hover:text-black focus:text-black`;
+
+    let linkColor = `text-[${variantStyles["default"].linkColor}"]`;
+    if (type === "success" || type === "warning") {
+      linkColor = `text-[${variantStyles[type].linkColor}"]`;
+    }
+
+    return `${base} ${linkColor}`;
+  };
+
   return (
-    <StyledContainer className={className}>
-      <StyledDiv>
-        <StyledContent>
+    <div
+      className={`
+      ${getContainerStyles(props.type)}
+      ${props.className}`}
+    >
+      <div className={"flex flex-row flex-nowrap justify-between"}>
+        <div className={"max-w-11/12 w-full"}>
           {children || text}{" "}
-          {slug && slugText ? <Link href={slug}>{slugText}</Link> : ""}{" "}
-        </StyledContent>
-        <Button onClick={() => (onClose ? onClose() : setIsVisible(false))}>
+          {slug && slugText ? (
+            <Link className={`hover:te ${getLinkStyles(props.type)}`} href={slug}>
+              {slugText}
+            </Link>
+          ) : (
+            ""
+          )}{" "}
+        </div>
+        <Button
+          className={`
+          [&_button]:bg-transparent [&_button]:border-0 [&_button]:text-black [&_button]:p-0
+          [&_button:hover]:border-0 [&_button:hover]:text-black [&_button:hover]:bg-transparent
+          [&_button:focus]:border-0 [&_button:focus]:text-black [&_button:focus]:bg-transparent
+        `}
+          onClick={() => (onClose ? onClose() : setIsVisible(false))}
+        >
           X
         </Button>
-      </StyledDiv>
-    </StyledContainer>
+      </div>
+    </div>
   );
 };
 
-const StyledFlashMessage = styled(FlashMessage)`
-  > div {
-    padding: 10px 15px;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: ${(props) =>
-      props.type === "success"
-        ? "#dff0d8"
-        : props.type === "warning"
-          ? "#fcf8e3"
-          : "#f2dede"};
-    border-left: 7px solid
-      ${(props) =>
-        props.type === "success"
-          ? "#d0e9c6"
-          : props.type === "warning"
-            ? "#faf2cc"
-            : "#ebcccc"};
-    color: ${(props) =>
-      props.type === "success"
-        ? "#3c763d"
-        : props.type === "warning"
-          ? "#8a6d3b"
-          : "#a94442"};
-    a {
-      color: ${(props) =>
-        props.type === "success"
-          ? "#2a522a"
-          : props.type === "warning"
-            ? "#8a6d3b"
-            : "#a94442"};
-      font-weight: 700;
-      text-decoration: underline;
-      transition: all 0.2s ease;
-
-      &:hover,
-      &:focus {
-        color: #333;
-      }
-    }
-
-    button {
-      background-color: transparent;
-      border: 0;
-      color: ${(props) => props.theme.black};
-      padding: 0;
-
-      &:hover,
-      &:focus {
-        border: 0;
-        color: ${(props) => props.theme.black};
-        background-color: transparent;
-      }
-    }
-  }
-`;
-StyledFlashMessage.displayName = "FlashMessage";
-
-export { StyledFlashMessage as FlashMessage };
+export { FlashMessage };
