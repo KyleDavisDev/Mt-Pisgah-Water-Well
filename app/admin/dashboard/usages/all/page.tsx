@@ -2,19 +2,10 @@
 
 import React from "react";
 
-import {
-  StyledWellContainer,
-  StyledFormContainer,
-  StyledTable,
-  StyledContainer,
-  StyledTableContainer,
-  StyledTableHeader
-} from "./pageStyle";
-import Well from "../../../../components/Well/Well";
-import Article from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import UsageEditModal from "./components/UsageEditModal/UsageEditModal";
 import { formatNumberWithCommas } from "../../util";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 export interface usagesVM {
   id: string;
@@ -92,78 +83,96 @@ const Page = () => {
   };
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>View Usages</h3>
-            <StyledFormContainer>
-              {homeowners.length > 0 ? (
-                homeowners.map(homeowner => {
+    <ArticleHolder>
+      <h3>View Usages</h3>
+      <div className={"flex flex-row flex-wrap p-6"}>
+        {homeowners.length > 0 ? (
+          homeowners.map(homeowner => {
+            return (
+              <div className={"w-full pb-[25px]"} key={homeowner.id}>
+                <h3>{homeowner.name}</h3>
+                {homeowner.properties.map(property => {
                   return (
-                    <div key={homeowner.id}>
-                      <h3>{homeowner.name}</h3>
-                      {homeowner.properties.map(property => {
-                        return (
-                          <StyledTableContainer key={property.id}>
-                            <StyledTableHeader>{property.address}</StyledTableHeader>
-                            <StyledTable>
-                              <thead>
-                                <tr>
-                                  <th>Date Collected</th>
-                                  <th style={{ textAlign: "right" }}>Gallons</th>
-                                  <th>Difference</th>
-                                  <th></th>
+                    <div className={"pt-[5px] pb-[15px]"} key={property.id}>
+                      <h5 className={"pb-[5px]"}>{property.address}</h5>
+                      <table className={"w-full text-left border-collapse"}>
+                        <thead className={"border-collapse"}>
+                          <tr className={"border-b border-tableBorder even:bg-gray-200"}>
+                            <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                              Date Collected
+                            </th>
+                            <th className={"border border-tableBorder text-right p-[8px] table-cell border-collapse"}>
+                              Gallons
+                            </th>
+                            <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                              Difference
+                            </th>
+                            <th
+                              className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                            ></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {property.usages &&
+                            property.usages.map((usage, ind) => {
+                              return (
+                                <tr className={"border-b border-tableBorder even:bg-gray-200"}>
+                                  <td
+                                    className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                                  >
+                                    {formatDate(usage.dateCollected)}
+                                  </td>
+                                  <td
+                                    className={
+                                      "border border-tableBorder text-right p-[8px] table-cell border-collapse"
+                                    }
+                                  >
+                                    {formatNumberWithCommas(usage.gallons)}
+                                  </td>
+                                  <td
+                                    className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                                  >
+                                    {ind < property.usages.length - 1
+                                      ? renderDifference(
+                                          parseInt(usage.gallons, 10),
+                                          parseInt(property.usages[ind + 1].gallons, 10)
+                                        )
+                                      : "---"}
+                                  </td>
+                                  <td
+                                    className={
+                                      "border border-tableBorder text-center p-[8px] table-cell border-collapse"
+                                    }
+                                  >
+                                    <Button
+                                      onClick={() => {
+                                        setShowModal(true);
+                                        setActiveUsage(usage);
+                                      }}
+                                    >
+                                      Edit
+                                    </Button>
+                                  </td>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                {property.usages &&
-                                  property.usages.map((usage, ind) => {
-                                    return (
-                                      <tr>
-                                        <td>{formatDate(usage.dateCollected)}</td>
-                                        <td style={{ textAlign: "right" }}>{formatNumberWithCommas(usage.gallons)}</td>
-                                        <td>
-                                          {ind < property.usages.length - 1
-                                            ? renderDifference(
-                                                parseInt(usage.gallons, 10),
-                                                parseInt(property.usages[ind + 1].gallons, 10)
-                                              )
-                                            : "---"}
-                                        </td>
-                                        <td style={{ textAlign: "center" }}>
-                                          <Button
-                                            onClick={() => {
-                                              setShowModal(true);
-                                              setActiveUsage(usage);
-                                            }}
-                                          >
-                                            Edit
-                                          </Button>
-                                        </td>
-                                      </tr>
-                                    );
-                                  })}
-                              </tbody>
-                            </StyledTable>
-                          </StyledTableContainer>
-                        );
-                      })}
+                              );
+                            })}
+                        </tbody>
+                      </table>
                     </div>
                   );
-                })
-              ) : (
-                <></>
-              )}
+                })}
+              </div>
+            );
+          })
+        ) : (
+          <></>
+        )}
 
-              {showModal && activeUsage && (
-                <UsageEditModal showModal={showModal} usage={{ ...activeUsage }} onModalClose={onModalClose} />
-              )}
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+        {showModal && activeUsage && (
+          <UsageEditModal showModal={showModal} usage={{ ...activeUsage }} onModalClose={onModalClose} />
+        )}
+      </div>
+    </ArticleHolder>
   );
 };
 
