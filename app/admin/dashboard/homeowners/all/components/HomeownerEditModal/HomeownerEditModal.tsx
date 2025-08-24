@@ -1,4 +1,3 @@
-import { StyledFooterDivs } from "../../pageStyle";
 import React from "react";
 import { homeownerVM } from "../../page";
 
@@ -166,11 +165,11 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
             value={"No"}
           />
 
-          <StyledFooterDivs>
+          <div className={"flex flex-row justify-around align-center mt-4"}>
             <Button type="submit" fullWidth disabled={loading}>
               {loading ? "Saving..." : "Save"}
             </Button>
-          </StyledFooterDivs>
+          </div>
         </form>
       </>
     </Modal>
