@@ -105,11 +105,11 @@ const Page = (): React.JSX.Element => {
                 name={"password"}
                 required={true}
               />
-              <StyledFooterDivs>
+              <div className={"flex flex-row justify-around align-center mt-4"}>
                 <Button type="submit" fullWidth>
                   Login
                 </Button>
-              </StyledFooterDivs>
+              </div>
             </form>
           </StyledFormContainer>
         </Well>
