@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import Label from "../Label/Label";
-import { CheckboxContainer, StyledCheckbox } from "./CheckboxStyle";
 
 export interface CheckboxProps {
   id: string;
@@ -17,15 +16,27 @@ const Checkbox: React.FC<CheckboxProps> = props => {
   const { isChecked, name, label, onChange, id, value, required = false } = props;
 
   return (
-    <CheckboxContainer>
-      <StyledCheckbox id={id} type="checkbox" checked={isChecked} value={value} name={name} onChange={onChange} />
+    <div className={"w-full pl-[10px]"}>
+      <input
+        className={`
+      bg-white border-inputBorder cursor-pointer inline-block relative
+        transition-[background-color,color,border] duration-300 ease-in-out
+        align-middle h-[38px] py-0 pr-[40px] pl-[15px] text-base
+      `}
+        id={id}
+        type="checkbox"
+        checked={isChecked}
+        value={value}
+        name={name}
+        onChange={onChange}
+      />
       {label && (
-        <Label htmlFor={id}>
+        <Label htmlFor={id} className={"inline hover:cursor-pointer"}>
           {label}
           {required ? "*" : ""}
         </Label>
       )}
-    </CheckboxContainer>
+    </div>
   );
 };
 
