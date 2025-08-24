@@ -80,7 +80,15 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
       >
         <div className={"flex flex-row flex-nowrap justify-between"}>
           <div className={"max-w-10/12 w-full"}>{props.children}</div>
-          <Button displayType={"outline"} onClick={() => props.onClose()}>
+          <Button
+            className={`
+          [&_button]:bg-transparent [&_button]:border-0 [&_button]:text-black [&_button]:p-0
+          [&_button:hover]:border-0 [&_button:hover]:text-black [&_button:hover]:bg-transparent
+          [&_button:focus]:border-0 [&_button:focus]:text-black [&_button:focus]:bg-transparent
+        `}
+            displayType={"outline"}
+            onClick={() => props.onClose()}
+          >
             X
           </Button>
         </div>
