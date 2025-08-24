@@ -1,12 +1,10 @@
 "use client";
 
 import React from "react";
-import { StyledWellContainer, StyledFormContainer, StyledTable, StyledContainer } from "./pageStyle";
-import Well from "../../../../components/Well/Well";
 import { Button } from "../../../../components/Button/Button";
 import PropertyEditModal from "./components/PropertyEditModal/PropertyEditModal";
-import Article from "../../../../components/Article/Article";
 import { homeownerVM } from "../../homeowners/all/page";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 export interface propertyVM {
   street: string;
@@ -99,137 +97,141 @@ const page = () => {
 
   if (!initialized.current) {
     return (
-      <StyledContainer>
-        <Article size="md">
-          <StyledWellContainer>
-            <Well>
-              <h3>All Properties</h3>
-              <StyledFormContainer>Loading...</StyledFormContainer>
-            </Well>
-          </StyledWellContainer>
-        </Article>
-      </StyledContainer>
+      <ArticleHolder>
+        <h3>All Properties</h3>
+        <div className={"flex flex-row flex-wrap p-6"}>Loading...</div>
+      </ArticleHolder>
     );
   }
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>All Properties</h3>
-            <StyledFormContainer>
-              {activeProperties.length > 0 && (
-                <>
-                  <h3>Active</h3>
-                  <StyledTable style={{ marginBottom: "25px" }}>
-                    <thead>
-                      <tr>
-                        <th>Address</th>
-                        <th>Description</th>
-                        <th>Homeowner</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {activeProperties.map(property => {
-                        return (
-                          <tr key={property.id}>
-                            <td>
-                              <span
-                                style={{
-                                  height: 10,
-                                  width: 10,
-                                  backgroundColor: property.isActive === "true" ? "green" : "red",
-                                  borderRadius: 50,
-                                  display: "inline-block",
-                                  marginRight: 8
-                                }}
-                              ></span>
-                              {property.street}
-                            </td>
-                            <td>{property.description}</td>
-                            <td>{property.homeowner}</td>
-                            <td style={{ textAlign: "center" }}>
-                              <Button
-                                onClick={() => {
-                                  setActiveProperty({ ...property });
-                                  setShowModal(true);
-                                }}
-                              >
-                                Edit
-                              </Button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </StyledTable>
-                </>
-              )}
+    <ArticleHolder>
+      <h3>All Properties</h3>
+      <div className={"flex flex-row flex-wrap p-6"}>
+        {activeProperties.length > 0 && (
+          <>
+            <h3>Active</h3>
+            <table className={"w-full text-left border-collapse mb-[25px]"}>
+              <thead className={"border-collapse"}>
+                <tr>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Address</th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                    Description
+                  </th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                    Homeowner
+                  </th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeProperties.map(property => {
+                  return (
+                    <tr key={property.id}>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        <span
+                          style={{
+                            height: 10,
+                            width: 10,
+                            backgroundColor: property.isActive === "true" ? "green" : "red",
+                            borderRadius: 50,
+                            display: "inline-block",
+                            marginRight: 8
+                          }}
+                        ></span>
+                        {property.street}
+                      </td>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        {property.description}
+                      </td>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        {property.homeowner}
+                      </td>
+                      <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
+                        <Button
+                          onClick={() => {
+                            setActiveProperty({ ...property });
+                            setShowModal(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </>
+        )}
 
-              {inactiveProperties.length > 0 && (
-                <>
-                  <h3>Inactive</h3>
-                  <StyledTable>
-                    <thead>
-                      <tr>
-                        <th>Address</th>
-                        <th>Description</th>
-                        <th>Homeowner</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {inactiveProperties.map(property => {
-                        return (
-                          <tr key={property.id}>
-                            <td>
-                              <span
-                                style={{
-                                  height: 10,
-                                  width: 10,
-                                  backgroundColor: property.isActive === "true" ? "green" : "red",
-                                  borderRadius: 50,
-                                  display: "inline-block",
-                                  marginRight: 8
-                                }}
-                              ></span>
-                              {property.street}
-                            </td>
-                            <td>{property.description}</td>
-                            <td>{property.homeowner}</td>
-                            <td style={{ textAlign: "center" }}>
-                              <Button
-                                onClick={() => {
-                                  setActiveProperty({ ...property });
-                                  setShowModal(true);
-                                }}
-                              >
-                                Edit
-                              </Button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </StyledTable>
-                </>
-              )}
+        {inactiveProperties.length > 0 && (
+          <>
+            <h3>Inactive</h3>
+            <table className={"w-full text-left border-collapse mb-[25px]"}>
+              <thead>
+                <tr>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Address</th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                    Description
+                  </th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                    Homeowner
+                  </th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {inactiveProperties.map(property => {
+                  return (
+                    <tr key={property.id}>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        <span
+                          style={{
+                            height: 10,
+                            width: 10,
+                            backgroundColor: property.isActive === "true" ? "green" : "red",
+                            borderRadius: 50,
+                            display: "inline-block",
+                            marginRight: 8
+                          }}
+                        ></span>
+                        {property.street}
+                      </td>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        {property.description}
+                      </td>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        {property.homeowner}
+                      </td>
+                      <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
+                        <Button
+                          onClick={() => {
+                            setActiveProperty({ ...property });
+                            setShowModal(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </>
+        )}
 
-              {activeProperty && (
-                <PropertyEditModal
-                  showModal={showModal}
-                  property={{ ...activeProperty }}
-                  onModalClose={onModalClose}
-                  homeowners={homeowners}
-                />
-              )}
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+        {activeProperty && (
+          <PropertyEditModal
+            showModal={showModal}
+            property={{ ...activeProperty }}
+            onModalClose={onModalClose}
+            homeowners={homeowners}
+          />
+        )}
+      </div>
+    </ArticleHolder>
   );
 };
 
