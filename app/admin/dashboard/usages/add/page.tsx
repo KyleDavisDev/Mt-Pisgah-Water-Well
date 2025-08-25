@@ -313,12 +313,12 @@ const Page = () => {
                       <td className={"border border-tableBorder p-[8px] table-cell border-collapse text-center"}>
                         <h4>{homeowner.name}</h4>
                       </td>
-                      <td className={"border border-tableBorder table-cell border-collapse text-center p-0 border-b-0"}>
+                      <td className={"border border-tableBorder table-cell border-collapse text-center p-0"}>
                         {homeowner.properties.map(property => {
                           return (
                             <div
                               className={
-                                "flex justify-center items-center h-[55px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
+                                "flex justify-center items-center h-[65px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
                               }
                               key={`property_${property.id}`}
                             >
@@ -338,7 +338,7 @@ const Page = () => {
                           return (
                             <div
                               className={
-                                "flex justify-center items-center h-[55px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
+                                "flex justify-center items-center h-[65px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
                               }
                               key={`previous_usage_${index}`}
                             >
@@ -350,7 +350,12 @@ const Page = () => {
                       <td className={"border border-tableBorder table-cell border-collapse text-center p-0"}>
                         {homeowner.properties.map(property => {
                           return (
-                            <div className={"flex flex-col w-full items-center"} key={`new_usage_${property.id}`}>
+                            <div
+                              className={
+                                "flex flex-col w-full items-center h-[65px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
+                              }
+                              key={`new_usage_${property.id}`}
+                            >
                               <div className={"w-1/2"}>
                                 <TextInput
                                   className={"mb-0 mt-0"}
@@ -379,7 +384,7 @@ const Page = () => {
                           return (
                             <div
                               className={
-                                "flex justify-center items-center h-[55px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
+                                "flex justify-center items-center h-[65px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
                               }
                               key={`difference_${p.id}`}
                               style={{ color }}
