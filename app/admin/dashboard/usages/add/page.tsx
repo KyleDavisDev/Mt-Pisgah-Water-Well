@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { StyledTable, StyledTd } from "./pageStyle";
 
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { Button } from "../../../../components/Button/Button";
@@ -351,23 +350,26 @@ const Page = () => {
                       <td className={"border border-tableBorder table-cell border-collapse text-center p-0"}>
                         {homeowner.properties.map(property => {
                           return (
-                            <TextInput
-                              className={"w-1/2 mb-0 mt-0"}
-                              key={`new_usage_${property.id}`}
-                              id={property.id}
-                              value={usages[property.id].new}
-                              onChange={e => {
-                                const inputValue = e.currentTarget.value;
+                            <div className={"flex flex-col w-full items-center"} key={`new_usage_${property.id}`}>
+                              <div className={"w-1/2"}>
+                                <TextInput
+                                  className={"mb-0 mt-0"}
+                                  id={property.id}
+                                  value={usages[property.id].new}
+                                  onChange={e => {
+                                    const inputValue = e.currentTarget.value;
 
-                                const newUsages = { ...usages };
-                                newUsages[property.id] = {
-                                  ...newUsages[property.id],
-                                  new: inputValue.replace(/\D+/, "")
-                                };
-                                setUsages(newUsages);
-                              }}
-                              onBlur={() => updateDeltas(property.id)}
-                            />
+                                    const newUsages = { ...usages };
+                                    newUsages[property.id] = {
+                                      ...newUsages[property.id],
+                                      new: inputValue.replace(/\D+/, "")
+                                    };
+                                    setUsages(newUsages);
+                                  }}
+                                  onBlur={() => updateDeltas(property.id)}
+                                />
+                              </div>
+                            </div>
                           );
                         })}
                       </td>
