@@ -18,6 +18,7 @@ import { NotificationDot } from "../../../../components/NotificationDot/Notifica
 import { MONTHS, YEARS } from "../../appConstants";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { formatNumberWithCommas } from "../../util";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 interface Property {
   id: string;
@@ -139,106 +140,120 @@ const Page = () => {
   };
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>Create Usage Bills</h3>
-            <StyledFormContainer>
-              {flashMessage.isVisible && (
-                <FlashMessage type={flashMessage.type} isVisible={flashMessage.isVisible} onClose={onFlashClose}>
-                  {flashMessage.text}
-                </FlashMessage>
-              )}
-              <div style={{ display: "flex", flexDirection: "row", alignItems: "last baseline", width: "100%" }}>
-                <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
-                  <Select
-                    id={"month"}
-                    options={MONTHS.map(m => {
-                      return { name: m, value: m };
-                    })}
-                    selectedValue={selectedMonth}
-                    onSelect={e => setSelectedMonth(e.target.value)}
-                    label={"Month"}
-                    showLabel={true}
-                  />
+    <ArticleHolder>
+      <h3>Create Usage Bills</h3>
+      <div className={"flex flex-col flex-wrap p-6"}>
+        {flashMessage.isVisible && (
+          <FlashMessage type={flashMessage.type} isVisible={flashMessage.isVisible} onClose={onFlashClose}>
+            {flashMessage.text}
+          </FlashMessage>
+        )}
+        <div className={"flex flex-row items-baseline-last w-full"}>
+          <div className={"w-full max-w-[380px] mr-[25px]"}>
+            <Select
+              id={"month"}
+              options={MONTHS.map(m => {
+                return { name: m, value: m };
+              })}
+              selectedValue={selectedMonth}
+              onSelect={e => setSelectedMonth(e.target.value)}
+              label={"Month"}
+              showLabel={true}
+            />
+          </div>
+          <div className={"w-full max-w-[380px] mr-[25px]"}>
+            <Select
+              id={"month"}
+              options={YEARS.map(y => {
+                return { name: y, value: y };
+              })}
+              selectedValue={selectedYear}
+              onSelect={e => setSelectedYear(e.target.value)}
+              label={"Year"}
+              showLabel={true}
+            />
+          </div>
+          <div className={"w-full max-w-[380px]"}>
+            <Button onClick={fetchAmountUsedByMonthAndYear} disabled={loading} displayType={"outline"}>
+              {loading ? "Loading..." : "Load"}
+            </Button>
+          </div>
+        </div>
+        {homeowners.length > 0 ? (
+          homeowners.map(homeowner => (
+            <div key={homeowner.id} style={{ width: "100%" }}>
+              <h3>{homeowner.name}</h3>
+              {homeowner.properties.map(property => (
+                <div className={"pt-[5px] pr-0 pl-0 pb-[15px]"} key={property.id}>
+                  <h5 className={"pb-[5px]"}>{property.address}</h5>
+                  <table className={"w-full text-left border-collapse mb-[25px]"}>
+                    <thead className={"border-collapse"}>
+                      <tr>
+                        <th
+                          className={
+                            "border border-tableBorder text-center p-[8px] table-cell border-collapse w-full max-w-1/3"
+                          }
+                        >
+                          Starting Gallons
+                        </th>
+                        <th
+                          className={
+                            "border border-tableBorder text-center p-[8px] table-cell border-collapse w-full max-w-1/3"
+                          }
+                        >
+                          Ending Gallons
+                        </th>
+                        <th
+                          className={"border border-tableBorder text-center p-[8px] table-cell border-collapse w-full"}
+                        >
+                          Total Used
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className={"border-b border-inputBorder"}>
+                        <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
+                          {formatNumberWithCommas(property.startingGallons.toString()) || "---"}
+                        </td>
+                        <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
+                          {formatNumberWithCommas(property.endingGallons.toString()) || "---"}
+                        </td>
+                        <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
+                          <strong>{renderTotalUsedCell(property)}</strong>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
-                  <Select
-                    id={"month"}
-                    options={YEARS.map(y => {
-                      return { name: y, value: y };
-                    })}
-                    selectedValue={selectedYear}
-                    onSelect={e => setSelectedYear(e.target.value)}
-                    label={"Year"}
-                    showLabel={true}
-                  />
-                </div>
-                <div style={{ maxWidth: "380px", width: "100%" }}>
-                  <Button onClick={fetchAmountUsedByMonthAndYear} disabled={loading} displayType={"outline"}>
-                    {loading ? "Loading..." : "Load"}
-                  </Button>
-                </div>
-              </div>
-              {homeowners.length > 0 ? (
-                homeowners.map(homeowner => (
-                  <div key={homeowner.id} style={{ width: "100%" }}>
-                    <h3>{homeowner.name}</h3>
-                    {homeowner.properties.map(property => (
-                      <StyledTableContainer key={property.id}>
-                        <StyledTableHeader>{property.address}</StyledTableHeader>
-                        <StyledTable>
-                          <thead>
-                            <tr>
-                              <th style={{ maxWidth: "35%", width: "100%" }}>Starting Gallons</th>
-                              <th style={{ maxWidth: "35%", width: "100%" }}>Ending Gallons</th>
-                              <th>Total Used</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>{formatNumberWithCommas(property.startingGallons.toString()) || "---"}</td>
-                              <td>{formatNumberWithCommas(property.endingGallons.toString()) || "---"}</td>
-                              <td>
-                                <strong>{renderTotalUsedCell(property)}</strong>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </StyledTable>
-                      </StyledTableContainer>
-                    ))}
+              ))}
 
-                    {homeowner.properties.length > 1 ? (
-                      <p style={{ marginTop: 0, marginBottom: "30px" }}>
-                        <i>Total Gallons Used (all properties):</i>{" "}
-                        {homeowner.properties.reduce(
-                          (sum, property) =>
-                            sum + (isNaN(parseInt(property.gallonsUsed, 10)) ? 0 : parseInt(property.gallonsUsed, 10)),
-                          0
-                        )}
-                      </p>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                ))
+              {homeowner.properties.length > 1 ? (
+                <p style={{ marginTop: 0, marginBottom: "30px" }}>
+                  <i>Total Gallons Used (all properties):</i>{" "}
+                  {homeowner.properties.reduce(
+                    (sum, property) =>
+                      sum + (isNaN(parseInt(property.gallonsUsed, 10)) ? 0 : parseInt(property.gallonsUsed, 10)),
+                    0
+                  )}
+                </p>
               ) : (
-                <p>Select timeframe above.</p>
+                <></>
               )}
+            </div>
+          ))
+        ) : (
+          <p>Select timeframe above.</p>
+        )}
 
-              {homeowners.length > 0 && (
-                <div style={{ marginTop: "20px", textAlign: "center" }}>
-                  <Button onClick={createBills} disabled={loading}>
-                    {loading ? "Creating..." : "Create Bills"}
-                  </Button>
-                </div>
-              )}
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+        {homeowners.length > 0 && (
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
+            <Button onClick={createBills} disabled={loading}>
+              {loading ? "Creating..." : "Create Bills"}
+            </Button>
+          </div>
+        )}
+      </div>
+    </ArticleHolder>
   );
 };
 
