@@ -32,7 +32,7 @@ const Button: React.FunctionComponent<ButtonProps> = props => {
 
     const disabledClasses = disabled
       ? props.displayType === "outline"
-        ? "disabled:text-black disabled:bg-neutral-500 disabled:border-neutral-500 disabled:cursor-not-allowed"
+        ? "disabled:text-black disabled:bg-gray-200 disabled:border-neutral-500 disabled:cursor-not-allowed"
         : "disabled:text-white disabled:bg-primaryDarkThemeColor disabled:border-primaryDarkThemeColor disabled:cursor-not-allowed"
       : "cursor-pointer";
 
