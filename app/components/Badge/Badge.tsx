@@ -7,12 +7,12 @@ export interface BadgeProps {
 }
 
 const variantStyles: Record<string, { bg: string; text: string }> = {
-  primary: { bg: "#007bff", text: "#fff" },
-  success: { bg: "#28a745", text: "#fff" },
-  danger: { bg: "#dc3545", text: "#fff" },
-  warning: { bg: "#ffc107", text: "#fff" },
-  info: { bg: "#17a2b8", text: "#fff" },
-  secondary: { bg: "#6c757d", text: "#fff" }
+  primary: { bg: "#007bff", text: "#ffffff" },
+  success: { bg: "#28a745", text: "#ffffff" },
+  danger: { bg: "#dc3545", text: "#ffffff" },
+  warning: { bg: "#ffc107", text: "#ffffff" },
+  info: { bg: "#17a2b8", text: "#ffffff" },
+  secondary: { bg: "#6c757d", text: "#ffffff" }
 };
 
 export const Badge: React.FC<BadgeProps> = ({ children, variant = "primary", className }) => {
@@ -29,7 +29,7 @@ export const Badge: React.FC<BadgeProps> = ({ children, variant = "primary", cla
     <span
       className={`inline-block px-2.5 py-1.5 text-xs font-semibold leading-none text-center whitespace-nowrap rounded-md
         ${getVariantStyles(variant)}
-        ${className}`}
+        ${className ? className : ""}`}
     >
       {children}
     </span>
