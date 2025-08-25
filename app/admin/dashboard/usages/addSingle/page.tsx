@@ -1,22 +1,11 @@
 "use client";
 
 import React from "react";
-import {
-  StyledContainer,
-  StyledFooterDivs,
-  StyledFormContainer,
-  StyledHeaderContainer,
-  StyledTile,
-  StyledTileContainer,
-  StyledTopContainer,
-  StyledWellContainer
-} from "./pageStyle";
-import Well from "../../../../components/Well/Well";
 import { Button } from "../../../../components/Button/Button";
-import Article from "../../../../components/Article/Article";
 import TextInput from "../../../../components/TextInput/TextInput";
 import Select from "../../../../components/Select/Select";
 import { formatNumberWithCommas } from "../../util";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 interface propertyVM {
   id: string;
@@ -184,95 +173,95 @@ const Page = () => {
   };
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>Add water usage</h3>
-            <StyledFormContainer>
-              <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
+    <ArticleHolder>
+      <h3>Add water usage</h3>
+      <div className={"flex flex-row flex-wrap p-2"}>
+        <div className={"flex flex-row items-center"}>
+          <div className={"w-full mr-[25px] max-w-[380px]"}>
+            <TextInput
+              onChange={e => {
+                setDateCollected(e.currentTarget.value);
+              }}
+              id={"dateCollected"}
+              type={"date"}
+              label={"Date Collected"}
+              required={true}
+              showLabel={true}
+              value={dateCollected}
+            />
+          </div>
+
+          <div className={"w-full mr-[25px] max-w-[380px]"}>
+            <Select
+              options={usersWhoCanGather.map(u => {
+                return {
+                  name: u.name,
+                  value: u.id
+                };
+              })}
+              onSelect={e => {
+                return setActiveGatheredUser(e.target.value);
+              }}
+              id={"userWhoGathered"}
+              label={"Collected By"}
+              required={true}
+              showLabel={true}
+              selectedValue={activeGatheredUser}
+            />
+          </div>
+        </div>
+
+        <div className={"flex flex-right items-center flex-wrap w-full"}>
+          {properties.map(property => {
+            return (
+              <div
+                className={`
+                max-w-full w-full py-[30px] px-0 mb-5 border-b border-gray-400 box-border
+                sm:w-[calc(50%-20px)] sm:m-2.5
+                lg:w-[calc(33.333%-20px)]
+              `}
+              >
+                <div className={"flex flex-row justify-between items-baseline"}>
+                  <div className={"flex flex-col"}>
+                    <h2>{property.address}</h2>
+                    <h4>{property.homeowner.name}</h4>
+                  </div>
+                </div>
+                Previous reading: {formatNumberWithCommas(property.usages[0].gallons)}
+                <br />
+                Delta:{" "}
+                {
+                  <span style={{ fontWeight: "bold", color: deltas[property.id] >= 0 ? "green" : "red" }}>
+                    {deltas[property.id]}
+                  </span>
+                }
+                <form onSubmit={e => onSubmit(e, property.id)} style={{ width: "100%" }}>
                   <TextInput
+                    key={`new_single_usage_${property.id}`}
+                    id={property.id}
+                    value={usages[property.id].new}
                     onChange={e => {
-                      setDateCollected(e.currentTarget.value);
-                    }}
-                    id={"dateCollected"}
-                    type={"date"}
-                    label={"Date Collected"}
-                    required={true}
-                    showLabel={true}
-                    value={dateCollected}
-                  />
-                </div>
+                      const inputValue = e.currentTarget.value;
 
-                <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
-                  <Select
-                    options={usersWhoCanGather.map(u => {
-                      return {
-                        name: u.name,
-                        value: u.id
+                      const newUsages = { ...usages };
+                      newUsages[property.id] = {
+                        ...newUsages[property.id],
+                        new: inputValue.replace(/\D+/, "")
                       };
-                    })}
-                    onSelect={e => {
-                      return setActiveGatheredUser(e.target.value);
+                      setUsages(newUsages);
                     }}
-                    id={"userWhoGathered"}
-                    label={"Collected By"}
-                    required={true}
-                    showLabel={true}
-                    selectedValue={activeGatheredUser}
+                    onBlur={() => updateDeltas(property.id)}
                   />
-                </div>
+                  <Button type="submit" fullWidth disabled={loading}>
+                    {loading ? "Saving..." : "Save Usage"}
+                  </Button>
+                </form>
               </div>
-
-              <StyledTileContainer>
-                {properties.map(property => {
-                  return (
-                    <StyledTile>
-                      <StyledTopContainer>
-                        <StyledHeaderContainer>
-                          <h2>{property.address}</h2>
-                          <h4>{property.homeowner.name}</h4>
-                        </StyledHeaderContainer>
-                      </StyledTopContainer>
-                      Previous reading: {formatNumberWithCommas(property.usages[0].gallons)}
-                      <br />
-                      Delta:{" "}
-                      {
-                        <span style={{ fontWeight: "bold", color: deltas[property.id] >= 0 ? "green" : "red" }}>
-                          {deltas[property.id]}
-                        </span>
-                      }
-                      <form onSubmit={e => onSubmit(e, property.id)} style={{ width: "100%" }}>
-                        <TextInput
-                          key={`new_single_usage_${property.id}`}
-                          id={property.id}
-                          value={usages[property.id].new}
-                          onChange={e => {
-                            const inputValue = e.currentTarget.value;
-
-                            const newUsages = { ...usages };
-                            newUsages[property.id] = {
-                              ...newUsages[property.id],
-                              new: inputValue.replace(/\D+/, "")
-                            };
-                            setUsages(newUsages);
-                          }}
-                          onBlur={() => updateDeltas(property.id)}
-                        />
-                        <Button type="submit" fullWidth disabled={loading}>
-                          {loading ? "Saving..." : "Save Usage"}
-                        </Button>
-                      </form>
-                    </StyledTile>
-                  );
-                })}
-              </StyledTileContainer>
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+            );
+          })}
+        </div>
+      </div>
+    </ArticleHolder>
   );
 };
 
