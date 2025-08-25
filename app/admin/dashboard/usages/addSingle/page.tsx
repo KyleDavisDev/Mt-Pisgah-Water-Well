@@ -175,7 +175,7 @@ const Page = () => {
   return (
     <ArticleHolder>
       <h3>Add water usage</h3>
-      <div className={"flex flex-row flex-wrap p-2"}>
+      <div className={"p-2"}>
         <div className={"flex flex-row items-center"}>
           <div className={"w-full mr-[25px] max-w-[380px]"}>
             <TextInput
@@ -193,6 +193,7 @@ const Page = () => {
 
           <div className={"w-full mr-[25px] max-w-[380px]"}>
             <Select
+              className={"[&_select]:h-[47px]"}
               options={usersWhoCanGather.map(u => {
                 return {
                   name: u.name,
