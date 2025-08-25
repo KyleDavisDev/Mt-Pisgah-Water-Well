@@ -2,16 +2,6 @@
 
 import React from "react";
 
-import {
-  StyledWellContainer,
-  StyledFormContainer,
-  StyledTable,
-  StyledContainer,
-  StyledTableContainer,
-  StyledTableHeader
-} from "./pageStyle";
-import Well from "../../../../components/Well/Well";
-import Article from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import InvoiceEditModal from "./components/InvoiceEditModal/InvoiceEditModal";
 import { invoiceDTO, homeownerData } from "./types";
@@ -21,6 +11,7 @@ import {
   formatPenniesToDollars,
   getMonthStrFromMonthIndex
 } from "../../util";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 const Page = () => {
   const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
@@ -79,110 +70,114 @@ const Page = () => {
 
   if (isLoading) {
     return (
-      <StyledContainer>
-        <Article size="lg">
-          <StyledWellContainer>
-            <Well>
-              <h3>Loading invoices...</h3>
-            </Well>
-          </StyledWellContainer>
-        </Article>
-      </StyledContainer>
+      <ArticleHolder>
+        <h3>Loading invoices...</h3>
+      </ArticleHolder>
     );
   }
 
   if (error) {
     return (
-      <StyledContainer>
-        <Article size="lg">
-          <StyledWellContainer>
-            <Well>
-              <h3>Error</h3>
-              <p>{error}</p>
-              <Button onClick={getInvoicesByHomeowner}>Retry</Button>
-            </Well>
-          </StyledWellContainer>
-        </Article>
-      </StyledContainer>
+      <ArticleHolder>
+        <h3>Error</h3>
+        <p>{error}</p>
+        <Button onClick={getInvoicesByHomeowner}>Retry</Button>
+      </ArticleHolder>
     );
   }
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>Invoices</h3>
-            <StyledFormContainer>
-              {homeowners.length > 0 ? (
-                homeowners.map(homeowner => (
-                  <div key={homeowner.id}>
-                    <h3>{homeowner.name}</h3>
-                    {homeowner.properties.map(property => (
-                      <StyledTableContainer key={property.id}>
-                        <StyledTableHeader>{property.address}</StyledTableHeader>
-                        {property.invoices && property.invoices.length > 0 ? (
-                          <StyledTable>
-                            <thead>
-                              <tr>
-                                <th>Pay Period</th>
-                                <th>Active</th>
-                                <th>Date Created</th>
-                                <th>Gallons Used</th>
-                                <th>Amount</th>
-                                <th></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {sortInvoicesByDate(property.invoices).map(invoice => (
-                                <tr key={invoice.id}>
-                                  <td>{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
-                                  <td>{invoice.isActive}</td>
-                                  <td>{formatISODateToUserFriendlyLocal(invoice.dateCreated)}</td>
-                                  <td>{formatNumberWithCommas(invoice.gallonsUsed)}</td>
-                                  <td>{formatPenniesToDollars(invoice.amountInPennies)}</td>
-                                  <td style={{ textAlign: "center" }}>
-                                    <Button
-                                      onClick={() => {
-                                        setActiveUsage(invoice);
-                                        setShowModal(true);
-                                      }}
-                                      style={{ marginRight: "8px" }}
-                                    >
-                                      Edit
-                                    </Button>
-                                    <Button
-                                      onClick={() => {
-                                        window.open(`/admin/dashboard/invoices/view/${invoice.id}`, "_blank");
-                                      }}
-                                    >
-                                      View Invoice
-                                    </Button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </StyledTable>
-                        ) : (
-                          // TODO: Allow pagination so not all invoices are shown at once
-                          <p style={{ padding: "1rem" }}>No invoices found for this property</p>
-                        )}
-                      </StyledTableContainer>
-                    ))}
-                  </div>
-                ))
-              ) : (
-                <p>No homeowners found</p>
-              )}
+    <ArticleHolder>
+      <h3>Invoices</h3>
+      <div className={"flex flex-row flex-wrap p-6"}>
+        {homeowners.length > 0 ? (
+          homeowners.map(homeowner => (
+            <div className={"w-full pb-[25px]"} key={homeowner.id}>
+              <h3>{homeowner.name}</h3>
+              {homeowner.properties.map(property => (
+                <div className={"pt-[5px] pr-0 pb-[15px] pl-0"} key={property.id}>
+                  <div className={"pt-0 pr-0 pb-[5px] pl-0"}>{property.address}</div>
+                  {property.invoices && property.invoices.length > 0 ? (
+                    <table className={"w-full text-left border-collapse mb-[25px]"}>
+                      <thead className={"border-collapse"}>
+                        <tr>
+                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                            Pay Period
+                          </th>
+                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                            Active
+                          </th>
+                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                            Date Created
+                          </th>
+                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                            Gallons Used
+                          </th>
+                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                            Amount
+                          </th>
+                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortInvoicesByDate(property.invoices).map(invoice => (
+                          <tr className={"border-b border-tableBorder even:bg-gray-200"} key={invoice.id}>
+                            <td
+                              className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                            >{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
+                            <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                              {invoice.isActive}
+                            </td>
+                            <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                              {formatISODateToUserFriendlyLocal(invoice.dateCreated)}
+                            </td>
+                            <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                              {formatNumberWithCommas(invoice.gallonsUsed)}
+                            </td>
+                            <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                              {formatPenniesToDollars(invoice.amountInPennies)}
+                            </td>
+                            <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
+                              <Button
+                                displayType={"outline"}
+                                disabled
+                                onClick={() => {
+                                  setActiveUsage(invoice);
+                                  setShowModal(true);
+                                }}
+                                style={{ marginRight: "8px" }}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  window.open(`/admin/dashboard/invoices/view/${invoice.id}`, "_blank");
+                                }}
+                              >
+                                View Invoice
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    // TODO: Allow pagination so not all invoices are shown at once
+                    <p style={{ padding: "1rem" }}>No invoices found for this property</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          <p>No homeowners found</p>
+        )}
 
-              {showModal && activeUsage && (
-                <InvoiceEditModal showModal={showModal} invoice={{ ...activeUsage }} onModalClose={onModalClose} />
-              )}
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+        {showModal && activeUsage && (
+          <InvoiceEditModal showModal={showModal} invoice={{ ...activeUsage }} onModalClose={onModalClose} />
+        )}
+      </div>
+    </ArticleHolder>
   );
 };
 
