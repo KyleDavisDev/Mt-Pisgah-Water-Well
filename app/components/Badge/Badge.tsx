@@ -22,14 +22,14 @@ export const Badge: React.FC<BadgeProps> = ({ children, variant = "primary", cla
     const style = variantStyles[variant];
     if (!style) return;
 
-    return `bg-[${style.bg}] text-[${style.text}]`;
+    return { backgroundColor: style.bg, color: style.text };
   };
 
   return (
     <span
       className={`inline-block px-2.5 py-1.5 text-xs font-semibold leading-none text-center whitespace-nowrap rounded-md
-        ${getVariantStyles(variant)}
         ${className ? className : ""}`}
+      style={getVariantStyles(variant)}
     >
       {children}
     </span>
