@@ -213,9 +213,10 @@ const Page = () => {
         </div>
 
         <div className={"flex flex-right items-center flex-wrap w-full"}>
-          {properties.map(property => {
+          {properties.map((property, ind) => {
             return (
               <div
+                key={`${property.id}_${ind}`}
                 className={`
                 max-w-full w-full py-[30px] px-0 mb-5 border-b border-gray-400 box-border
                 sm:w-[calc(50%-20px)] sm:m-2.5
