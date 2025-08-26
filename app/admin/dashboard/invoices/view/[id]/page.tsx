@@ -1,12 +1,14 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
 import { InvoiceDetailsMapper } from "./utils/invoiceDetailsMapper";
 import { InvoiceDetails, invoiceDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
 import { formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util";
-import Image from "next/image";
 
-export default function BillView({ params }: { params: { id: string } }) {
+export default function BillView() {
+  const params = useParams<{ id: string }>();
   const [bill, setBill] = React.useState<invoiceDTO | null>(null);
   const [homeowner, setHomeowner] = React.useState<homeownerDTO | null>(null);
   const [property, setProperty] = React.useState<propertyDTO | null>(null);
@@ -35,7 +37,7 @@ export default function BillView({ params }: { params: { id: string } }) {
     };
 
     fetchInvoiceById();
-  }, [params.id]);
+  }, []);
 
   React.useEffect(() => {
     if (bill && !isLoading && !error) {
