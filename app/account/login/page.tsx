@@ -4,7 +4,6 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { FlashMessage, FlashMessageProps } from "../../components/FlashMessage/FlashMessage";
 import Article from "../../components/Article/Article";
-import { StyledContainer, StyledFooterDivs, StyledFormContainer } from "./pageStyle";
 import Well from "../../components/Well/Well";
 import TextInput from "../../components/TextInput/TextInput";
 import { Button } from "../../components/Button/Button";
@@ -74,10 +73,10 @@ const Page = (): React.JSX.Element => {
 
   return (
     <Article size="xs">
-      <StyledContainer>
+      <div className={"flex flex-col justify-center"}>
         <Well>
           <h3>Login</h3>
-          <StyledFormContainer>
+          <div className={"p-6 flex flex-row flex-wrap"}>
             {flashMessage.isVisible && (
               <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
                 {flashMessage.text}
@@ -105,15 +104,16 @@ const Page = (): React.JSX.Element => {
                 name={"password"}
                 required={true}
               />
+
               <div className={"flex flex-row justify-around align-center mt-4"}>
                 <Button type="submit" fullWidth>
                   Login
                 </Button>
               </div>
             </form>
-          </StyledFormContainer>
+          </div>
         </Well>
-      </StyledContainer>
+      </div>
     </Article>
   );
 };
