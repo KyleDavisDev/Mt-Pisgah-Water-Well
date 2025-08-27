@@ -1,5 +1,5 @@
 import * as React from "react";
-import styled from "../../theme/styled-components";
+
 import { Link } from "../Link/Link";
 import { Button } from "../Button/Button";
 
