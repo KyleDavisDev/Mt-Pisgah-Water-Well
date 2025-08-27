@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import TextInput from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
@@ -9,13 +9,13 @@ import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 const Page = () => {
   const _defaultErrorMessage = "There was a problem saving the homeowner. Please refresh your page and try again!";
 
-  const [name, setUsername] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [phone, setPhone] = React.useState("");
-  const [mailingAddress, setMailingAddress] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+  const [name, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [mailingAddress, setMailingAddress] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
+  const [flashMessage, setFlashMessage] = useState<FlashMessageProps>({
     isVisible: false,
     text: "",
     type: undefined
