@@ -1,5 +1,4 @@
 import * as React from "react";
-import styled from "../../theme/styled-components";
 
 export interface ButtonProps {
   children: string | React.JSX.Element | Array<string | React.JSX.Element>;
@@ -13,80 +12,50 @@ export interface ButtonProps {
 }
 
 const Button: React.FunctionComponent<ButtonProps> = props => {
-  const { className, style, onClick, type = "button", fullWidth = false, disabled = false, children } = props;
+  const { style, onClick, type = "button", fullWidth = false, disabled = false, children } = props;
+
+  const getButtonClasses = (props: ButtonProps) => {
+    const baseClasses =
+      "text-base font-futura px-4 py-2 transition-all duration-200 ease-out rounded-sm border-2 no-underline";
+
+    const widthClasses = fullWidth ? "w-full" : "w-auto";
+
+    const variantClasses =
+      props.displayType === "outline"
+        ? "border-primaryThemeColor bg-transparent text-primaryThemeColor"
+        : "border-primaryThemeColor bg-primaryThemeColor text-white";
+
+    const hoverClasses =
+      props.displayType === "outline"
+        ? "hover:border-primaryDarkThemeColor hover:bg-transparent hover:text-primaryDarkThemeColor"
+        : "hover:border-primaryDarkThemeColor hover:bg-primaryDarkThemeColor hover:text-white";
+
+    const disabledClasses = disabled
+      ? props.displayType === "outline"
+        ? "disabled:text-black disabled:bg-gray-200 disabled:border-neutral-500 disabled:cursor-not-allowed"
+        : "disabled:text-white disabled:bg-primaryDarkThemeColor disabled:border-primaryDarkThemeColor disabled:cursor-not-allowed"
+      : "cursor-pointer";
+
+    const svgClasses = "[&_svg]:w-5 [&_svg]:pl-2.5 [&_svg]:transition-all [&_svg]:duration-200 [&_svg]:ease-out";
+    const svgHoverClasses =
+      props.displayType === "outline" ? "hover:[&_svg]:fill-primaryDarkThemeColor" : "hover:[&_svg]:fill-white";
+
+    return `${baseClasses} ${widthClasses} ${variantClasses} ${hoverClasses} ${disabledClasses} ${svgClasses} ${svgHoverClasses}`;
+  };
 
   return (
-    <div className={className} style={style}>
-      <button onClick={onClick} type={type} disabled={disabled} aria-disabled={disabled}>
+    <div className={`inline-block ${props.fullWidth ? "w-full" : "w-auto"} ${props.className}`} style={style}>
+      <button
+        className={`${getButtonClasses(props)}`}
+        onClick={onClick}
+        type={type}
+        disabled={disabled}
+        aria-disabled={disabled}
+      >
         {children}
       </button>
     </div>
   );
 };
 
-const StyledButton = styled(Button)`
-  display: inline-block;
-
-  width: ${props => {
-    return props.fullWidth ? "100%" : "default";
-  }};
-
-  button {
-    font-size: 1rem;
-    width: ${props => {
-      return props.fullWidth ? "100%" : "default";
-    }};
-    text-decoration: none;
-    font-family: FuturaMedium, serif;
-    padding: 0.5em 1em;
-    transition: all 0.2s ease;
-    border-radius: 3px;
-    background-color: ${props => (props.displayType === "outline" ? "transparent" : props.theme.primaryThemeColor)};
-    border: ${props => "2px solid " + props.theme.primaryThemeColor};
-    color: ${props => (props.displayType === "outline" ? props.theme.primaryThemeColor : props.theme.white2)};
-
-    &:disabled {
-      color: ${props => (props.displayType === "outline" ? props.theme.black : props.theme.white)};
-      background-color: ${props =>
-        props.displayType === "outline" ? props.theme.lightGrey : props.theme.primaryDarkThemeColor};
-      border: ${props =>
-        props.displayType === "outline"
-          ? "2px solid " + props.theme.lightGrey
-          : "2px solid " + props.theme.primaryDarkThemeColor};
-
-      &:hover,
-      &:focus {
-        color: ${props => (props.displayType === "outline" ? props.theme.black : props.theme.white)};
-        background-color: ${props =>
-          props.displayType === "outline" ? props.theme.lightGrey : props.theme.primaryDarkThemeColor};
-        border: ${props =>
-          props.displayType === "outline"
-            ? "2px solid " + props.theme.lightGrey
-            : "2px solid " + props.theme.primaryDarkThemeColor};
-      }
-    }
-
-    &:hover,
-    &:focus {
-      cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
-      background-color: ${props =>
-        props.displayType === "outline" ? "transparent" : props.theme.primaryDarkThemeColor};
-      border: ${props => "2px solid " + props.theme.primaryDarkThemeColor};
-      color: ${props =>
-        props.displayType === "outline" ? props.theme.primaryDarkThemeColor : props.theme.buttonFontColor};
-
-      svg {
-        fill: ${props => (props.displayType === "outline" ? props.theme.primaryDarkThemeColor : props.theme.white)};
-      }
-    }
-
-    svg {
-      width: 20px;
-      padding-left: 10px;
-      transition: all 0.2s ease;
-    }
-  }
-`;
-StyledButton.displayName = "Button";
-
-export { StyledButton as Button };
+export { Button };

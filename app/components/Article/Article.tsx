@@ -2,8 +2,6 @@
 
 import * as React from "react";
 
-import styled from "../../theme/styled-components";
-
 export interface ArticleProps {
   children: any;
   className?: string;
@@ -12,38 +10,27 @@ export interface ArticleProps {
 }
 
 const Article: React.FunctionComponent<ArticleProps> = props => {
+  const getMaxWidth = (size: ArticleProps["size"]) => {
+    if (!size) return "max-w-[1200px]";
+
+    const sizes = {
+      xs: "max-w-[450px]",
+      sm: "max-w-[600px]",
+      md: "max-w-[900px]",
+      lg: "max-w-[1200px]"
+    };
+
+    return sizes[size] || sizes.lg;
+  };
+
   return (
-    <article className={props.className} style={props.style}>
+    <article
+      className={`${getMaxWidth(props.size)} w-full mx-auto font-avenir px-[15px] box-border sm:px-0 ${props.className}`}
+      style={props.style}
+    >
       {props.children}
     </article>
   );
 };
 
-const StyledArticle = styled(Article)`
-  max-width: ${props => {
-    if (props.size === "xs") return "450px";
-    if (props.size === "sm") return "600px";
-    if (props.size === "md") return "900px";
-    return "1200px";
-  }};
-  width: 100%;
-  margin: 0 auto;
-  font-family: AvenirNextReg;
-  padding: 0 15px;
-  box-sizing: border-box;
-
-  > div {
-    margin-bottom: 3.5rem;
-    margin-top: 3.5rem;
-  }
-
-  @media (min-width: ${props => props.theme.smToMd}) {
-    padding: 0;
-
-    > div {
-      margin-bottom: 3.5rem;
-    }
-  }
-`;
-
-export { StyledArticle as Article };
+export default Article;

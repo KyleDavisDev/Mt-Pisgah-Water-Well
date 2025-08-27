@@ -1,12 +1,10 @@
 "use client";
 
 import React from "react";
-import { StyledWellContainer, StyledFooterDivs, StyledFormContainer, StyledContainer } from "./pageStyle";
-import Well from "../../../../components/Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
-import { TextInput } from "../../../../components/TextInput/TextInput";
+import TextInput from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
-import { Article } from "../../../../components/Article/Article";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 const Page = () => {
   const _defaultErrorMessage = "There was a problem saving the homeowner. Please refresh your page and try again!";
@@ -82,68 +80,67 @@ const Page = () => {
   };
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>Add Homeowner</h3>
-            <StyledFormContainer>
-              {flashMessage.isVisible && (
-                <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
-                  {flashMessage.text}
-                </FlashMessage>
-              )}
+    <ArticleHolder>
+      <h3>Add Homeowner</h3>
+      <div className={"p-4 flex flex-row flex-wrap"}>
+        {flashMessage.isVisible && (
+          <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
+            {flashMessage.text}
+          </FlashMessage>
+        )}
 
-              <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-                <TextInput
-                  onChange={e => setUsername(e.target.value)}
-                  value={name}
-                  type={"text"}
-                  id={"name"}
-                  showLabel={true}
-                  label={"Name"}
-                  name={"name"}
-                  required={true}
-                />
-                <TextInput
-                  onChange={e => setEmail(e.target.value)}
-                  value={email}
-                  type={"text"}
-                  id={"email"}
-                  showLabel={true}
-                  label={"Email"}
-                  name={"email"}
-                />
-                <TextInput
-                  onChange={e => setPhone(e.target.value)}
-                  value={phone}
-                  type={"text"}
-                  id={"phone"}
-                  showLabel={true}
-                  label={"Phone number"}
-                  name={"phone"}
-                />
-                <TextInput
-                  onChange={e => setMailingAddress(e.target.value)}
-                  value={mailingAddress}
-                  type={"text"}
-                  id={"mailingAddress"}
-                  showLabel={true}
-                  label={"Mailing Address"}
-                  name={"mailingAddress"}
-                  required={true}
-                />
-                <StyledFooterDivs>
-                  <Button type="submit" fullWidth disabled={loading}>
-                    {loading ? "Adding..." : "Add Homeowner"}
-                  </Button>
-                </StyledFooterDivs>
-              </form>
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+        <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
+          <TextInput
+            onChange={e => setUsername(e.target.value)}
+            value={name}
+            type={"text"}
+            id={"name"}
+            showLabel={true}
+            label={"Name"}
+            name={"name"}
+            required={true}
+          />
+          <TextInput
+            onChange={e => setEmail(e.target.value)}
+            value={email}
+            type={"text"}
+            id={"email"}
+            showLabel={true}
+            label={"Email"}
+            name={"email"}
+          />
+          <TextInput
+            onChange={e => setPhone(e.target.value)}
+            value={phone}
+            type={"text"}
+            id={"phone"}
+            showLabel={true}
+            label={"Phone number"}
+            name={"phone"}
+          />
+          <TextInput
+            onChange={e => setMailingAddress(e.target.value)}
+            value={mailingAddress}
+            type={"text"}
+            id={"mailingAddress"}
+            showLabel={true}
+            label={"Mailing Address"}
+            name={"mailingAddress"}
+            required={true}
+          />
+
+          {/*  > div > label {*/}
+          {/*  font-size: 0.85rem;*/}
+          {/*  text-transform: inherit;*/}
+          {/*}*/}
+          <div className={"flex flex-row justify-around align-center mt-4"}>
+            <Button type="submit" fullWidth disabled={loading}>
+              {loading ? "Adding..." : "Add Homeowner"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </ArticleHolder>
   );
 };
 

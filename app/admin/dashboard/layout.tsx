@@ -1,7 +1,4 @@
-"use client";
-
 import SidebarMenu from "./components/SidebarMenu/SidebarMenu";
-import { StyledDiv } from "./layoutStyle";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,10 +12,10 @@ interface LayoutProps {
  */
 const Layout = ({ children }: LayoutProps): JSX.Element => {
   return (
-    <StyledDiv>
+    <div className="bg-[theme-bg-color] flex flex-col w-full min-h-screen text-[theme-font-color] print:bg-white sm:flex-row">
       <SidebarMenu />
       {children}
-    </StyledDiv>
+    </div>
   );
 };
 

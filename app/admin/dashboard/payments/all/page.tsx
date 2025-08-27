@@ -2,19 +2,10 @@
 
 import React from "react";
 
-import {
-  StyledWellContainer,
-  StyledFormContainer,
-  StyledTable,
-  StyledContainer,
-  StyledTableContainer,
-  StyledTableHeader
-} from "./pageStyle";
-import Well from "../../../../components/Well/Well";
-import { Article } from "../../../../components/Article/Article";
 import { Button } from "../../../../components/Button/Button";
 import PaymentEditModal from "./components/PaymentEditModal/PaymentEditModal";
-import { formatISODateToUserFriendlyLocal, formatNumberWithCommas, formatPenniesToDollars } from "../../util";
+import { formatISODateToUserFriendlyLocal, formatPenniesToDollars } from "../../util";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 type paymentMethod = "CASH" | "CHECK";
 
@@ -79,73 +70,92 @@ const Page = () => {
   };
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>View Payments</h3>
-            <StyledFormContainer>
-              {homeowners.length > 0 ? (
-                homeowners.map(homeowner => {
+    <ArticleHolder>
+      <h3>View Payments</h3>
+      <div className={"flex flex-row flex-wrap p-6"}>
+        {homeowners.length > 0 ? (
+          homeowners.map(homeowner => {
+            return (
+              <div className={"w-full pb-[25px]"} key={homeowner.id}>
+                <h3>{homeowner.name}</h3>
+                {homeowner.properties.map(property => {
                   return (
-                    <div key={homeowner.id}>
-                      <h3>{homeowner.name}</h3>
-                      {homeowner.properties.map(property => {
-                        return (
-                          <StyledTableContainer key={property.id}>
-                            <StyledTableHeader>{property.address}</StyledTableHeader>
-                            <StyledTable>
-                              <thead>
-                                <tr>
-                                  <th>Date Collected</th>
-                                  <th style={{ textAlign: "right" }}>Amount</th>
-                                  <th>Method</th>
-                                  <th></th>
+                    <div className={"pt-[5px] pb-[15px]"} key={property.id}>
+                      <h5 className={"pb-[5px]"}>{property.address}</h5>
+                      <table className={"w-full text-left border-collapse mb-[25px]"}>
+                        <thead className={"border-collapse"}>
+                          <tr>
+                            <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                              Date Collected
+                            </th>
+                            <th className={"border border-tableBorder text-right p-[8px] table-cell border-collapse"}>
+                              Amount
+                            </th>
+                            <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                              Method
+                            </th>
+                            <th
+                              className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                            ></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {property.payments &&
+                            property.payments.map(payment => {
+                              return (
+                                <tr
+                                  className={"border-b border-tableBorder even:bg-gray-200"}
+                                  key={`ind_${payment.id}`}
+                                >
+                                  <td
+                                    className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                                  >
+                                    {formatISODateToUserFriendlyLocal(payment.createdAt)}
+                                  </td>
+                                  <td
+                                    className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                                    style={{ textAlign: "right" }}
+                                  >
+                                    {formatPenniesToDollars(payment.amountInPennies)}
+                                  </td>
+                                  <td
+                                    className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                                  >
+                                    {payment.method}
+                                  </td>
+                                  <td
+                                    className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
+                                    style={{ textAlign: "center" }}
+                                  >
+                                    <Button
+                                      onClick={() => {
+                                        setShowModal(true);
+                                        setActivePayment(payment);
+                                      }}
+                                    >
+                                      Edit
+                                    </Button>
+                                  </td>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                {property.payments &&
-                                  property.payments.map(payment => {
-                                    return (
-                                      <tr key={`ind_${payment.id}`}>
-                                        <td>{formatISODateToUserFriendlyLocal(payment.createdAt)}</td>
-                                        <td style={{ textAlign: "right" }}>
-                                          {formatPenniesToDollars(payment.amountInPennies)}
-                                        </td>
-                                        <td>{payment.method}</td>
-                                        <td style={{ textAlign: "center" }}>
-                                          <Button
-                                            onClick={() => {
-                                              setShowModal(true);
-                                              setActivePayment(payment);
-                                            }}
-                                          >
-                                            Edit
-                                          </Button>
-                                        </td>
-                                      </tr>
-                                    );
-                                  })}
-                              </tbody>
-                            </StyledTable>
-                          </StyledTableContainer>
-                        );
-                      })}
+                              );
+                            })}
+                        </tbody>
+                      </table>
                     </div>
                   );
-                })
-              ) : (
-                <></>
-              )}
+                })}
+              </div>
+            );
+          })
+        ) : (
+          <></>
+        )}
 
-              {showModal && activePayment && (
-                <PaymentEditModal showModal={showModal} payment={{ ...activePayment }} onModalClose={onModalClose} />
-              )}
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+        {showModal && activePayment && (
+          <PaymentEditModal showModal={showModal} payment={{ ...activePayment }} onModalClose={onModalClose} />
+        )}
+      </div>
+    </ArticleHolder>
   );
 };
 

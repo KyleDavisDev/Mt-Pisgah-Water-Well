@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { formatDollarsToPennies, formatPenniesToDollars } from "../../admin/dashboard/util";
-import { TextInput } from "../TextInput/TextInput";
+import TextInput from "../TextInput/TextInput";
 
 interface MoneyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "id"> {
   id: string;
@@ -9,6 +9,7 @@ interface MoneyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElemen
   name?: string;
   label?: string;
   showLabel?: boolean;
+  className?: string;
 }
 
 /**
@@ -35,7 +36,8 @@ const MoneyInput: React.FunctionComponent<MoneyInputProps> = ({
   onChange,
   name,
   showLabel,
-  label
+  label,
+  className
 }) => {
   const [internalValueInPennies, setInternalValueInPennies] = React.useState<number>(valueInPennies);
   const [displayValue, setDisplayValue] = React.useState<string>(formatMoney(valueInPennies));
@@ -68,6 +70,7 @@ const MoneyInput: React.FunctionComponent<MoneyInputProps> = ({
 
   return (
     <TextInput
+      className={className}
       id={id}
       type="text"
       value={displayValue}

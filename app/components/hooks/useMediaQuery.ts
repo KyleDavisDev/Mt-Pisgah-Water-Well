@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { theme } from "../../theme/styled-components";
+
+const SMALL_TO_MEDIUM_BREAKPOINT = "768px";
+const MEDIUM_TO_LARGE_BREAKPOINT = "1024px";
 
 interface MediaQueryProps {
   min?: number;
@@ -53,7 +55,11 @@ const extractPixelsRobust = (str: string) => {
   return match ? parseInt(match[1]) : 0;
 };
 
-export const isDesktopHook = () => useMediaQuery({ min: extractPixelsRobust(theme.mdToLg), max: Infinity });
+export const isDesktopHook = () =>
+  useMediaQuery({ min: extractPixelsRobust(MEDIUM_TO_LARGE_BREAKPOINT), max: Infinity });
 export const isTabletHook = () =>
-  useMediaQuery({ min: extractPixelsRobust(theme.smToMd), max: extractPixelsRobust(theme.mdToLg) });
-export const isMobileHook = () => useMediaQuery({ min: 0, max: extractPixelsRobust(theme.smToMd) });
+  useMediaQuery({
+    min: extractPixelsRobust(SMALL_TO_MEDIUM_BREAKPOINT),
+    max: extractPixelsRobust(MEDIUM_TO_LARGE_BREAKPOINT)
+  });
+export const isMobileHook = () => useMediaQuery({ min: 0, max: extractPixelsRobust(SMALL_TO_MEDIUM_BREAKPOINT) });

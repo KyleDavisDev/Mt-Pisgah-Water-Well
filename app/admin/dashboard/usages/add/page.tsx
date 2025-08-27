@@ -1,19 +1,11 @@
 "use client";
 
 import React from "react";
-import {
-  StyledContainer,
-  StyledFooterDivs,
-  StyledFormContainer,
-  StyledTable,
-  StyledTd,
-  StyledWellContainer
-} from "./pageStyle";
-import Well from "../../../../components/Well/Well";
+
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { Button } from "../../../../components/Button/Button";
-import { Article } from "../../../../components/Article/Article";
-import { TextInput } from "../../../../components/TextInput/TextInput";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
+import TextInput from "../../../../components/TextInput/TextInput";
 import Select from "../../../../components/Select/Select";
 import Checkbox from "../../../../components/Checkbox/Checkbox";
 import { formatNumberWithCommas } from "../../util";
@@ -237,151 +229,185 @@ const Page = () => {
   };
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>Add water usage</h3>
-            <StyledFormContainer>
-              {flashMessage.isVisible && (
-                <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
-                  {flashMessage.text}
-                </FlashMessage>
-              )}
+    <ArticleHolder>
+      <h3>Add water usage</h3>
+      <div className={"flex flex-row flex-wrap p-6"}>
+        {flashMessage.isVisible && (
+          <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
+            {flashMessage.text}
+          </FlashMessage>
+        )}
 
-              <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                  <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
-                    <TextInput
-                      onChange={e => {
-                        setDateCollected(e.currentTarget.value);
-                      }}
-                      id={"dateCollected"}
-                      type={"date"}
-                      label={"Date Collected"}
-                      required={true}
-                      showLabel={true}
-                      value={dateCollected}
-                    />
-                  </div>
+        <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+            <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
+              <TextInput
+                onChange={e => {
+                  setDateCollected(e.currentTarget.value);
+                }}
+                id={"dateCollected"}
+                type={"date"}
+                label={"Date Collected"}
+                required={true}
+                showLabel={true}
+                value={dateCollected}
+              />
+            </div>
 
-                  <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
-                    <Select
-                      options={users.map(u => {
-                        return {
-                          name: u.name,
-                          value: u.id
-                        };
-                      })}
-                      onSelect={e => {
-                        return setActiveGatheredUser(e.target.value);
-                      }}
-                      id={"userWhoGathered"}
-                      label={"Who Collected the Data?"}
-                      required={true}
-                      showLabel={true}
-                      selectedValue={activeGatheredUser}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      maxWidth: "380px",
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center"
-                    }}
-                  >
-                    <Checkbox
-                      id={"ckbxOverrideRestrictions"}
-                      isChecked={allowNegativeInputs}
-                      onChange={() => setAllowNegativeInputs(!allowNegativeInputs)}
-                      label={"Allow negative usages"}
-                    />
-                  </div>
-                </div>
-                <StyledTable>
-                  <thead>
-                    <tr>
-                      <th>Homeowner</th>
-                      <th>Property</th>
-                      <th>Previous Reading</th>
-                      <th>New Reading</th>
-                      <th>Usage</th>
+            <div style={{ maxWidth: "380px", width: "100%", marginRight: "25px" }}>
+              <Select
+                options={users.map(u => {
+                  return {
+                    name: u.name,
+                    value: u.id
+                  };
+                })}
+                onSelect={e => {
+                  return setActiveGatheredUser(e.target.value);
+                }}
+                id={"userWhoGathered"}
+                label={"Who Collected the Data?"}
+                required={true}
+                showLabel={true}
+                selectedValue={activeGatheredUser}
+              />
+            </div>
+            <div
+              style={{
+                maxWidth: "380px",
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center"
+              }}
+            >
+              <Checkbox
+                id={"ckbxOverrideRestrictions"}
+                isChecked={allowNegativeInputs}
+                onChange={() => setAllowNegativeInputs(!allowNegativeInputs)}
+                label={"Allow negative usages"}
+              />
+            </div>
+          </div>
+          <table className={"w-full text-left border-collapse"}>
+            <thead className={"border-collapse"}>
+              <tr>
+                <th className={"border border-tableBorder p-[8px] table-cell border-collapse text-center"}>
+                  Homeowner
+                </th>
+                <th className={"border border-tableBorder p-[8px] table-cell border-collapse text-center"}>Property</th>
+                <th className={"border border-tableBorder p-[8px] table-cell border-collapse text-center"}>
+                  Previous Reading
+                </th>
+                <th className={"border border-tableBorder p-[8px] table-cell border-collapse text-center"}>
+                  New Reading
+                </th>
+                <th className={"border border-tableBorder p-[8px] table-cell border-collapse text-center"}>Usage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {homeowners &&
+                homeowners.map(homeowner => {
+                  return (
+                    <tr key={`homeowner_${homeowner.id}`}>
+                      <td className={"border border-tableBorder p-[8px] table-cell border-collapse text-center"}>
+                        <h4>{homeowner.name}</h4>
+                      </td>
+                      <td className={"border border-tableBorder table-cell border-collapse text-center p-0"}>
+                        {homeowner.properties.map(property => {
+                          return (
+                            <div
+                              className={
+                                "flex justify-center items-center h-[65px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
+                              }
+                              key={`property_${property.id}`}
+                            >
+                              {property.address}
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td className={"border border-tableBorder table-cell border-collapse text-center p-0"}>
+                        {homeowner.properties.map((property, index) => {
+                          let value;
+
+                          if (!property.usages) value = "0";
+                          else if (!property.usages[0]) value = "0";
+                          else value = property.usages[0].gallons;
+
+                          return (
+                            <div
+                              className={
+                                "flex justify-center items-center h-[65px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
+                              }
+                              key={`previous_usage_${index}`}
+                            >
+                              {formatNumberWithCommas(value)}
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td className={"border border-tableBorder table-cell border-collapse text-center p-0"}>
+                        {homeowner.properties.map(property => {
+                          return (
+                            <div
+                              className={
+                                "flex flex-col w-full items-center h-[65px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
+                              }
+                              key={`new_usage_${property.id}`}
+                            >
+                              <div className={"w-1/2"}>
+                                <TextInput
+                                  className={"mb-0 mt-0"}
+                                  id={property.id}
+                                  value={usages[property.id].new}
+                                  onChange={e => {
+                                    const inputValue = e.currentTarget.value;
+
+                                    const newUsages = { ...usages };
+                                    newUsages[property.id] = {
+                                      ...newUsages[property.id],
+                                      new: inputValue.replace(/\D+/, "")
+                                    };
+                                    setUsages(newUsages);
+                                  }}
+                                  onBlur={() => updateDeltas(property.id)}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td className={"border border-tableBorder table-cell border-collapse text-center p-0"}>
+                        {homeowner.properties.map(p => {
+                          const color = deltas[p.id] > 0 ? "green" : "red";
+                          return (
+                            <div
+                              className={
+                                "flex justify-center items-center h-[65px] p-[8px] border-b-1 border-b-tableBorder last-of-type:border-b-0"
+                              }
+                              key={`difference_${p.id}`}
+                              style={{ color }}
+                            >
+                              {deltas[p.id].toLocaleString()}
+                            </div>
+                          );
+                        })}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {homeowners &&
-                      homeowners.map(homeowner => {
-                        return (
-                          <tr key={`homeowner_${homeowner.id}`}>
-                            <td>
-                              <h4>{homeowner.name}</h4>
-                            </td>
-                            <StyledTd>
-                              {homeowner.properties.map(property => {
-                                return <div key={`property_${property.id}`}>{property.address}</div>;
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map((property, index) => {
-                                let value;
+                  );
+                })}
+            </tbody>
+          </table>
 
-                                if (!property.usages) value = "0";
-                                else if (!property.usages[0]) value = "0";
-                                else value = property.usages[0].gallons;
-
-                                return <div key={`previous_usage_${index}`}>{formatNumberWithCommas(value)}</div>;
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map(property => {
-                                return (
-                                  <TextInput
-                                    key={`new_usage_${property.id}`}
-                                    id={property.id}
-                                    value={usages[property.id].new}
-                                    onChange={e => {
-                                      const inputValue = e.currentTarget.value;
-
-                                      const newUsages = { ...usages };
-                                      newUsages[property.id] = {
-                                        ...newUsages[property.id],
-                                        new: inputValue.replace(/\D+/, "")
-                                      };
-                                      setUsages(newUsages);
-                                    }}
-                                    onBlur={() => updateDeltas(property.id)}
-                                  />
-                                );
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map(p => {
-                                const color = deltas[p.id] > 0 ? "green" : "red";
-                                return (
-                                  <div key={`difference_${p.id}`} style={{ color }}>
-                                    {deltas[p.id].toLocaleString()}
-                                  </div>
-                                );
-                              })}
-                            </StyledTd>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </StyledTable>
-                <StyledFooterDivs>
-                  <Button type="submit" fullWidth disabled={loading}>
-                    {loading ? "Saving..." : "Save Usages"}
-                  </Button>
-                </StyledFooterDivs>
-              </form>
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+          <div className={"flex flex-row justify-around align-center mt-4"}>
+            <Button type="submit" fullWidth disabled={loading}>
+              {loading ? "Saving..." : "Save Usages"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </ArticleHolder>
   );
 };
 

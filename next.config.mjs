@@ -11,12 +11,6 @@ const nextConfig = {
         permanent: true
       }
     ];
-  },
-  compiler: {
-    styledComponents: {
-      displayName: true,
-      ssr: true
-    }
   }
 };
 

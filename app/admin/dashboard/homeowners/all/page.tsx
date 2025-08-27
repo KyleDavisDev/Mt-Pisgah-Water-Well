@@ -1,18 +1,15 @@
 "use client";
 
 import React from "react";
-import { StyledWellContainer, StyledFormContainer, StyledTable, StyledContainer } from "./pageStyle";
 import HomeownerEditModal from "./components/HomeownerEditModal/HomeownerEditModal";
-import Well from "../../../../components/Well/Well";
 import { Button } from "../../../../components/Button/Button";
-import { Article } from "../../../../components/Article/Article";
 import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
-import { StyledBillTemplate } from "../../invoices/view/[id]/pageStyle";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 export interface homeownerVM {
   name: string;
-  email?: string;
-  phone?: string;
+  email?: string | null;
+  phone?: string | null;
   mailingAddress: string;
   isActive: string;
   id: number;
@@ -76,122 +73,118 @@ const Page = () => {
 
   if (!initialized.current) {
     return (
-      <StyledContainer>
-        <Article size="lg">
-          <StyledWellContainer>
-            <Well>
-              <h3>All Homeowners</h3>
-              <StyledFormContainer>Loading...</StyledFormContainer>
-            </Well>
-          </StyledWellContainer>
-        </Article>
-      </StyledContainer>
+      <ArticleHolder>
+        <h3>All Homeowners</h3>
+        <div className={"flex flex-row flex-wrap p-6"}>Loading...</div>
+      </ArticleHolder>
     );
   }
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>All Homeowners</h3>
-            <StyledFormContainer>
-              {activeHomeowners.length > 0 ? (
-                <>
-                  <h3>Active</h3>
-                  <StyledTable style={{ marginBottom: "25px" }}>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Mailing Address</th>
-                        <th>Email</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {activeHomeowners.map((homeowner, ind) => {
-                        return (
-                          <tr key={`tr__${ind}__${homeowner.id}`}>
-                            <td>
-                              <NotificationDot variant={"success"} />
-                              {homeowner.name}
-                            </td>
-                            <td>{homeowner.mailingAddress}</td>
-                            <td>{homeowner.email}</td>
-                            <td style={{ textAlign: "center" }}>
-                              <Button
-                                onClick={() => {
-                                  setActiveHomeowner({ ...homeowner });
-                                  setShowModal(true);
-                                }}
-                              >
-                                Edit
-                              </Button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </StyledTable>
-                </>
-              ) : (
-                <></>
-              )}
+    <ArticleHolder>
+      <h3>All Homeowners</h3>
+      <div className={"flex flex-row flex-wrap p-6"}>
+        {activeHomeowners.length > 0 ? (
+          <>
+            <h3>Active</h3>
+            <table className={"w-full text-left border-collapse mb-[25px]"}>
+              <thead className={"border-collapse"}>
+                <tr>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Name</th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                    Mailing Address
+                  </th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Email</th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeHomeowners.map((homeowner, ind) => {
+                  return (
+                    <tr className={"border-b border-tableBorder even:bg-gray-200"} key={`tr__${ind}__${homeowner.id}`}>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        <NotificationDot variant={"success"} />
+                        {homeowner.name}
+                      </td>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        {homeowner.mailingAddress}
+                      </td>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        {homeowner.email}
+                      </td>
+                      <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
+                        <Button
+                          onClick={() => {
+                            setActiveHomeowner({ ...homeowner });
+                            setShowModal(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </>
+        ) : (
+          <></>
+        )}
 
-              {inactiveHomeowners.length > 0 ? (
-                <>
-                  <h3>Inactive</h3>
-                  <StyledTable>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Mailing Address</th>
-                        <th>Email</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {inactiveHomeowners.map((homeowner, ind) => {
-                        return (
-                          <tr key={`tr__${ind}__${homeowner.id}`}>
-                            <td>
-                              <NotificationDot variant={"danger"} />
-                              {homeowner.name}
-                            </td>
-                            <td>{homeowner.mailingAddress}</td>
-                            <td>{homeowner.email}</td>
-                            <td style={{ textAlign: "center" }}>
-                              <Button
-                                onClick={() => {
-                                  setActiveHomeowner({ ...homeowner });
-                                  setShowModal(true);
-                                }}
-                              >
-                                Edit
-                              </Button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </StyledTable>
-                </>
-              ) : (
-                <></>
-              )}
+        {inactiveHomeowners.length > 0 ? (
+          <>
+            <h3>Inactive</h3>
+            <table className={"w-full text-left border-collapse mb-[25px]"}>
+              <thead className={"border-collapse"}>
+                <tr>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Name</th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                    Mailing Address
+                  </th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Email</th>
+                  <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {inactiveHomeowners.map((homeowner, ind) => {
+                  return (
+                    <tr className={"border-b border-tableBorder even:bg-gray-200"} key={`tr__${ind}__${homeowner.id}`}>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        <NotificationDot variant={"danger"} />
+                        {homeowner.name}
+                      </td>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        {homeowner.mailingAddress}
+                      </td>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        {homeowner.email}
+                      </td>
+                      <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
+                        <Button
+                          onClick={() => {
+                            setActiveHomeowner({ ...homeowner });
+                            setShowModal(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </>
+        ) : (
+          <></>
+        )}
 
-              {showModal && activeHomeowner && (
-                <HomeownerEditModal
-                  showModal={showModal}
-                  homeowner={{ ...activeHomeowner }}
-                  onModalClose={onModalClose}
-                />
-              )}
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+        {showModal && activeHomeowner && (
+          <HomeownerEditModal showModal={showModal} homeowner={{ ...activeHomeowner }} onModalClose={onModalClose} />
+        )}
+      </div>
+    </ArticleHolder>
   );
 };
 
