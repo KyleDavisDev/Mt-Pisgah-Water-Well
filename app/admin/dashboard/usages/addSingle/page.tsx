@@ -105,7 +105,7 @@ const Page = () => {
       getUsagesByWalkableOrder();
       getUsersWhoCanGather();
     }
-  }, []);
+  }, [getUsagesByWalkableOrder, getUsersWhoCanGather]);
 
   const safeParseStr = (str: string) => {
     try {

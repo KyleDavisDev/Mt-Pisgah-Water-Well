@@ -14,7 +14,7 @@ export interface propertyVM {
   homeowner: string;
 }
 
-const page = () => {
+const Page = () => {
   // assign state
   const [activeProperties, setActiveProperties] = useState<propertyVM[]>([]);
   const [inactiveProperties, setInactiveProperties] = useState<propertyVM[]>([]);
@@ -235,4 +235,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

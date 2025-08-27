@@ -1,28 +1,28 @@
 "use client";
 
-import React from "react";
+import { useState, useEffect } from "react";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import TextInput from "../../../../components/TextInput/TextInput";
 import { Button } from "../../../../components/Button/Button";
 import Select from "../../../../components/Select/Select";
 import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
-const page = () => {
+const Page = () => {
   const _defaultErrorMessage = "There was a problem saving the property. Please refresh your page and try again!";
 
   // assign state
-  const [description, setDescription] = React.useState("");
-  const [address, setAddress] = React.useState("");
-  const [homeowners, setHomeowners] = React.useState<{ name: string; id: string }[]>([]);
-  const [homeowner, setHomeowner] = React.useState("");
-  const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
+  const [description, setDescription] = useState("");
+  const [address, setAddress] = useState("");
+  const [homeowners, setHomeowners] = useState<{ name: string; id: string }[]>([]);
+  const [homeowner, setHomeowner] = useState("");
+  const [flashMessage, setFlashMessage] = useState<FlashMessageProps>({
     isVisible: false,
     text: "",
     type: undefined
   });
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Fetch data from the API using a GET request
     fetch("/api/homeowners")
       .then(response => {
@@ -183,4 +183,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
