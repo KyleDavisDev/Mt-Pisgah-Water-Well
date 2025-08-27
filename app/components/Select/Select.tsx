@@ -19,7 +19,7 @@ const Select: React.FC<SelectProps> = props => {
   const { className, options, name, label, onSelect, selectedValue, id, showLabel = false, required = false } = props;
 
   return (
-    <div className={`flex flex-col w-full ${className}`}>
+    <div className={`flex flex-col w-full ${className ?? ""}`}>
       {showLabel && label && (
         <Label htmlFor={id}>
           {label}
