@@ -1,10 +1,9 @@
-import { StyledFooterDivs } from "../../pageStyle";
 import React from "react";
 import { homeownerVM } from "../../page";
 
 import { FlashMessage, FlashMessageProps } from "../../../../../../components/FlashMessage/FlashMessage";
 import { RadioButton } from "../../../../../../components/RadioButton/RadioButton";
-import { TextInput } from "../../../../../../components/TextInput/TextInput";
+import TextInput from "../../../../../../components/TextInput/TextInput";
 import { Button } from "../../../../../../components/Button/Button";
 import { Modal } from "../../../../../../components/Modal/Modal";
 import Label from "../../../../../../components/Label/Label";
@@ -122,7 +121,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
           />
           <TextInput
             onChange={e => setEmail(e.target.value)}
-            value={email}
+            value={email ?? ""}
             type={"text"}
             id={"email"}
             showLabel={true}
@@ -131,7 +130,7 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
           />
           <TextInput
             onChange={e => setPhone(e.target.value)}
-            value={phone}
+            value={phone ?? ""}
             type={"text"}
             id={"phone"}
             showLabel={true}
@@ -166,11 +165,11 @@ const HomeownerEditModal = (props: HomeownerEditModalProps) => {
             value={"No"}
           />
 
-          <StyledFooterDivs>
+          <div className={"flex flex-row justify-around align-center mt-4"}>
             <Button type="submit" fullWidth disabled={loading}>
               {loading ? "Saving..." : "Save"}
             </Button>
-          </StyledFooterDivs>
+          </div>
         </form>
       </>
     </Modal>

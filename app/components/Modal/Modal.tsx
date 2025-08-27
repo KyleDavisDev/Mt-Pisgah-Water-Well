@@ -1,7 +1,5 @@
-import styled from "styled-components";
 import * as React from "react";
 import { Button } from "../Button/Button";
-import { findDOMNode } from "react-dom";
 
 export interface ModalProps {
   children: string | React.JSX.Element | Array<string | React.JSX.Element>;
@@ -40,10 +38,9 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
 
     // Find the DOM element that was clicked on
     const elementAtMouse = document.elementFromPoint(mouseX, mouseY);
-    const clickedOnElement = findDOMNode(elementAtMouse);
-    if (!clickedOnElement) return;
+    if (!elementAtMouse) return;
 
-    const label = (clickedOnElement as Element).attributes.getNamedItem("aria-labelledby")?.value;
+    const label = (elementAtMouse as Element).attributes.getNamedItem("aria-labelledby")?.value;
     if (label === "Close Modal") {
       props.onClose();
     }
@@ -69,81 +66,35 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
 
   return (
     <div
-      className={props.className}
+      className={`z-auto fixed top-0 left-0 h-screen w-screen bg-translucentBackground
+        ${props.isActive ? "block" : "hidden"}
+        ${props.className}`}
       style={props.style}
       onClick={(e: React.MouseEvent<HTMLDivElement>) => onOutsideClick(e)}
       aria-labelledby={`Close Modal`}
     >
-      <div>
-        <div>
-          <div>{props.children}</div>
-          <Button onClick={() => props.onClose()}>X</Button>
+      <div
+        className={`fixed bg-white w-1/3 h-auto top-1/5 left-1/2 rounded-md p-[20px] text-black -translate-x-1/2 translate-y-0
+        ${props.isActive ? "block" : "hidden"}
+        `}
+      >
+        <div className={"flex flex-row flex-nowrap justify-between"}>
+          <div className={"max-w-10/12 w-full"}>{props.children}</div>
+          <Button
+            className={`
+          [&_button]:bg-transparent [&_button]:border-0 [&_button]:text-black [&_button]:p-0
+          [&_button:hover]:border-0 [&_button:hover]:text-black [&_button:hover]:bg-transparent
+          [&_button:focus]:border-0 [&_button:focus]:text-black [&_button:focus]:bg-transparent
+        `}
+            displayType={"outline"}
+            onClick={() => props.onClose()}
+          >
+            X
+          </Button>
         </div>
       </div>
     </div>
   );
 };
 
-const StyledModal = styled(Modal)`
-    z-index: auto;
-    display: ${props => {
-      return props.isActive ? "block" : "none";
-    }};
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    background: rgba(0, 0, 0, 0.35);
-
-    > div {
-        position: fixed;
-        display: ${props => {
-          return props.isActive ? "block" : "none";
-        }};
-        background: ${props => props.theme.white};
-        width: 33%;
-        height: auto;
-        top: 20%;
-        left: 50%;
-        transform: translate(-50%, 0);
-        border-radius: ${props => props.theme.borderRadiusSize};
-        padding: 20px;
-        color: rgba(0, 0, 139, 0.7);
-
-        > div {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-
-            > div:first-child {
-                max-width: 90%;
-                width: 100%;
-            }
-
-            > div:last-child {
-                button {
-
-                    background-color: transparent;
-                    border: 0;
-                    color: ${props => props.theme.black};
-                    padding: 0;
-
-                    &:hover,
-                    &:focus {
-                        border: 0;
-                        color: ${props => props.theme.black};
-                        background-color: transparent;
-                    }
-                
-                }
-            }
-        }
-
-
-    }
-}
-`;
-
-export { StyledModal as Modal };
+export { Modal };

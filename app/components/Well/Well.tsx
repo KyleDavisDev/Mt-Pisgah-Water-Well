@@ -1,7 +1,5 @@
 import * as React from "react";
 
-import { StyledDiv } from "./WellStyle";
-
 export interface WellProps {
   className?: string;
   children: string | React.JSX.Element | (string | React.JSX.Element)[];
@@ -10,9 +8,17 @@ export interface WellProps {
 
 const Well: React.FC<WellProps> = props => {
   return (
-    <StyledDiv className={props.className} style={props.style}>
+    <div
+      className="
+        max-w-[2000px] w-full mx-0
+       bg-white
+        flex flex-col justify-start
+        p-4
+      "
+      style={props.style}
+    >
       {props.children}
-    </StyledDiv>
+    </div>
   );
 };
 

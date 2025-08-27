@@ -1,8 +1,6 @@
 import * as React from "react";
 
 import Label from "../Label/Label";
-import { StyledDiv, StyledInput } from "./TextInputStyle";
-import styled from "../../theme/styled-components";
 
 export interface TextInputProps {
   id: string;
@@ -43,7 +41,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = props => {
   } = props;
 
   return (
-    <StyledDiv className={className} style={style}>
+    <div className={`flex flex-col w-full ${className ?? ""}`} style={style}>
       {showLabel && label && (
         <Label htmlFor={id}>
           {label}
@@ -51,7 +49,12 @@ const TextInput: React.FunctionComponent<TextInputProps> = props => {
         </Label>
       )}
 
-      <StyledInput
+      <input
+        className={`w-full max-w-full p-[10px] box-border mt-[5px] mb-[15px] font-sans border border-inputBorder font-System shadow-none
+        ${props.requirementText ? "mb-0" : "bg-white"}
+        ${props.disabled ? "bg-grey" : "bg-white"}
+        ${props.disabled ? "hover:cursor-not-allowed" : "hover:cursor-auto"}
+        `}
         type={type}
         id={id}
         name={name}
@@ -67,22 +70,8 @@ const TextInput: React.FunctionComponent<TextInputProps> = props => {
       />
 
       {requirementText && <p>{requirementText}</p>}
-    </StyledDiv>
+    </div>
   );
 };
 
-const StyledTextInput = styled(TextInput)`
-  input {
-    background-color: ${props => (props.disabled ? "#eee" : props.theme.white)};
-    box-shadow: none;
-    margin-bottom: ${props => props.requirementText && "0px"};
-
-    :hover,
-    :focus {
-      cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
-    }
-  }
-`;
-
-export { StyledTextInput as TextInput };
 export default TextInput;

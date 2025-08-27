@@ -19,7 +19,7 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "CREATE_INVOICE");

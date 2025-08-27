@@ -1,16 +1,9 @@
 "use client";
 
-import {
-  StyledIconContainer,
-  StyledMenuItem,
-  StyledMenuItemContainer,
-  StyledSideBarContainer,
-  StyledSubMenuItemContainer,
-  StyledTopBarToggleContainer
-} from "./SidebarMenuStyle";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+
 import { HamburgerIcon } from "../../../../components/HamburgerIcon/HamburgerIcon";
 import { isDesktopHook, isMobileHook, isTabletHook } from "../../../../components/hooks/useMediaQuery";
 
@@ -27,98 +20,167 @@ const SidebarMenu = () => {
   const isDesktop = isDesktopHook();
 
   const renderMenuItems = () => (
-    <StyledSideBarContainer>
-      <StyledIconContainer>
+    <div className="flex flex-col w-full max-w-full bg-white shadow-lg print:!hidden sm:max-w-[300px] md:w-full">
+      <div className="hidden sm:flex flex-row justify-center justify-items-center w-full">
         <Link href={"/admin/dashboard"}>
           <Image src="/water-well.png" height={75} width={75} alt={"Well Icon"} />
         </Link>
-      </StyledIconContainer>
-      <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowHomeowners(!showHomeowners)}>Homeowners</StyledMenuItem>
+      </div>
+      <div className="pl-0">
+        <div
+          className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600"
+          onClick={() => setShowHomeowners(!showHomeowners)}
+        >
+          Homeowners
+        </div>
         {showHomeowners && (
           <>
-            <StyledSubMenuItemContainer>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/homeowners/all"}>View All</Link>
-            </StyledSubMenuItemContainer>
-            <StyledSubMenuItemContainer>
+            </div>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/homeowners/add"}>Add Homeowner</Link>
-            </StyledSubMenuItemContainer>
+            </div>
           </>
         )}
-      </StyledMenuItemContainer>
+      </div>
 
-      <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowProperties(!showProperties)}>Properties</StyledMenuItem>
+      <div className="pl-0">
+        <div
+          className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600"
+          onClick={() => setShowProperties(!showProperties)}
+        >
+          Properties
+        </div>
         {showProperties && (
           <>
-            <StyledSubMenuItemContainer>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/properties/all"}>View All</Link>
-            </StyledSubMenuItemContainer>
-            <StyledSubMenuItemContainer>
+            </div>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/properties/add"}>Add Property</Link>
-            </StyledSubMenuItemContainer>
+            </div>
           </>
         )}
-      </StyledMenuItemContainer>
+      </div>
 
-      <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowUsage(!showUsage)}>Usages</StyledMenuItem>
+      <div className="pl-0">
+        <div
+          className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600"
+          onClick={() => setShowUsage(!showUsage)}
+        >
+          Usages
+        </div>
         {showUsage && (
           <>
-            <StyledSubMenuItemContainer>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/usages/all"}>View All</Link>
-            </StyledSubMenuItemContainer>
-            <StyledSubMenuItemContainer>
+            </div>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/usages/add"}>Add Usage</Link>
-            </StyledSubMenuItemContainer>
-            <StyledSubMenuItemContainer>
+            </div>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/usages/addSingle"}>Add Individually</Link>
-            </StyledSubMenuItemContainer>
+            </div>
           </>
         )}
-      </StyledMenuItemContainer>
+      </div>
 
-      <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowInvoices(!showInvoices)}>Invoices</StyledMenuItem>
+      <div className="pl-0">
+        <div
+          className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600"
+          onClick={() => setShowInvoices(!showInvoices)}
+        >
+          Invoices
+        </div>
         {showInvoices && (
           <>
-            <StyledSubMenuItemContainer>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/invoices/all"}>View All Invoices</Link>
-            </StyledSubMenuItemContainer>
-            <StyledSubMenuItemContainer>
+            </div>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/invoices/add"}>Generate Monthly Invoices</Link>
-            </StyledSubMenuItemContainer>
+            </div>
           </>
         )}
-      </StyledMenuItemContainer>
+      </div>
 
-      <StyledMenuItemContainer>
-        <StyledMenuItem onClick={() => setShowPayments(!showPayments)}>Payments</StyledMenuItem>
+      <div className="pl-0">
+        <div
+          className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600"
+          onClick={() => setShowPayments(!showPayments)}
+        >
+          Payments
+        </div>
         {showPayments && (
           <>
-            <StyledSubMenuItemContainer>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/payments/all"}>View All</Link>
-            </StyledSubMenuItemContainer>
-            <StyledSubMenuItemContainer>
+            </div>
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
               <Link href={"/admin/dashboard/payments/add"}>Add Payment</Link>
-            </StyledSubMenuItemContainer>
+            </div>
           </>
         )}
-      </StyledMenuItemContainer>
-    </StyledSideBarContainer>
+      </div>
+    </div>
   );
 
   const renderMobileMenu = () => {
     return (
       <>
-        <StyledTopBarToggleContainer>
+        <div className="flex flex-row justify-end w-full max-w-full bg-white shadow-lg border-b border-gray-400 print:!hidden sm:hidden">
           <HamburgerIcon
             isOpen={isMenuExpandedForMobile}
             onClick={() => setIsMenuExpandedForMobile(!isMenuExpandedForMobile)}
             size={30}
             color="#000"
           />
-        </StyledTopBarToggleContainer>
+        </div>
         {isMenuExpandedForMobile && renderMenuItems()}
       </>
     );

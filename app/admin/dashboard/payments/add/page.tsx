@@ -1,21 +1,12 @@
 "use client";
 
 import React from "react";
-import {
-  StyledContainer,
-  StyledFooterDivs,
-  StyledFormContainer,
-  StyledTable,
-  StyledTd,
-  StyledWellContainer
-} from "./pageStyle";
-import Well from "../../../../components/Well/Well";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { Button } from "../../../../components/Button/Button";
-import { Article } from "../../../../components/Article/Article";
 import { formatPenniesToDollars } from "../../util";
 import MoneyInput from "../../../../components/MoneyInput/MoneyInput";
 import Select from "../../../../components/Select/Select";
+import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 type propertyVM = {
   id: string;
@@ -146,6 +137,7 @@ const Page = () => {
 
     return (
       <MoneyInput
+        className={"[&_input]:mb-0 [&_input]:mt-0"}
         id={`payment_${property.id}`}
         valueInPennies={valueInPennies}
         onChange={amtInPennies => {
@@ -164,87 +156,116 @@ const Page = () => {
   };
 
   return (
-    <StyledContainer>
-      <Article size="lg">
-        <StyledWellContainer>
-          <Well>
-            <h3>Add Payment</h3>
-            <StyledFormContainer>
-              {flashMessage.isVisible && (
-                <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
-                  {flashMessage.text}
-                </FlashMessage>
-              )}
+    <ArticleHolder>
+      <h3>Add Payment</h3>
+      <div className={"flex flex-row flex-wrap p-6"}>
+        {flashMessage.isVisible && (
+          <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
+            {flashMessage.text}
+          </FlashMessage>
+        )}
 
-              <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-                <StyledTable>
-                  <thead>
-                    <tr>
-                      <th>Homeowner</th>
-                      <th>Property</th>
-                      <th>Account Balance</th>
-                      <th>Payment Amount</th>
-                      <th>Payment Method</th>
+        <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
+          <table className={"w-full text-left border-collapse"}>
+            <thead className={"border-collapse"}>
+              <tr className={"border-b border-r border-tableBorder"}>
+                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Homeowner</th>
+                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Property</th>
+                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                  Account Balance
+                </th>
+                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                  Payment Amount
+                </th>
+                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                  Payment Method
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {homeowners &&
+                homeowners.map(homeowner => {
+                  return (
+                    <tr className={"border border-tableBorder"} key={`homeowner_${homeowner.id}`}>
+                      <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                        <h4>{homeowner.name}</h4>
+                      </td>
+                      <td className={"p-0 border-b-0"}>
+                        {homeowner.properties.map(property => {
+                          return (
+                            <div
+                              className={
+                                "flex justify-center items-center h-[65px] p-[8px] border-b border-r border-tableBorder last-of-type:border-b-0"
+                              }
+                              key={`property_${property.id}`}
+                            >
+                              {property.address}
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td className={"p-0 border-b-0"}>
+                        {homeowner.properties.map((property, index) => {
+                          return (
+                            <div
+                              className={
+                                "flex justify-center items-center h-[65px] p-[8px] border-b border-r border-tableBorder last-of-type:border-b-0"
+                              }
+                              key={`previous_usage_${index}`}
+                            >
+                              {formatPenniesToDollars(property.totalInPennies)}
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td className={"p-0 border-b-0"}>
+                        {homeowner.properties.map((property, index) => {
+                          return (
+                            <div
+                              className={
+                                "flex justify-center items-center h-[65px] p-[8px] border-b border-r border-tableBorder [&_div]:w-2/3 last-of-type:border-b-0"
+                              }
+                              key={`payment_amount_${index}`}
+                            >
+                              {renderMoneyInput(property)}
+                            </div>
+                          );
+                        })}
+                      </td>
+                      <td className={"p-0 border-b-0"}>
+                        {homeowner.properties.map((property, index) => {
+                          return (
+                            <div
+                              className={
+                                "flex justify-center items-center h-[65px] p-[8px] border-b border-r border-tableBorder last-of-type:border-b-0 [&_input]:w-full [&_input]:mb-0 [&_input]:mt-0"
+                              }
+                              key={`payment_type_${index}`}
+                            >
+                              <Select
+                                className={"[&_div]:mt-0 [&_div]:mb-0"}
+                                id={`payment_type_${index}`}
+                                selectedValue={"check"}
+                                onSelect={() => {}}
+                                options={[{ name: "Check", value: "check" }]}
+                                required={false}
+                              />
+                            </div>
+                          );
+                        })}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {homeowners &&
-                      homeowners.map(homeowner => {
-                        return (
-                          <tr key={`homeowner_${homeowner.id}`}>
-                            <td>
-                              <h4>{homeowner.name}</h4>
-                            </td>
-                            <StyledTd>
-                              {homeowner.properties.map(property => {
-                                return <div key={`property_${property.id}`}>{property.address}</div>;
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map((property, index) => {
-                                return (
-                                  <div key={`previous_usage_${index}`}>
-                                    {formatPenniesToDollars(property.totalInPennies)}
-                                  </div>
-                                );
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map((property, index) => {
-                                return <div key={`payment_amount_${index}`}>{renderMoneyInput(property)}</div>;
-                              })}
-                            </StyledTd>
-                            <StyledTd>
-                              {homeowner.properties.map((property, index) => {
-                                return (
-                                  <div key={`payment_type_${index}`}>
-                                    <Select
-                                      id={`payment_type_${index}`}
-                                      selectedValue={"check"}
-                                      onSelect={() => {}}
-                                      options={[{ name: "Check", value: "check" }]}
-                                      required={false}
-                                    />
-                                  </div>
-                                );
-                              })}
-                            </StyledTd>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </StyledTable>
-                <StyledFooterDivs>
-                  <Button type="submit" fullWidth disabled={loading}>
-                    {loading ? "Saving..." : "Save All"}
-                  </Button>
-                </StyledFooterDivs>
-              </form>
-            </StyledFormContainer>
-          </Well>
-        </StyledWellContainer>
-      </Article>
-    </StyledContainer>
+                  );
+                })}
+            </tbody>
+          </table>
+          <div className={"flex flex-row justify-around align-center mt-4"}>
+            <Button type="submit" fullWidth disabled={loading}>
+              {loading ? "Saving..." : "Save All"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </ArticleHolder>
   );
 };
 
