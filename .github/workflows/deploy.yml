@@ -29,6 +29,7 @@ jobs:
           script: |
             cd /var/www/mtpisgahapp/Mt-Pisgah-Water-Well
             git pull origin main
+            rm -rf node_modules/
             npm install
             npm run build
             
