@@ -41,7 +41,7 @@ const TextInput: React.FunctionComponent<TextInputProps> = props => {
   } = props;
 
   return (
-    <div className={`flex flex-col w-full ${className}`} style={style}>
+    <div className={`flex flex-col w-full ${className ?? ""}`} style={style}>
       {showLabel && label && (
         <Label htmlFor={id}>
           {label}
