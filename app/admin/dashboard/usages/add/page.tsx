@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { Button } from "../../../../components/Button/Button";
@@ -47,7 +47,7 @@ const Page = () => {
   const [allowNegativeInputs, setAllowNegativeInputs] = useState<boolean>(false);
   const initialized = useRef(false);
 
-  const getUsagesByHomeowner = () => {
+  const getUsagesByHomeowner = useCallback(() => {
     // Fetch data from the API using a GET request
     fetch("/api/usages/get?groupBy=HOMEOWNER", { method: "GET" })
       .then(response => {
@@ -86,9 +86,9 @@ const Page = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       });
-  };
+  }, []);
 
-  const getUsersWhoCanGather = () => {
+  const getUsersWhoCanGather = useCallback(() => {
     // Fetch data from the API using a GET request
     fetch("/api/users?permissions=GATHER_USAGES", { method: "GET" })
       .then(response => {
@@ -108,7 +108,7 @@ const Page = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       });
-  };
+  }, []);
 
   useEffect(() => {
     if (!initialized.current) {
@@ -117,7 +117,7 @@ const Page = () => {
       getUsagesByHomeowner();
       getUsersWhoCanGather();
     }
-  }, []);
+  }, [getUsagesByHomeowner, getUsersWhoCanGather]);
 
   const onFlashClose = () => {
     // clear flash message if was shown
