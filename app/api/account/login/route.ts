@@ -102,9 +102,8 @@ export async function POST(req: Request): Promise<Response> {
     });
 
     // Set cookie
-    cookies().set({
-      name: "jwt",
-      value: token,
+    const cookieStore = await cookies();
+    cookieStore.set("jwt", token, {
       httpOnly: true,
       sameSite: "strict",
       path: "/"
