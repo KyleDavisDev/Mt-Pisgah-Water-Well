@@ -38,7 +38,7 @@ const Page = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const initialized = React.useRef(false);
 
-  const getUsagesByWalkableOrder = () => {
+  const getUsagesByWalkableOrder = React.useCallback(() => {
     // Fetch data from the API using a GET request
     fetch("/api/usages/get?groupBy=WALKABLE", { method: "GET" })
       .then(response => {
@@ -74,9 +74,9 @@ const Page = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       });
-  };
+  }, []);
 
-  const getUsersWhoCanGather = () => {
+  const getUsersWhoCanGather = React.useCallback(() => {
     // Fetch data from the API using a GET request
     fetch("/api/users?permissions=GATHER_USAGES", { method: "GET" })
       .then(response => {
@@ -96,7 +96,7 @@ const Page = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       });
-  };
+  }, []);
 
   React.useEffect(() => {
     if (!initialized.current) {
@@ -105,7 +105,7 @@ const Page = () => {
       getUsagesByWalkableOrder();
       getUsersWhoCanGather();
     }
-  }, []);
+  }, [getUsagesByWalkableOrder, getUsersWhoCanGather]);
 
   const safeParseStr = (str: string) => {
     try {

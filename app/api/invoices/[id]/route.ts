@@ -9,7 +9,7 @@ import { PRICING_FORMULAS } from "../pricingFormulas";
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> {
   if (req.method !== "GET") {
     return new Response("Method Not Allowed", { status: 405 });
   }
@@ -21,7 +21,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_BILLS");
 
-    const bill = await InvoiceRepository.getInvoiceById(params.id);
+    const { id } = await params;
+    const bill = await InvoiceRepository.getInvoiceById(id);
     if (!bill) {
       return Response.json({ error: "Bill not found" }, { status: 404 });
     }

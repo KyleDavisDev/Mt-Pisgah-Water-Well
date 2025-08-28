@@ -55,11 +55,11 @@ const extractPixelsRobust = (str: string) => {
   return match ? parseInt(match[1]) : 0;
 };
 
-export const isDesktopHook = () =>
+export const useIsDesktopHook = () =>
   useMediaQuery({ min: extractPixelsRobust(MEDIUM_TO_LARGE_BREAKPOINT), max: Infinity });
-export const isTabletHook = () =>
+export const useIsTabletHook = () =>
   useMediaQuery({
     min: extractPixelsRobust(SMALL_TO_MEDIUM_BREAKPOINT),
     max: extractPixelsRobust(MEDIUM_TO_LARGE_BREAKPOINT)
   });
-export const isMobileHook = () => useMediaQuery({ min: 0, max: extractPixelsRobust(SMALL_TO_MEDIUM_BREAKPOINT) });
+export const useIsMobileHook = () => useMediaQuery({ min: 0, max: extractPixelsRobust(SMALL_TO_MEDIUM_BREAKPOINT) });

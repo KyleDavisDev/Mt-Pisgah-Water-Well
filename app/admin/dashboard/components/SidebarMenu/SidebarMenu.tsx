@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { HamburgerIcon } from "../../../../components/HamburgerIcon/HamburgerIcon";
-import { isDesktopHook, isMobileHook, isTabletHook } from "../../../../components/hooks/useMediaQuery";
+import { useIsDesktopHook, useIsMobileHook, useIsTabletHook } from "../../../../components/hooks/useMediaQuery";
 
 const SidebarMenu = () => {
   const [isMenuExpandedForMobile, setIsMenuExpandedForMobile] = useState<boolean>(false);
@@ -15,9 +15,9 @@ const SidebarMenu = () => {
   const [showInvoices, setShowInvoices] = useState<boolean>(false);
   const [showPayments, setShowPayments] = useState<boolean>(false);
 
-  const isMobile = isMobileHook();
-  const isTablet = isTabletHook();
-  const isDesktop = isDesktopHook();
+  const isMobile = useIsMobileHook();
+  const isTablet = useIsTabletHook();
+  const isDesktop = useIsDesktopHook();
 
   const renderMenuItems = () => (
     <div className="flex flex-col w-full max-w-full bg-white shadow-lg print:!hidden sm:max-w-[300px] md:w-full">

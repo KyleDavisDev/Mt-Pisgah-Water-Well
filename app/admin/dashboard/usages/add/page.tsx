@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
 import { Button } from "../../../../components/Button/Button";
@@ -32,22 +32,22 @@ interface UserVM {
 const Page = () => {
   const _defaultErrorMessage = "There was a problem saving the usage. Please refresh your page and try again!";
 
-  const [homeowners, setHomeowners] = React.useState<UsageVM[]>([]);
-  const [users, setUsers] = React.useState<UserVM[]>([]);
-  const [activeGatheredUser, setActiveGatheredUser] = React.useState<string>("");
-  const [usages, setUsages] = React.useState<{ [key: string]: { previous: string; new: string } }>({});
-  const [deltas, setDeltas] = React.useState<{ [key: string]: number }>({});
-  const [dateCollected, setDateCollected] = React.useState("");
-  const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
+  const [homeowners, setHomeowners] = useState<UsageVM[]>([]);
+  const [users, setUsers] = useState<UserVM[]>([]);
+  const [activeGatheredUser, setActiveGatheredUser] = useState<string>("");
+  const [usages, setUsages] = useState<{ [key: string]: { previous: string; new: string } }>({});
+  const [deltas, setDeltas] = useState<{ [key: string]: number }>({});
+  const [dateCollected, setDateCollected] = useState("");
+  const [flashMessage, setFlashMessage] = useState<FlashMessageProps>({
     isVisible: false,
     text: "",
     type: undefined
   });
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [allowNegativeInputs, setAllowNegativeInputs] = React.useState<boolean>(false);
-  const initialized = React.useRef(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [allowNegativeInputs, setAllowNegativeInputs] = useState<boolean>(false);
+  const initialized = useRef(false);
 
-  const getUsagesByHomeowner = () => {
+  const getUsagesByHomeowner = useCallback(() => {
     // Fetch data from the API using a GET request
     fetch("/api/usages/get?groupBy=HOMEOWNER", { method: "GET" })
       .then(response => {
@@ -86,9 +86,9 @@ const Page = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       });
-  };
+  }, []);
 
-  const getUsersWhoCanGather = () => {
+  const getUsersWhoCanGather = useCallback(() => {
     // Fetch data from the API using a GET request
     fetch("/api/users?permissions=GATHER_USAGES", { method: "GET" })
       .then(response => {
@@ -108,16 +108,16 @@ const Page = () => {
         // Handle fetch errors
         console.error("Error fetching data:", error);
       });
-  };
+  }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
 
       getUsagesByHomeowner();
       getUsersWhoCanGather();
     }
-  }, []);
+  }, [getUsagesByHomeowner, getUsersWhoCanGather]);
 
   const onFlashClose = () => {
     // clear flash message if was shown
