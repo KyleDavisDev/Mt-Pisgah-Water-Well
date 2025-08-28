@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "../../../../components/Button/Button";
 import PropertyEditModal from "./components/PropertyEditModal/PropertyEditModal";
 import { homeownerVM } from "../../homeowners/all/page";
@@ -14,15 +14,15 @@ export interface propertyVM {
   homeowner: string;
 }
 
-const page = () => {
+const Page = () => {
   // assign state
-  const [activeProperties, setActiveProperties] = React.useState<propertyVM[]>([]);
-  const [inactiveProperties, setInactiveProperties] = React.useState<propertyVM[]>([]);
-  const [homeowners, setHomeowners] = React.useState<homeownerVM[]>([]);
+  const [activeProperties, setActiveProperties] = useState<propertyVM[]>([]);
+  const [inactiveProperties, setInactiveProperties] = useState<propertyVM[]>([]);
+  const [homeowners, setHomeowners] = useState<homeownerVM[]>([]);
 
-  const [activeProperty, setActiveProperty] = React.useState<propertyVM | null>();
-  const [showModal, setShowModal] = React.useState(false);
-  const initialized = React.useRef(false);
+  const [activeProperty, setActiveProperty] = useState<propertyVM | null>();
+  const [showModal, setShowModal] = useState(false);
+  const initialized = useRef(false);
 
   const getProperties = () => {
     // Fetch data from the API using a GET request
@@ -81,7 +81,7 @@ const page = () => {
       .finally(() => {});
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
       getProperties();
@@ -235,4 +235,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

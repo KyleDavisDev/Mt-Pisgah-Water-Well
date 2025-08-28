@@ -10,6 +10,8 @@ export interface ModalProps {
 }
 
 const Modal: React.FunctionComponent<ModalProps> = props => {
+  const { onClose } = props;
+
   const onOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.detail === 0) {
       // a 'enter' keypress occurred
@@ -42,7 +44,7 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
 
     const label = (elementAtMouse as Element).attributes.getNamedItem("aria-labelledby")?.value;
     if (label === "Close Modal") {
-      props.onClose();
+      onClose();
     }
 
     return;
@@ -52,7 +54,7 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
   React.useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.code.toLowerCase() === "escape") {
-        props.onClose();
+        onClose();
       }
     };
 
@@ -62,7 +64,7 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
     return () => {
       document.body.removeEventListener("keyup", handleKeyUp);
     };
-  }, []);
+  }, [onClose]);
 
   return (
     <div

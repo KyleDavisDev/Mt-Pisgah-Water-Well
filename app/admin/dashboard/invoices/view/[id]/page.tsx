@@ -37,7 +37,7 @@ export default function BillView() {
     };
 
     fetchInvoiceById();
-  }, []);
+  }, [params.id]);
 
   React.useEffect(() => {
     if (bill && !isLoading && !error) {
