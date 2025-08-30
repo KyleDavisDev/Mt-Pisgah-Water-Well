@@ -45,9 +45,7 @@ const FlashMessage: React.FC<FlashMessageProps> = props => {
       textColor.textColor = variantStyles[type].textColor;
     }
 
-    let temp = { ...backGroundColor, ...borderColor, ...textColor };
-    console.log(temp);
-    return temp;
+    return { ...backGroundColor, ...borderColor, ...textColor };
   };
 
   const getLinkStyles = (type: FlashMessageProps["type"]) => {
