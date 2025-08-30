@@ -29,48 +29,52 @@ const FlashMessage: React.FC<FlashMessageProps> = props => {
   }
 
   const getContainerStyles = (type: FlashMessageProps["type"]) => {
-    const baseline = "flex flex-row w-full mb-[15px] pt-[10px] pb-[15px] box-border ";
-
-    let backGroundColor = `bg-[${variantStyles["default"].bg}"]`;
+    console.log(type);
+    let backGroundColor = { backgroundColor: variantStyles["default"].bg };
     if (type === "success" || type === "warning") {
-      backGroundColor = `bg-[${variantStyles[type].bg}"]`;
+      backGroundColor.backgroundColor = variantStyles[type].bg;
     }
 
-    let borderLeft = `border border-l-7 border-l-[${variantStyles["default"].borderLeft}"]`;
+    let borderColor = { borderColor: variantStyles["default"].borderLeft };
     if (type === "success" || type === "warning") {
-      borderLeft = `border border-l-7 border-l-[${variantStyles[type].borderLeft}"]`;
+      borderColor.borderColor = variantStyles[type].borderLeft;
     }
 
-    let textColor = `text-[${variantStyles["default"].textColor}"]`;
+    let textColor = { textColor: variantStyles["default"].textColor };
     if (type === "success" || type === "warning") {
-      textColor = `text-[${variantStyles[type].textColor}"]`;
+      textColor.textColor = variantStyles[type].textColor;
     }
 
-    return `${baseline} ${backGroundColor} ${borderLeft} ${textColor}`;
+    let temp = { ...backGroundColor, ...borderColor, ...textColor };
+    console.log(temp);
+    return temp;
   };
 
   const getLinkStyles = (type: FlashMessageProps["type"]) => {
-    const base = `bold decoration-1 transition-all duration-200 ease-out hover:text-black focus:text-black`;
-
-    let linkColor = `text-[${variantStyles["default"].linkColor}"]`;
+    let linkColor = { color: variantStyles["default"].linkColor };
     if (type === "success" || type === "warning") {
-      linkColor = `text-[${variantStyles[type].linkColor}"]`;
+      linkColor.color = variantStyles[type].linkColor;
     }
 
-    return `${base} ${linkColor}`;
+    return { ...linkColor };
   };
 
   return (
     <div
-      className={`
-      ${getContainerStyles(props.type)}
-      ${props.className}`}
+      className={`flex flex-row w-full mb-[15px] pt-[10px] pb-[15px] pl-[15px] box-border
+      border-t-1 border-r-1 border-b-1 border-l-[15px]
+      ${props.className ? props.className : ""}`}
+      style={getContainerStyles(props.type)}
     >
       <div className={"flex flex-row flex-nowrap justify-between"}>
         <div className={"max-w-11/12 w-full"}>
           {children || text}{" "}
           {slug && slugText ? (
-            <Link className={`hover:te ${getLinkStyles(props.type)}`} href={slug}>
+            <Link
+              className={`bold decoration-1 transition-all duration-200 ease-out hover:text-black focus:text-black hover:te`}
+              href={slug}
+              style={getLinkStyles(props.type)}
+            >
               {slugText}
             </Link>
           ) : (
