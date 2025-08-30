@@ -3,10 +3,9 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { FlashMessage, FlashMessageProps } from "../../components/FlashMessage/FlashMessage";
-import Article from "../../components/Article/Article";
-import Well from "../../components/Well/Well";
 import TextInput from "../../components/TextInput/TextInput";
 import { Button } from "../../components/Button/Button";
+import { ArticleHolder } from "../../admin/dashboard/components/ArticleHolder/ArticleHolder";
 
 const Page = (): React.JSX.Element => {
   const _defaultErrorMessage = "There was a problem logging into your account. Please refresh your page and try again!";
@@ -72,49 +71,45 @@ const Page = (): React.JSX.Element => {
   };
 
   return (
-    <Article size="xs">
-      <div className={"flex flex-col justify-center"}>
-        <Well>
-          <h3>Login</h3>
-          <div className={"p-6 flex flex-row flex-wrap"}>
-            {flashMessage.isVisible && (
-              <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
-                {flashMessage.text}
-              </FlashMessage>
-            )}
+    <ArticleHolder>
+      <h3>Login</h3>
+      <div className={"p-6 flex flex-row flex-wrap"}>
+        {flashMessage.isVisible && (
+          <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
+            {flashMessage.text}
+          </FlashMessage>
+        )}
 
-            <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
-              <TextInput
-                onChange={e => setUsername(e.target.value)}
-                value={username}
-                type={"text"}
-                id={"username"}
-                showLabel={true}
-                label={"Username"}
-                name={"username"}
-                required={true}
-              />
-              <TextInput
-                onChange={e => setPassword(e.target.value)}
-                value={password}
-                type={"password"}
-                id={"password"}
-                showLabel={true}
-                label={"Password"}
-                name={"password"}
-                required={true}
-              />
+        <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
+          <TextInput
+            onChange={e => setUsername(e.target.value)}
+            value={username}
+            type={"text"}
+            id={"username"}
+            showLabel={true}
+            label={"Username"}
+            name={"username"}
+            required={true}
+          />
+          <TextInput
+            onChange={e => setPassword(e.target.value)}
+            value={password}
+            type={"password"}
+            id={"password"}
+            showLabel={true}
+            label={"Password"}
+            name={"password"}
+            required={true}
+          />
 
-              <div className={"flex flex-row justify-around align-center mt-4"}>
-                <Button type="submit" fullWidth>
-                  Login
-                </Button>
-              </div>
-            </form>
+          <div className={"flex flex-row justify-around align-center mt-4"}>
+            <Button type="submit" fullWidth>
+              Login
+            </Button>
           </div>
-        </Well>
+        </form>
       </div>
-    </Article>
+    </ArticleHolder>
   );
 };
 
