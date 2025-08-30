@@ -8,7 +8,7 @@ import { Button } from "../../components/Button/Button";
 import { ArticleHolder } from "../../admin/dashboard/components/ArticleHolder/ArticleHolder";
 
 const Page = (): React.JSX.Element => {
-  const _defaultErrorMessage = "There was a problem logging into your account. Please refresh your page and try again!";
+  const _defaultErrorMessage = "Invalid username or password";
 
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -46,17 +46,17 @@ const Page = (): React.JSX.Element => {
         body: JSON.stringify({ username, password })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-
+      if (!response.ok) {
         setFlashMessage({
           isVisible: true,
-          text: data.message,
-          type: "success"
+          text: _defaultErrorMessage,
+          type: "warning"
         });
 
-        router.push("/admin/dashboard");
+        return;
       }
+
+      router.push("/admin/dashboard");
     } catch (err: any) {
       console.log(err);
       // Create warning flash
