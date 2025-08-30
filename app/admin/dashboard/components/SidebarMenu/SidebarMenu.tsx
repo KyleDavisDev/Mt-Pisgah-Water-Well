@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { HamburgerIcon } from "../../../../components/HamburgerIcon/HamburgerIcon";
 import { useIsDesktopHook, useIsMobileHook, useIsTabletHook } from "../../../../components/hooks/useMediaQuery";
+import { Button } from "../../../../components/Button/Button";
 
 const SidebarMenu = () => {
   const [isMenuExpandedForMobile, setIsMenuExpandedForMobile] = useState<boolean>(false);
@@ -14,10 +16,35 @@ const SidebarMenu = () => {
   const [showUsage, setShowUsage] = useState<boolean>(false);
   const [showInvoices, setShowInvoices] = useState<boolean>(false);
   const [showPayments, setShowPayments] = useState<boolean>(false);
+  const router = useRouter();
 
   const isMobile = useIsMobileHook();
   const isTablet = useIsTabletHook();
   const isDesktop = useIsDesktopHook();
+
+  const handleLogoutClick = async () => {
+    try {
+      const resp = await fetch("/api/account/logout", {
+        method: "POST",
+        credentials: "include" // ensure cookies are sent
+      });
+
+      if (!resp.ok) {
+        const err = await resp.text();
+        console.error("Logout failed:", err);
+        alert("Could not log out – please try again.");
+
+        return;
+      }
+
+      // Successful logout → navigate to login page
+      router.replace("/account/login");
+    } catch (e) {
+      console.error("Network error during logout", e);
+      alert("Network error – please try again.");
+    } finally {
+    }
+  };
 
   const renderMenuItems = () => (
     <div className="flex flex-col w-full max-w-full bg-white shadow-lg print:!hidden sm:max-w-[300px] md:w-full">
@@ -166,6 +193,14 @@ const SidebarMenu = () => {
             </div>
           </>
         )}
+      </div>
+
+      <div className="pl-0">
+        <div className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600">
+          <Button onClick={() => handleLogoutClick()} displayType={"outline"}>
+            Logout
+          </Button>
+        </div>
       </div>
     </div>
   );
