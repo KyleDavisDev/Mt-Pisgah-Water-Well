@@ -56,7 +56,7 @@ const SidebarMenu = () => {
   };
 
   const renderMenuItems = () => (
-    <div className="flex flex-col w-full max-w-full bg-white shadow-lg print:!hidden sm:max-w-[300px] md:w-full">
+    <div className="flex flex-col w-full max-w-full bg-white shadow-lg print:!hidden">
       <div className="hidden sm:flex flex-row justify-center justify-items-center w-full">
         <Link href={"/admin/dashboard"}>
           <Image src="/water-well.png" height={75} width={75} alt={"Well Icon"} />
@@ -258,13 +258,13 @@ const SidebarMenu = () => {
     return <div className={"sm:hidden md:hidden lg:flex w-[350px]"}>{renderMenuItems()}</div>;
   };
 
-  return (
-    <>
-      {isMobile && renderMobileMenu()}
-      {isTablet && renderMobileMenu()}
-      {isDesktop && renderDesktopMenu()}
-    </>
-  );
+  const renderAppropriateMenu = (isMobile: boolean, isTablet: boolean, isDesktop: boolean) => {
+    if (isDesktop) return renderDesktopMenu();
+    else if (isTablet) return renderMobileMenu();
+    else if (isMobile) return renderMobileMenu();
+  };
+
+  return <>{renderAppropriateMenu(isMobile, isTablet, isDesktop)}</>;
 };
 
 export { SidebarMenu };
