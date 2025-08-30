@@ -12,6 +12,7 @@ const Page = (): React.JSX.Element => {
 
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
     text: "",
@@ -41,6 +42,7 @@ const Page = (): React.JSX.Element => {
     }
 
     try {
+      setLoading(true);
       const response = await fetch("/api/account/login", {
         method: "POST",
         body: JSON.stringify({ username, password })
@@ -67,6 +69,8 @@ const Page = (): React.JSX.Element => {
       });
       setUsername("");
       setPassword("");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,8 +107,8 @@ const Page = (): React.JSX.Element => {
           />
 
           <div className={"flex flex-row justify-around align-center mt-4"}>
-            <Button type="submit" fullWidth>
-              Login
+            <Button type="submit" fullWidth disabled={loading}>
+              {loading ? "Loading..." : "Login"}
             </Button>
           </div>
         </form>
