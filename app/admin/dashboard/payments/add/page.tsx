@@ -158,7 +158,7 @@ const Page = () => {
   return (
     <ArticleHolder>
       <h3>Add Payment</h3>
-      <div className={"flex flex-row flex-wrap p-6"}>
+      <div className={"flex flex-row flex-wrap p-6 overflow-x-scroll"}>
         {flashMessage.isVisible && (
           <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
             {flashMessage.text}
@@ -174,10 +174,10 @@ const Page = () => {
                 <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                   Account Balance
                 </th>
-                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse min-w-[200px]"}>
                   Payment Amount
                 </th>
-                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
+                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse min-w-[200px]"}>
                   Payment Method
                 </th>
               </tr>
