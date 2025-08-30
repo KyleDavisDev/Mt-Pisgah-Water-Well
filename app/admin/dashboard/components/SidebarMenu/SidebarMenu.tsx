@@ -258,9 +258,6 @@ const SidebarMenu = () => {
     return <div className={"sm:hidden md:hidden lg:flex w-[350px]"}>{renderMenuItems()}</div>;
   };
 
-  console.log(`isMobile: ${isMobile}`);
-  console.log(`isTablet: ${isTablet}`);
-  console.log(`isDesktop: ${isDesktop}`);
   return (
     <>
       {isMobile && renderMobileMenu()}
