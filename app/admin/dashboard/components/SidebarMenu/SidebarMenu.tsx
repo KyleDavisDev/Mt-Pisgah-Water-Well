@@ -57,7 +57,7 @@ const SidebarMenu = () => {
 
   const renderMenuItems = () => (
     <div className="flex flex-col w-full max-w-full bg-white shadow-lg print:!hidden">
-      <div className="hidden sm:flex flex-row justify-center justify-items-center w-full">
+      <div className="hidden sm:flex flex-row justify-center justify-items-center w-full mt-[10px] mb-[10px]">
         <Link href={"/admin/dashboard"}>
           <Image src="/water-well.png" height={75} width={75} alt={"Well Icon"} />
         </Link>
