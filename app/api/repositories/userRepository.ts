@@ -57,7 +57,7 @@ export const getActiveUserByPermissionAndUsername = async (
         AND p.is_active = true`;
 
   if (users.length !== 1) {
-    throw new Error(`User not found for username: ${username}`);
+    return null;
   }
 
   return users[0];

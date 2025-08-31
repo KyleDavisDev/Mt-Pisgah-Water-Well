@@ -70,13 +70,16 @@ const Modal: React.FunctionComponent<ModalProps> = props => {
     <div
       className={`z-auto fixed top-0 left-0 h-screen w-screen bg-translucentBackground
         ${props.isActive ? "block" : "hidden"}
-        ${props.className}`}
+        ${props.className ? props.className : ""}`}
       style={props.style}
       onClick={(e: React.MouseEvent<HTMLDivElement>) => onOutsideClick(e)}
       aria-labelledby={`Close Modal`}
     >
       <div
-        className={`fixed bg-white w-1/3 h-auto top-1/5 left-1/2 rounded-md p-[20px] text-black -translate-x-1/2 translate-y-0
+        className={`fixed bg-white h-auto top-1/5 left-1/2 rounded-md p-[20px] text-black -translate-x-1/2 translate-y-0
+        w-full max-w-[475px] m-[15px]
+        md:w-1/2 
+        lg:w-1/3 lg:m-0
         ${props.isActive ? "block" : "hidden"}
         `}
       >

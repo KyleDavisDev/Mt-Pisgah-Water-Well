@@ -25,7 +25,7 @@ const Article: React.FunctionComponent<ArticleProps> = props => {
 
   return (
     <article
-      className={`${getMaxWidth(props.size)} w-full mx-auto font-avenir px-[15px] box-border sm:px-0 ${props.className}`}
+      className={`${getMaxWidth(props.size)} w-full mx-auto font-avenir px-[15px] box-border sm:px-0 ${props.className ? props.className : ""}`}
       style={props.style}
     >
       {props.children}

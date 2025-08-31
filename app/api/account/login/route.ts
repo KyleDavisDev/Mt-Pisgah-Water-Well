@@ -106,7 +106,8 @@ export async function POST(req: Request): Promise<Response> {
     cookieStore.set("jwt", token, {
       httpOnly: true,
       sameSite: "strict",
-      path: "/"
+      path: "/",
+      maxAge: 60 * 60 * 24 // One day
     });
 
     return Response.json({ message: "Success!" });

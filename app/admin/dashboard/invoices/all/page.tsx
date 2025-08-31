@@ -89,7 +89,7 @@ const Page = () => {
   return (
     <ArticleHolder>
       <h3>Invoices</h3>
-      <div className={"flex flex-row flex-wrap p-6"}>
+      <div className={"flex flex-row flex-wrap p-6 overflow-x-scroll"}>
         {homeowners.length > 0 ? (
           homeowners.map(homeowner => (
             <div className={"w-full pb-[25px]"} key={homeowner.id}>
@@ -116,7 +116,11 @@ const Page = () => {
                           <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                             Amount
                           </th>
-                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}></th>
+                          <th
+                            className={
+                              "border border-tableBorder text-left p-[8px] table-cell border-collapse min-w-[250px]"
+                            }
+                          ></th>
                         </tr>
                       </thead>
                       <tbody>
