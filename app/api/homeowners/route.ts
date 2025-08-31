@@ -21,7 +21,7 @@ const handler = async (req: Request) => {
   const homeowners = await db<Homeowners[]>`
         SELECT *
         FROM homeowners
-        ORDER BY id DESC;
+        ORDER BY name DESC;
     `;
 
   return Response.json({
