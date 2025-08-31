@@ -1,7 +1,7 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import jwt from "jsonwebtoken";
 import { getActiveUserByPermissionAndUsername } from "../repositories/userRepository";
-import { BadRequestError, ForbiddenError, UnauthorizedError } from "./errors";
+import { BadRequestError, ForbiddenError } from "./errors";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
