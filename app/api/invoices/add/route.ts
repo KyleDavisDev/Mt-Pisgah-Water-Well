@@ -83,7 +83,6 @@ export async function POST(req: Request): Promise<Response> {
       createdBillsCount++;
     }
 
-    console.log(`${createdBillsCount} bill(s) created.`);
     return Response.json({ message: `${createdBillsCount} bill(s) created.` });
   } catch (error) {
     console.error("Error creating usage bills:", error);

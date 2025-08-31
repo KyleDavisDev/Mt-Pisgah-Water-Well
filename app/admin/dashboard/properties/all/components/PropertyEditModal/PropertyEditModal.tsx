@@ -171,7 +171,7 @@ const PropertyEditModal = (props: PropertyEditModalProps) => {
 
           <div className={"flex flex-row justify-around align-center mt-4"}>
             <Button type="submit" fullWidth disabled={loading}>
-              {loading ? "Adding..." : "Add Homeowner"}
+              {loading ? "Updating..." : "Update Property"}
             </Button>
           </div>
         </form>

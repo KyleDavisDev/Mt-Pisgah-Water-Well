@@ -82,7 +82,7 @@ const Page = () => {
 
   return (
     <ArticleHolder>
-      <h3>All Homeowners</h3>
+      <h3>All Members</h3>
       <div className={"flex flex-row flex-wrap p-6 overflow-x-scroll"}>
         {activeHomeowners.length > 0 ? (
           <>

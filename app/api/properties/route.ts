@@ -18,7 +18,8 @@ export async function GET(req: Request) {
 
     const records = await db`
       SELECT prop.*, homeowner.name as name FROM properties prop
-      JOIN homeowners homeowner on prop.homeowner_id = homeowner.id 
+      JOIN homeowners homeowner on prop.homeowner_id = homeowner.id
+      ORDER BY prop.id desc
     `;
 
     return Response.json({
