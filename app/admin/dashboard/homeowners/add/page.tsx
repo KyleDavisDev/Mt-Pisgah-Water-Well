@@ -7,7 +7,7 @@ import { Button } from "../../../../components/Button/Button";
 import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 const Page = () => {
-  const _defaultErrorMessage = "There was a problem saving the homeowner. Please refresh your page and try again!";
+  const _defaultErrorMessage = "There was a problem saving the member. Please refresh your page and try again!";
 
   const [name, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -81,7 +81,7 @@ const Page = () => {
 
   return (
     <ArticleHolder>
-      <h3>Add Homeowner</h3>
+      <h3>Add Member</h3>
       <div className={"p-4 flex flex-row flex-wrap"}>
         {flashMessage.isVisible && (
           <FlashMessage type={flashMessage.type} isVisible onClose={onFlashClose}>
@@ -129,13 +129,9 @@ const Page = () => {
             required={true}
           />
 
-          {/*  > div > label {*/}
-          {/*  font-size: 0.85rem;*/}
-          {/*  text-transform: inherit;*/}
-          {/*}*/}
           <div className={"flex flex-row justify-around align-center mt-4"}>
             <Button type="submit" fullWidth disabled={loading}>
-              {loading ? "Adding..." : "Add Homeowner"}
+              {loading ? "Adding..." : "Add Member"}
             </Button>
           </div>
         </form>

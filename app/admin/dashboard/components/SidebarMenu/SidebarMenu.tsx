@@ -74,7 +74,7 @@ const SidebarMenu = () => {
           className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600"
           onClick={() => setShowHomeowners(!showHomeowners)}
         >
-          Homeowners
+          Members
         </div>
         {showHomeowners && (
           <>
@@ -93,7 +93,7 @@ const SidebarMenu = () => {
               }
             >
               <Link href={"/admin/dashboard/homeowners/add"} onClick={() => handleMobileClick()}>
-                Add Homeowner
+                Add Member
               </Link>
             </div>
           </>
