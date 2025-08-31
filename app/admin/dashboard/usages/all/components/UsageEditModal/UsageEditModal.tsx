@@ -127,7 +127,7 @@ const UsageEditModal = (props: UsageEditModalProps) => {
 
           <div className={"flex flex-row justify-around align-center mt-4"}>
             <Button type="submit" fullWidth disabled={loading}>
-              {loading ? "Adding..." : "Add Homeowner"}
+              {loading ? "Updating..." : "Update Usage"}
             </Button>
           </div>
         </form>

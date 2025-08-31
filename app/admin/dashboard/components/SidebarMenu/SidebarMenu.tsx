@@ -23,12 +23,14 @@ const SidebarMenu = () => {
   const isDesktop = useIsDesktopHook();
 
   const handleMobileClick = () => {
-    setIsMenuExpandedForMobile(false);
-    setShowHomeowners(false);
-    setShowProperties(false);
-    setShowUsage(false);
-    setShowInvoices(false);
-    setShowPayments(false);
+    if (isMobile || isTablet) {
+      setIsMenuExpandedForMobile(false);
+      setShowHomeowners(false);
+      setShowProperties(false);
+      setShowUsage(false);
+      setShowInvoices(false);
+      setShowPayments(false);
+    }
   };
 
   const handleLogoutClick = async () => {
@@ -57,7 +59,7 @@ const SidebarMenu = () => {
 
   const renderMenuItems = () => (
     <div className="flex flex-col w-full max-w-full bg-white shadow-lg print:!hidden">
-      <div className="hidden sm:flex flex-row justify-center justify-items-center w-full">
+      <div className="hidden sm:flex flex-row justify-center justify-items-center w-full mt-[10px] mb-[10px]">
         <Link href={"/admin/dashboard"}>
           <Image src="/water-well.png" height={75} width={75} alt={"Well Icon"} />
         </Link>
@@ -74,7 +76,7 @@ const SidebarMenu = () => {
           className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600"
           onClick={() => setShowHomeowners(!showHomeowners)}
         >
-          Homeowners
+          Members
         </div>
         {showHomeowners && (
           <>
@@ -93,7 +95,7 @@ const SidebarMenu = () => {
               }
             >
               <Link href={"/admin/dashboard/homeowners/add"} onClick={() => handleMobileClick()}>
-                Add Homeowner
+                Add Member
               </Link>
             </div>
           </>
