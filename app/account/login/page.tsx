@@ -7,7 +7,7 @@ import TextInput from "../../components/TextInput/TextInput";
 import { Button } from "../../components/Button/Button";
 import { ArticleHolder } from "../../admin/dashboard/components/ArticleHolder/ArticleHolder";
 
-const Page = (): React.JSX.Element => {
+const Page = () => {
   const _defaultErrorMessage = "Invalid username or password";
 
   const [username, setUsername] = React.useState("");
@@ -75,7 +75,7 @@ const Page = (): React.JSX.Element => {
   };
 
   return (
-    <ArticleHolder>
+    <ArticleHolder size={"sm"}>
       <h3>Login</h3>
       <div className={"p-6 flex flex-row flex-wrap"}>
         {flashMessage.isVisible && (

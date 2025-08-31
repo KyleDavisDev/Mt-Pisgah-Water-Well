@@ -4,7 +4,7 @@ import * as React from "react";
 import Well from "../../components/Well/Well";
 import { ArticleHolder } from "./components/ArticleHolder/ArticleHolder";
 
-const Page = (): React.JSX.Element => {
+const Page = () => {
   return (
     <ArticleHolder>
       <h5>Dashboard</h5>
