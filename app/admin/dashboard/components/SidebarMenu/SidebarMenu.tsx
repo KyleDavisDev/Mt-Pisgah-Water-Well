@@ -23,12 +23,14 @@ const SidebarMenu = () => {
   const isDesktop = useIsDesktopHook();
 
   const handleMobileClick = () => {
-    setIsMenuExpandedForMobile(false);
-    setShowHomeowners(false);
-    setShowProperties(false);
-    setShowUsage(false);
-    setShowInvoices(false);
-    setShowPayments(false);
+    if (isMobile || isTablet) {
+      setIsMenuExpandedForMobile(false);
+      setShowHomeowners(false);
+      setShowProperties(false);
+      setShowUsage(false);
+      setShowInvoices(false);
+      setShowPayments(false);
+    }
   };
 
   const handleLogoutClick = async () => {
