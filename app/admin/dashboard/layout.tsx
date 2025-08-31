@@ -1,4 +1,4 @@
-import SidebarMenu from "./components/SidebarMenu/SidebarMenu";
+import { SidebarMenu } from "./components/SidebarMenu/SidebarMenu";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ interface LayoutProps {
  */
 const Layout = ({ children }: LayoutProps): JSX.Element => {
   return (
-    <div className="bg-[theme-bg-color] flex flex-col w-full min-h-screen text-[theme-font-color] print:bg-white sm:flex-row">
+    <div className="flex flex-col w-full min-h-screen text-[theme-font-color] print:bg-white lg:flex-row">
       <SidebarMenu />
       {children}
     </div>

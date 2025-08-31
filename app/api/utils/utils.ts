@@ -1,6 +1,7 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import jwt from "jsonwebtoken";
 import { getActiveUserByPermissionAndUsername } from "../repositories/userRepository";
+import { BadRequestError, ForbiddenError } from "./errors";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -18,22 +19,22 @@ export const safeParseStr = (str: string) => {
 
 export const getUsernameFromCookie = async (jwtCookie: RequestCookie | undefined): Promise<string> => {
   if (!jwtCookie) {
-    throw new Error("Please re-login.");
+    throw new BadRequestError("Please re-login.");
   }
   const token = jwtCookie.value.split(" ")[0];
   if (!token) {
-    throw new Error("Invalid token format");
+    throw new BadRequestError("Invalid token format");
   }
 
   const payload = jwt.verify(token, jwtPrivateKey as string);
   if (!payload || typeof payload === "string") {
-    throw new Error("Invalid token");
+    throw new BadRequestError("Invalid token");
   }
 
   const username = payload.username;
 
   if (!username) {
-    throw new Error("Missing username");
+    throw new BadRequestError("Missing username");
   }
 
   return username;
@@ -43,7 +44,8 @@ export const validatePermission = async (username: string, permission: string): 
   const user = await getActiveUserByPermissionAndUsername(permission, username);
 
   if (user === null) {
-    throw Error("User does not have sufficient privileges.");
+    console.warn(`User not found for ${username}`);
+    throw new ForbiddenError("User does not have sufficient privileges.");
   }
 
   return;
