@@ -27,7 +27,7 @@ jobs:
 
       - name: Create deployment archive
         run: |
-          tar -czf deployment.tar.gz .next public package.json next.config.mjs
+          tar -czf deployment.tar.gz .next public package.json yarn.lock next.config.mjs
 
       - name: Deploy to server
         uses: appleboy/scp-action@v0.1.4
