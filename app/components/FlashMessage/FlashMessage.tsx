@@ -59,12 +59,12 @@ const FlashMessage: React.FC<FlashMessageProps> = props => {
 
   return (
     <div
-      className={`flex flex-row w-full mb-[15px] pt-[10px] pb-[15px] pl-[15px] box-border
+      className={`flex flex-row w-full mb-[15px] pt-[10px] pr-[15px] pb-[15px] pl-[15px] box-border
       border-t-1 border-r-1 border-b-1 border-l-[15px]
       ${props.className ? props.className : ""}`}
       style={getContainerStyles(props.type)}
     >
-      <div className={"flex flex-row flex-nowrap justify-between"}>
+      <div className={"flex flex-row flex-nowrap justify-between w-full"}>
         <div className={"max-w-11/12 w-full"}>
           {children || text}{" "}
           {slug && slugText ? (
