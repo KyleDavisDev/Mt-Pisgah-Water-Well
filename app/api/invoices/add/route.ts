@@ -13,6 +13,19 @@ import { InvoiceCreate } from "../../models/Invoice";
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
+const getPricingFormula = (year: number, month: number) => {
+  console.log(year, month);
+  // In Sept 6, 2025 meeting a new formula was adopted.
+  const cutoffYear = 2025;
+  const cutoffMonth = 9;
+
+  if (month < cutoffMonth && year <= cutoffYear) {
+    return PRICING_FORMULAS["tiered_2025_v1"];
+  } else {
+    return PRICING_FORMULAS["tiered_2025Sept_v1"];
+  }
+};
+
 export async function POST(req: Request): Promise<Response> {
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
@@ -69,7 +82,7 @@ export async function POST(req: Request): Promise<Response> {
 
       if (existing.length > 0) continue;
 
-      const formula = PRICING_FORMULAS["tiered_2025_v1"];
+      const formula = getPricingFormula(parseInt(year), parseInt(month));
       const newData: InvoiceCreate = {
         property_id: property.id,
         metadata: {
