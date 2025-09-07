@@ -37,6 +37,7 @@ export class InvoiceRepository {
     FROM invoices
     WHERE property_id IN ${db(propertyIds)}
       AND type = ${type}
+      AND is_active = true
     ORDER BY (metadata ->> 'billing_year')::INT DESC,
              (metadata ->> 'billing_month')::INT DESC;
   `;
