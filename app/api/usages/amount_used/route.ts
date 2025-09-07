@@ -5,9 +5,9 @@ import {
   getUsernameFromCookie,
   validatePermission
 } from "../../utils/utils";
-import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
-import { getAllActiveProperties } from "../../repositories/propertiesRepository";
-import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
+import { UsageRepository } from "../../repositories/usageRepository";
+import { PropertyRepository } from "../../repositories/propertyRepository";
+import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 
 // NextJS quirk to make the route dynamic
@@ -40,11 +40,15 @@ export async function GET(req: Request) {
       month[0]
     );
 
-    const properties = await getAllActiveProperties();
+    const properties = await PropertyRepository.getAllActiveProperties();
     const propertyIds = properties.map((p: any) => p.id);
 
-    const startingUsages = await getFirstUsageByDateCollectedRangeAndPropertyIn(startOfMonth, endOfMonth, propertyIds);
-    const endingUsages = await getFirstUsageByDateCollectedRangeAndPropertyIn(
+    const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
+      startOfMonth,
+      endOfMonth,
+      propertyIds
+    );
+    const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
       startOfNextMonth,
       endOfNextMonth,
       propertyIds
@@ -55,7 +59,7 @@ export async function GET(req: Request) {
       propertyIds
     );
 
-    const homeowners = await getAllActiveHomeowners();
+    const homeowners = await HomeownerRepository.getAllActiveHomeowners();
     const returnData = homeowners
       .filter(h => {
         return properties.some(p => p.homeowner_id === h.id);
@@ -91,6 +95,4 @@ export async function GET(req: Request) {
     console.error("Error generating usage bill:", error);
     return new Response("Invalid username or password.", { status: 403 });
   }
-
-  return new Response("Something went wrong.", { status: 500 });
 }

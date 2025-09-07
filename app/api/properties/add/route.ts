@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
+import { AuditRepository } from "../../repositories/auditRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       return new Response("Missing required fields", { status: 400 });
     }
 
-    const auditLog = await addAuditTableRecord({
+    const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "properties",
       recordId: 0, // will update
       newData: JSON.stringify({ address, city, state, zip, description, homeowner, is_active: true }),

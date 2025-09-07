@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { getClientIPFromRequest, getUserAgentFromRequest } from "../../utils/utils";
 import { db } from "../../utils/db";
-import { getUserByUsername } from "../../repositories/userRepository";
+import { UserRepository } from "../../repositories/userRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -54,7 +54,7 @@ export async function POST(req: Request): Promise<Response> {
     let user;
 
     try {
-      user = await getUserByUsername(username);
+      user = await UserRepository.getUserByUsername(username);
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : String(e);
 

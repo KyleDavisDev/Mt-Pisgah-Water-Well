@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
 
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
-import { getHomeownerByPropertyId } from "../../repositories/homeownerRepository";
+import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import { getPropertyById } from "../../repositories/propertiesRepository";
+import { PropertyRepository } from "../../repositories/propertyRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
 
 // NextJS quirk to make the route dynamic
@@ -29,8 +29,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     // Fetch associated homeowner data, property address, historical usages, and late fees in parallel
     const [homeowner, property, historicalUsages, lateFees] = await Promise.all([
-      getHomeownerByPropertyId(bill.property_id),
-      getPropertyById(bill.property_id),
+      HomeownerRepository.getHomeownerByPropertyId(bill.property_id),
+      PropertyRepository.getPropertyById(bill.property_id),
       InvoiceRepository.getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
         bill.property_id,
         12,

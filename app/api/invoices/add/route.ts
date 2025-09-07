@@ -4,8 +4,8 @@ import {
   getUsernameFromCookie,
   validatePermission
 } from "../../utils/utils";
-import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
-import { getAllActiveProperties } from "../../repositories/propertiesRepository";
+import { UsageRepository } from "../../repositories/usageRepository";
+import { PropertyRepository } from "../../repositories/propertyRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { InvoiceCreate } from "../../models/Invoice";
@@ -36,11 +36,15 @@ export async function POST(req: Request): Promise<Response> {
       month
     );
 
-    const properties = await getAllActiveProperties();
+    const properties = await PropertyRepository.getAllActiveProperties();
 
     const propertyIds = properties.map((p: any) => p.id);
-    const startingUsages = await getFirstUsageByDateCollectedRangeAndPropertyIn(startOfMonth, endOfMonth, propertyIds);
-    const endingUsages = await getFirstUsageByDateCollectedRangeAndPropertyIn(
+    const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
+      startOfMonth,
+      endOfMonth,
+      propertyIds
+    );
+    const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
       startOfNextMonth,
       endOfNextMonth,
       propertyIds

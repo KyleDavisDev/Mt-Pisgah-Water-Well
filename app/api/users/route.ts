@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
-import { getAllActiveUsersByPermission, getAllUsers } from "../repositories/userRepository";
+import { UserRepository } from "../repositories/userRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -20,7 +20,9 @@ export async function GET(req: Request) {
     const permissions = extractKeyFromRequest(req, "permissions");
     // TODO: data validation of permissions
 
-    const users = permissions ? await getAllActiveUsersByPermission(permissions) : await getAllUsers();
+    const users = permissions
+      ? await UserRepository.getAllActiveUsersByPermission(permissions)
+      : await UserRepository.getAllUsers();
 
     return Response.json({
       users: users.map(u => {

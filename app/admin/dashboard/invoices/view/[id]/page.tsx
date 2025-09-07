@@ -83,6 +83,15 @@ export default function BillView() {
             <Image className={"mr-[10px]"} src="/water-well.png" height={40} width={40} alt={"Well Icon"} />
             <h2 className={"text-[20px] font-bold"}>{billDetails.waterCompany.name}</h2>
           </div>
+          <p className={"m-0"}>{billDetails.homeowner.name}</p>
+          <p className={"m-0"}>{billDetails.property.street}</p>
+          <p className={"m-0"}>
+            {billDetails.property.city}, {billDetails.property.state} {billDetails.property.zip}
+          </p>
+        </div>
+        <div className={"text-right text-[14px]"}>
+          <p>Invoice Created On: {billDetails.createdDate}</p>
+          <p className={"mb-[15px]"}>Invoice Number: {billDetails.id}</p>
           <p>{billDetails.waterCompany.address}</p>
           <p>
             {billDetails.waterCompany.city}, {billDetails.waterCompany.state} {billDetails.waterCompany.zip}
@@ -91,20 +100,10 @@ export default function BillView() {
           {billDetails.waterCompany.fax && <p>Fax: {billDetails.waterCompany.fax}</p>}
           <p>Email: {billDetails.waterCompany.email}</p>
         </div>
-        <div className={"text-right text-[14px]"}>
-          <p>Invoice Created On: {billDetails.createdDate}</p>
-          <p>Invoice Number: {billDetails.id}</p>
-        </div>
       </div>
 
       <div>
-        <div className={"[&_p]:mt-[4px] [&_p]:mb-[4px] [&_p]:mr-0 [&_p]:ml-0 [&_p]:text-[14px]"}>
-          <p>{billDetails.homeowner.name}</p>
-          <p>{billDetails.property.street}</p>
-          <p>
-            {billDetails.property.city}, {billDetails.property.state} {billDetails.property.zip}
-          </p>
-        </div>
+        <div className={"[&_p]:mt-[4px] [&_p]:mb-[4px] [&_p]:mr-0 [&_p]:ml-0 [&_p]:text-[14px]"}></div>
       </div>
 
       <div className={"bg-[#f8f8f8] p-[20px] rounded-sm mt-6 mb-6"}>
@@ -165,6 +164,7 @@ export default function BillView() {
             <thead>
               <tr>
                 <th className={"p-[8px] text-left border border-tableBorder font-bold"}>Month</th>
+                <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Reading</th>
                 <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Usage</th>
                 <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Amount</th>
               </tr>
@@ -173,6 +173,9 @@ export default function BillView() {
               {billDetails.monthlyUsageHistory.map((monthlyUsage, index) => (
                 <tr className={`${index % 2 === 0 ? "bg-[#fafafa]" : ""}`} key={monthlyUsage.month}>
                   <td className={"p-[8px] text-left border border-tableBorder"}>
+                    {getMonthStrFromMonthIndex(monthlyUsage.month)}
+                  </td>
+                  <td className={"p-[8px] text-right border border-tableBorder"}>
                     {getMonthStrFromMonthIndex(monthlyUsage.month)}
                   </td>
                   <td className={"p-[8px] text-right border border-tableBorder"}>{monthlyUsage.gallonsUsed}</td>

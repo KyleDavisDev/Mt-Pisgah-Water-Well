@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Homeowner from "../../models/Homeowners";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
+import { AuditRepository } from "../../repositories/auditRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -50,7 +50,7 @@ export async function PUT(req: Request) {
     const newObj = { ...oldRecords[0], name, email, phone, mailingAddress, id, is_active: isActive === "true" };
 
     // log intent
-    const auditRecord = await addAuditTableRecord({
+    const auditRecord = await AuditRepository.addAuditTableRecord({
       oldData: JSON.stringify(oldRecords[0]),
       newData: JSON.stringify(newObj),
       recordId: oldRecords[0].id,

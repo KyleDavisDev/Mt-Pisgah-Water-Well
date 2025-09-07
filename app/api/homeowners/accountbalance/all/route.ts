@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { getUsernameFromCookie, validatePermissions } from "../../../utils/utils";
 import Homeowners from "../../../models/Homeowners";
 import Property from "../../../models/Properties";
-import { getAllActiveHomeowners } from "../../../repositories/homeownerRepository";
-import { getAllActivePropertiesByHomeownerIdIn } from "../../../repositories/propertiesRepository";
+import { HomeownerRepository } from "../../../repositories/homeownerRepository";
+import { PropertyRepository } from "../../../repositories/propertyRepository";
 import { PaymentRepository } from "../../../repositories/paymentRepository";
 import { InvoiceRepository } from "../../../repositories/invoiceRepository";
 
@@ -22,14 +22,14 @@ export async function GET(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermissions(username, ["READ_PAYMENT", "READ_INVOICE"]);
 
-    const homeowners = await getAllActiveHomeowners();
+    const homeowners = await HomeownerRepository.getAllActiveHomeowners();
     if (!homeowners || homeowners.length === 0) {
       return Response.json({ homeowners: [] });
     }
 
     // Fetch properties for all homeowners
     const homeownerIds = homeowners.map(h => h.id);
-    const properties = await getAllActivePropertiesByHomeownerIdIn(homeownerIds);
+    const properties = await PropertyRepository.getAllActivePropertiesByHomeownerIdIn(homeownerIds);
     if (!properties || properties.length === 0) {
       return Response.json({
         homeowners: homeowners.map(h => ({ id: h.id.toString(), name: h.name, properties: [] }))

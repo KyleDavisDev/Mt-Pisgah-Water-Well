@@ -1,39 +1,40 @@
 import Usage from "../models/Usages";
 import { db } from "../utils/db";
 
-export const getUsageById = async (id: string): Promise<Usage | null> => {
-  const usages = await db<Usage[]>`
+export class UsageRepository {
+  static getUsageById = async (id: string): Promise<Usage | null> => {
+    const usages = await db<Usage[]>`
     SELECT *
     FROM usages
     where id = ${id}
   `;
 
-  if (!usages || usages.length !== 1) {
-    return null;
-  }
+    if (!usages || usages.length !== 1) {
+      return null;
+    }
 
-  return usages[0];
-};
+    return usages[0];
+  };
 
-/**
- * Retrieves the earliest active usage record per property within a given date range.
- *
- * @param start - Start date in YYYY-MM-DD format (inclusive)
- * @param end - End date in YYYY-MM-DD format (exclusive)
- * @param properties - Array of property IDs to filter on
- * @returns Promise resolving to an array of Usage records
- */
-export const getFirstUsageByDateCollectedRangeAndPropertyIn = async (
-  start: string,
-  end: string,
-  properties: number[]
-): Promise<Usage[]> => {
-  // Return early if no properties provided
-  if (start === "" || end === "" || !properties || properties.length === 0) {
-    return [];
-  }
+  /**
+   * Retrieves the earliest active usage record per property within a given date range.
+   *
+   * @param start - Start date in YYYY-MM-DD format (inclusive)
+   * @param end - End date in YYYY-MM-DD format (exclusive)
+   * @param properties - Array of property IDs to filter on
+   * @returns Promise resolving to an array of Usage records
+   */
+  static getFirstUsageByDateCollectedRangeAndPropertyIn = async (
+    start: string,
+    end: string,
+    properties: number[]
+  ): Promise<Usage[]> => {
+    // Return early if no properties provided
+    if (start === "" || end === "" || !properties || properties.length === 0) {
+      return [];
+    }
 
-  const usages = await db<Usage[]>`
+    const usages = await db<Usage[]>`
     SELECT DISTINCT ON (u.property_id) u.*
     FROM usages u
     WHERE u.date_collected >= ${start}
@@ -43,18 +44,18 @@ export const getFirstUsageByDateCollectedRangeAndPropertyIn = async (
     ORDER BY u.property_id, u.date_collected ASC
   `;
 
-  return usages ?? [];
-};
+    return usages ?? [];
+  };
 
-/**
- * Retrieves the most recent active usage records for each property ID, limited to `limit` per property.
- * @param propertyIds list of property IDs to filter by
- * @param limit the number of records to return per property
- *
- * @returns Promise resolving to an array of Usage records
- */
-export const findAllActiveByPropertyIdInAndLimitBy = async (propertyIds: number[], limit: number): Promise<Usage[]> => {
-  const usages = await db<Usage[]>`
+  /**
+   * Retrieves the most recent active usage records for each property ID, limited to `limit` per property.
+   * @param propertyIds list of property IDs to filter by
+   * @param limit the number of records to return per property
+   *
+   * @returns Promise resolving to an array of Usage records
+   */
+  static findAllActiveByPropertyIdInAndLimitBy = async (propertyIds: number[], limit: number): Promise<Usage[]> => {
+    const usages = await db<Usage[]>`
     WITH usages_by_property AS (SELECT id,
                                   property_id,
                                   gallons,
@@ -79,5 +80,6 @@ export const findAllActiveByPropertyIdInAndLimitBy = async (propertyIds: number[
     ORDER BY property_id, date_collected DESC;
   `;
 
-  return usages ?? [];
-};
+    return usages ?? [];
+  };
+}

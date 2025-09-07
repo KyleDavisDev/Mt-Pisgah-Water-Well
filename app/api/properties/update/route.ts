@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
-import { getPropertyById } from "../../repositories/propertiesRepository";
+import { AuditRepository } from "../../repositories/auditRepository";
+import { PropertyRepository } from "../../repositories/propertyRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -35,7 +35,7 @@ export async function PUT(req: Request) {
     }
 
     // Find record to be edited
-    const oldRecord = await getPropertyById(id);
+    const oldRecord = await PropertyRepository.getPropertyById(id);
 
     if (!oldRecord) {
       return new Response("Cannot find property record", { status: 404 });
@@ -46,7 +46,7 @@ export async function PUT(req: Request) {
 
     // TODO: move this to repository
     // log intent
-    const auditRecord = await addAuditTableRecord({
+    const auditRecord = await AuditRepository.addAuditTableRecord({
       oldData: JSON.stringify(oldRecord),
       newData: JSON.stringify(newObj),
       recordId: oldRecord.id,

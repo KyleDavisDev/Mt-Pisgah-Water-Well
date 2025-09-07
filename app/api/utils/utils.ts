@@ -1,6 +1,6 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import jwt from "jsonwebtoken";
-import { getActiveUserByPermissionAndUsername } from "../repositories/userRepository";
+import { UserRepository } from "../repositories/userRepository";
 import { BadRequestError, ForbiddenError } from "./errors";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
@@ -41,7 +41,7 @@ export const getUsernameFromCookie = async (jwtCookie: RequestCookie | undefined
 };
 
 export const validatePermission = async (username: string, permission: string): Promise<void> => {
-  const user = await getActiveUserByPermissionAndUsername(permission, username);
+  const user = await UserRepository.getActiveUserByPermissionAndUsername(permission, username);
 
   if (user === null) {
     console.warn(`User not found for ${username}`);

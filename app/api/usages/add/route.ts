@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Usage from "../../models/Usages";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
+import { AuditRepository } from "../../repositories/auditRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     const sqlUsages = toModelAdapter(usages);
 
     for (let i = 0; i < sqlUsages.length; i++) {
-      const auditRecord = await addAuditTableRecord({
+      const auditRecord = await AuditRepository.addAuditTableRecord({
         newData: JSON.stringify(sqlUsages[i]),
         recordId: 0, // will be updated later
         tableName: "usages",

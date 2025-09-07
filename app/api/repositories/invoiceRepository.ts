@@ -1,6 +1,6 @@
 import { db } from "../utils/db";
 import Invoice, { InvoiceCreate, InvoiceTotal } from "../models/Invoice";
-import { addAuditTableRecord } from "./auditRepository";
+import { AuditRepository } from "./auditRepository";
 
 export class InvoiceRepository {
   /**
@@ -128,7 +128,7 @@ export class InvoiceRepository {
    * @returns {Promise<Invoice | null>} Resolves to the newly created invoice record.
    */
   static insertNewInvoiceAsTransactional = async (user: string, newData: InvoiceCreate): Promise<Invoice | null> => {
-    const auditLog = await addAuditTableRecord({
+    const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "invoices",
       recordId: 0,
       newData: JSON.stringify(newData),
@@ -181,7 +181,7 @@ export class InvoiceRepository {
     oldData: Invoice,
     newData: Invoice
   ): Promise<Invoice | null> => {
-    const auditLog = await addAuditTableRecord({
+    const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "invoices",
       recordId: oldData.id,
       oldData: JSON.stringify(oldData),

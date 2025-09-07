@@ -3,9 +3,9 @@ import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Homeowners from "../../models/Homeowners";
 import Property from "../../models/Properties";
 import Usages from "../../models/Usages";
-import { findAllActiveByPropertyIdInAndLimitBy } from "../../repositories/usageRepository";
-import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
-import { getAllActivePropertiesByHomeownerIdIn } from "../../repositories/propertiesRepository";
+import { UsageRepository } from "../../repositories/usageRepository";
+import { HomeownerRepository } from "../../repositories/homeownerRepository";
+import { PropertyRepository } from "../../repositories/propertyRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -22,14 +22,14 @@ export async function GET(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_USAGES");
 
-    const homeowners = await getAllActiveHomeowners();
+    const homeowners = await HomeownerRepository.getAllActiveHomeowners();
     if (!homeowners || homeowners.length === 0) {
       return Response.json({ homeowners: [] });
     }
 
     // Fetch properties for all homeowners
     const homeownerIds = homeowners.map(h => h.id);
-    const properties = await getAllActivePropertiesByHomeownerIdIn(homeownerIds);
+    const properties = await PropertyRepository.getAllActivePropertiesByHomeownerIdIn(homeownerIds);
     if (!properties || properties.length === 0) {
       return Response.json({
         homeowners: homeowners.map(h => ({ id: h.id.toString(), name: h.name, properties: [] }))
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
 
     // Fetch latest usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const usages = await findAllActiveByPropertyIdInAndLimitBy(propertyIds, 100);
+    const usages = await UsageRepository.findAllActiveByPropertyIdInAndLimitBy(propertyIds, 100);
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
@@ -77,6 +77,4 @@ export async function GET(req: Request) {
     console.log(error);
     return new Response("Invalid username or password.", { status: 403 });
   }
-
-  return new Response("Something went wrong.", { status: 500 });
 }
