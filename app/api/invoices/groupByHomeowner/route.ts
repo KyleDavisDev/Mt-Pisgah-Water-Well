@@ -80,6 +80,4 @@ export async function GET(req: Request) {
     console.log(error);
     return new Response("Invalid username or password.", { status: 403 });
   }
-
-  return new Response("Something went wrong.", { status: 500 });
 }
