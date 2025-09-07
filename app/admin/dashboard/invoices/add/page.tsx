@@ -147,7 +147,7 @@ const Page = () => {
               })}
               selectedValue={selectedMonth}
               onSelect={e => setSelectedMonth(e.target.value)}
-              label={"Month"}
+              label={"Month water was used in:"}
               showLabel={true}
             />
           </div>
