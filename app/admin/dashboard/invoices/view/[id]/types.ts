@@ -8,6 +8,8 @@ export interface MonthlyUsage {
   month: number;
   year: number;
   gallonsUsed: string;
+  gallonsStart: string;
+  gallonsEnd: string;
   amountInPennies: number;
 }
 
@@ -91,5 +93,7 @@ export interface historicalUsageDTO {
   month: number;
   year: number;
   gallonsUsed: string;
+  gallonsStart: string;
+  gallonsEnd: string;
   amountInPennies: number;
 }
