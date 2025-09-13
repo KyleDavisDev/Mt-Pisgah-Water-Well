@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { InvoiceDetailsMapper } from "./utils/invoiceDetailsMapper";
 import { InvoiceDetails, invoiceDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
-import { formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util";
+import { formatNumberWithCommas, formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util";
 
 export default function BillView() {
   const params = useParams<{ id: string }>();
@@ -15,6 +15,19 @@ export default function BillView() {
   const [historicalUsage, setHistoricalUsage] = React.useState<historicalUsageDTO[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+
+  // TODO: Redirect user instead? Shouldn't get here without NextJS breaking...
+  if (!params) {
+    return (
+      <div
+        className={
+          "shadow-lg p-10 min-w-[900px] min-h-[11in] mx-auto my-6 bg-white text-black font-sans leading-[1.4] box-border print:w-full print:min-h-screen print:shadow-none"
+        }
+      >
+        Error loading bill: {error}
+      </div>
+    );
+  }
 
   React.useEffect(() => {
     const fetchInvoiceById = async () => {
@@ -69,7 +82,7 @@ export default function BillView() {
     );
   }
 
-  const billDetails: InvoiceDetails = InvoiceDetailsMapper(bill, homeowner, property, historicalUsage);
+  const billDetails = InvoiceDetailsMapper(bill, homeowner, property, historicalUsage);
 
   return (
     <div
@@ -164,7 +177,8 @@ export default function BillView() {
             <thead>
               <tr>
                 <th className={"p-[8px] text-left border border-tableBorder font-bold"}>Month</th>
-                <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Reading</th>
+                <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Start</th>
+                <th className={"p-[8px] text-right border border-tableBorder font-bold"}>End</th>
                 <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Usage</th>
                 <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Amount</th>
               </tr>
@@ -176,9 +190,14 @@ export default function BillView() {
                     {getMonthStrFromMonthIndex(monthlyUsage.month)}
                   </td>
                   <td className={"p-[8px] text-right border border-tableBorder"}>
-                    {getMonthStrFromMonthIndex(monthlyUsage.month)}
+                    {formatNumberWithCommas(monthlyUsage.gallonsStart)}
                   </td>
-                  <td className={"p-[8px] text-right border border-tableBorder"}>{monthlyUsage.gallonsUsed}</td>
+                  <td className={"p-[8px] text-right border border-tableBorder"}>
+                    {formatNumberWithCommas(monthlyUsage.gallonsEnd)}
+                  </td>
+                  <td className={"p-[8px] text-right border border-tableBorder"}>
+                    {formatNumberWithCommas(monthlyUsage.gallonsUsed)}
+                  </td>
                   <td className={"p-[8px] text-right border border-tableBorder"}>
                     {formatPenniesToDollars(monthlyUsage.amountInPennies)}
                   </td>
