@@ -22,7 +22,7 @@ const getPricingFormula = (year: number, month: number) => {
   if (month < cutoffMonth && year <= cutoffYear) {
     return PRICING_FORMULAS["tiered_2025_v1"];
   } else {
-    return PRICING_FORMULAS["tiered_2025Sept_v1"];
+    return PRICING_FORMULAS["tiered_2025_September_v1"];
   }
 };
 
