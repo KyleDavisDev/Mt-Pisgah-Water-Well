@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { InvoiceDetailsMapper } from "./utils/invoiceDetailsMapper";
-import { InvoiceDetails, invoiceDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
+import { invoiceDTO, homeownerDTO, propertyDTO } from "./types";
 import { formatNumberWithCommas, formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util";
 
 export default function BillView() {
@@ -12,7 +12,7 @@ export default function BillView() {
   const [bill, setBill] = React.useState<invoiceDTO | null>(null);
   const [homeowner, setHomeowner] = React.useState<homeownerDTO | null>(null);
   const [property, setProperty] = React.useState<propertyDTO | null>(null);
-  const [historicalUsage, setHistoricalUsage] = React.useState<historicalUsageDTO[] | null>(null);
+  const [historicalUsage, setHistoricalUsage] = React.useState<invoiceDTO[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -37,10 +37,10 @@ export default function BillView() {
           throw new Error("Failed to fetch bill");
         }
         const data = await response.json();
-        setBill(data.bill);
+        setBill(data.invoices[0]);
         setHomeowner(data.homeowner);
         setProperty(data.property);
-        setHistoricalUsage(data.historicalUsage);
+        setHistoricalUsage(data.invoices);
       } catch (err) {
         setError("Failed to load bill details");
         console.error(err);
@@ -172,7 +172,7 @@ export default function BillView() {
         </div>
 
         <div className={"w-full ml-[20px]"}>
-          <h4 className={"text-[16px] mr-[15px] font-bold"}>Previous Monthly Usages</h4>
+          <h4 className={"text-[16px] mr-[15px] font-bold"}>Monthly Usages</h4>
           <table className={"w-full border-collapse text-[14px]"}>
             <thead>
               <tr>
@@ -185,7 +185,7 @@ export default function BillView() {
             </thead>
             <tbody>
               {billDetails.monthlyUsageHistory.map((monthlyUsage, index) => (
-                <tr className={`${index % 2 === 0 ? "bg-[#fafafa]" : ""}`} key={monthlyUsage.month}>
+                <tr className={`${index % 2 === 0 ? "bg-[#fafafa]" : ""}`} key={`${monthlyUsage.month}_${index}`}>
                   <td className={"p-[8px] text-left border border-tableBorder"}>
                     {getMonthStrFromMonthIndex(monthlyUsage.month)}
                   </td>
