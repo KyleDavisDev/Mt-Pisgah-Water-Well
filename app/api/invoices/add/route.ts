@@ -89,6 +89,8 @@ export async function POST(req: Request): Promise<Response> {
           billing_month: parseInt(month),
           billing_year: parseInt(year),
           gallons_used: gallonsUsed,
+          gallons_start: startingUsage.gallons,
+          gallons_end: endingUsage.gallons,
           formula_used: `${formula.name}`
         },
         type: "WATER_USAGE",
