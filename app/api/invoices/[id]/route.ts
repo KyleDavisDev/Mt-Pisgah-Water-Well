@@ -33,7 +33,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       PropertyRepository.getPropertyById(bill.property_id),
       InvoiceRepository.getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
         bill.property_id,
-        12,
+        11,
         bill.metadata.billing_month,
         bill.metadata.billing_year
       ),
@@ -44,33 +44,24 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       return Response.json({ error: "Homeowner and Property info not found" }, { status: 404 });
     }
 
-    const formula = PRICING_FORMULAS[bill.metadata.formula_used];
-
     return Response.json({
-      bill: {
-        id: bill.id,
-        amountInPennies: bill.amount_in_pennies,
-        formula: {
-          description: formula.description,
-          baseFeeInPennies: formula.baseFeeInPennies,
-          baseGallons: formula.baseGallons,
-          usageRateInPennies: formula.usageRateInPennies
-        },
-        gallonsUsed: bill.metadata.gallons_used,
-        month: bill.metadata.billing_month,
-        year: bill.metadata.billing_year,
-        createdAt: bill.created_at,
-        isActive: bill.is_active
-      },
       homeowner: { name: homeowner.name },
       property: { street: property.street, city: property.city, state: property.state, zip: property.zip },
-      historicalUsage: historicalInvoices.map(h => ({
-        month: h.metadata.billing_month,
-        year: h.metadata.billing_year,
-        gallonsUsed: h.metadata.gallons_used,
-        gallonsStart: h.metadata.gallons_start,
-        gallonsEnd: h.metadata.gallons_end,
-        amountInPennies: h.amount_in_pennies
+      invoices: [bill, ...historicalInvoices].map(invoice => ({
+        id: invoice.id,
+        amountInPennies: invoice.amount_in_pennies,
+        month: invoice.metadata.billing_month,
+        year: invoice.metadata.billing_year,
+        gallonsStart: invoice.metadata.gallons_start,
+        gallonsEnd: invoice.metadata.gallons_end,
+        gallonsUsed: invoice.metadata.gallons_used,
+        createdAt: invoice.created_at,
+        formula: {
+          description: PRICING_FORMULAS[invoice.metadata.formula_used].description,
+          baseFeeInPennies: PRICING_FORMULAS[invoice.metadata.formula_used].baseFeeInPennies,
+          baseGallons: PRICING_FORMULAS[invoice.metadata.formula_used].baseGallons,
+          usageRateInPennies: PRICING_FORMULAS[invoice.metadata.formula_used].usageRateInPennies
+        }
       }))
     });
   } catch (error) {
