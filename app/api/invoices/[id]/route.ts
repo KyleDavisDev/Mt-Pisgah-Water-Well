@@ -28,7 +28,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     // Fetch associated homeowner data, property address, historical usages, and late fees in parallel
-    const [homeowner, property, historicalUsages, lateFees] = await Promise.all([
+    const [homeowner, property, historicalInvoices, lateFees] = await Promise.all([
       HomeownerRepository.getHomeownerByPropertyId(bill.property_id),
       PropertyRepository.getPropertyById(bill.property_id),
       InvoiceRepository.getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
@@ -64,10 +64,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       },
       homeowner: { name: homeowner.name },
       property: { street: property.street, city: property.city, state: property.state, zip: property.zip },
-      historicalUsage: historicalUsages.map(h => ({
+      historicalUsage: historicalInvoices.map(h => ({
         month: h.metadata.billing_month,
         year: h.metadata.billing_year,
         gallonsUsed: h.metadata.gallons_used,
+        gallonsStart: h.metadata.gallons_start,
+        gallonsEnd: h.metadata.gallons_end,
         amountInPennies: h.amount_in_pennies
       }))
     });
