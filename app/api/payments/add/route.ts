@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { PaymentCreate } from "../../models/Payments";
 import { PaymentRepository } from "../../repositories/paymentRepository";
+import { MethodNotAllowedError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -28,7 +29,7 @@ const toModelAdapter = (payments: any): PaymentCreate[] => {
 export async function POST(req: Request) {
   if (req.method !== "POST") {
     // Handle any other HTTP method
-    return new Response("Method Not Allowed", { status: 405 });
+    throw new MethodNotAllowedError();
   }
 
   try {

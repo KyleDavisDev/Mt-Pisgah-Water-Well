@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
 import { UserRepository } from "../repositories/userRepository";
+import { MethodNotAllowedError } from "../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
-    return new Response("Method Not Allowed", { status: 405 });
+    throw new MethodNotAllowedError();
   }
 
   try {

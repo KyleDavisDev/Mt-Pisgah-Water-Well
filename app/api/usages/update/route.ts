@@ -3,13 +3,14 @@ import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { UsageRepository } from "../../repositories/usageRepository";
 import { AuditRepository } from "../../repositories/auditRepository";
+import { MethodNotAllowedError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
 export async function PUT(req: Request) {
   if (req.method !== "PUT") {
-    return new Response("Method Not Allowed", { status: 405 });
+    throw new MethodNotAllowedError();
   }
   try {
     const cookieStore = await cookies();

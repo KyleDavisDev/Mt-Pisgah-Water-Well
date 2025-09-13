@@ -8,6 +8,7 @@ import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import Usage from "../../models/Usages";
 import Homeowner from "../../models/Homeowners";
+import { MethodNotAllowedError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -118,7 +119,7 @@ const defaultGrouping = (homeowners: Homeowner[], properties: Property[], usages
 export async function GET(req: Request) {
   if (req.method !== "GET") {
     // Handle any other HTTP method
-    return new Response("Method Not Allowed", { status: 405 });
+    throw new MethodNotAllowedError();
   }
 
   try {
