@@ -26,3 +26,9 @@ export class ForbiddenError extends HttpError {
     super(message, 403);
   }
 }
+
+export class MethodNotAllowedError extends HttpError {
+  constructor(message = "Method Not Allowed") {
+    super(message, 405);
+  }
+}
