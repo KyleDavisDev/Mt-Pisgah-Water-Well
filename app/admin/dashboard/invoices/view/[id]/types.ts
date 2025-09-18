@@ -6,7 +6,7 @@ export interface BillUsage {
 
 export interface BillCharges {
   baseCharge: string;
-  excessUsageCharge: number;
+  excessUsageChargeInPennies: number;
   lateFee: number;
   otherCharges: number;
   amountOutstanding: number;
