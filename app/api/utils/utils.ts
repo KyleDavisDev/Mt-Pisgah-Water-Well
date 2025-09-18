@@ -186,5 +186,6 @@ export const getCurrentPropertyAccountBalance = async (propertyId: number): Prom
     InvoiceRepository.findActiveTotalByPropertyIds([propertyId])
   ]);
 
+  // TODO: Is there a bug here? What's wrong with totalPayments[0]?
   return totalPayment[0].amount_in_pennies - totalOwed[0].amount_in_pennies;
 };
