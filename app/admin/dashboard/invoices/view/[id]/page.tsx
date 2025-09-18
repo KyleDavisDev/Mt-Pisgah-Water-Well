@@ -141,20 +141,24 @@ export default function BillView() {
           <h4 className={"text-[16px] mr-[15px] font-bold"}>This Month</h4>
           <div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
-              <span>Base Charge ({billDetails.bill.formula.baseGallons}):</span>
+              <span>Base Charge ({billDetails.bill.formula.baseGallons} gal):</span>
               <span>{billDetails.bill.baseCharge}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
-              <span>Excess Charge:</span>
-              <span>${billDetails.bill.excessUsageCharge.toFixed(2)}</span>
+              <span>Excess Charge ({`${billDetails.bill.formula.usageRateInPennies}¢ per gal`}):</span>
+              <span>{formatPenniesToDollars(billDetails.bill.excessUsageChargeInPennies)}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
               <span>Late Fee:</span>
-              <span>${billDetails.bill.lateFee.toFixed(2)}</span>
+              <span>{formatPenniesToDollars(billDetails.bill.lateFee)}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
               <span>Other Charges:</span>
               <span>${billDetails.bill.otherCharges.toFixed(2)}</span>
+            </div>
+            <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
+              <span>New Charges this month:</span>
+              <span>{billDetails.bill.totalAmount}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px]"}>
               <span>Amount Outstanding:</span>
