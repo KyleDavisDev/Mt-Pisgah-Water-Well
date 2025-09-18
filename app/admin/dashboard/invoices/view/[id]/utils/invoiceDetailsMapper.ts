@@ -23,13 +23,13 @@ export const InvoiceDetailsMapper = (
   );
 
   const baseCharge = invoice.formula.baseFeeInPennies;
-  const excessUsageCharge =
+  const excessUsageChargeInPennies =
     invoice.gallonsUsed > invoice.formula.baseGallons
       ? (invoice.gallonsUsed - invoice.formula.baseGallons) * invoice.formula.usageRateInPennies
       : 0;
   const lateFee = 0;
   const otherCharges = 0;
-  const amountOutstanding = 0;
+  const amountOutstanding = 0; // TODO: this should be the current balance of the account
 
   return {
     id: invoice.id,
@@ -41,9 +41,11 @@ export const InvoiceDetailsMapper = (
     },
     property: { ...property },
     bill: {
-      totalAmount: formatPenniesToDollars(baseCharge + excessUsageCharge + lateFee + otherCharges + amountOutstanding),
+      totalAmount: formatPenniesToDollars(
+        baseCharge + excessUsageChargeInPennies + lateFee + otherCharges + amountOutstanding
+      ),
       baseCharge: formatPenniesToDollars(invoice.formula.baseFeeInPennies),
-      excessUsageCharge: excessUsageCharge,
+      excessUsageChargeInPennies: excessUsageChargeInPennies,
       lateFee,
       otherCharges,
       amountOutstanding,
