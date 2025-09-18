@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import {
+  getCurrentPropertyAccountBalance,
   getStartAndEndOfProvidedMonthAndNextMonth,
   getUsernameFromCookie,
   validatePermission
@@ -83,6 +84,8 @@ export async function POST(req: Request): Promise<Response> {
 
       if (existing.length > 0) continue;
 
+      const currentBalanceInPennies = await getCurrentPropertyAccountBalance(property.id);
+
       const formula = getPricingFormula(parseInt(year), parseInt(month));
       const newData: InvoiceCreate = {
         property_id: property.id,
@@ -92,7 +95,8 @@ export async function POST(req: Request): Promise<Response> {
           gallons_used: gallonsUsed,
           gallons_start: startingUsage.gallons,
           gallons_end: endingUsage.gallons,
-          formula_used: `${formula.name}`
+          formula_used: `${formula.name}`,
+          current_balance_in_pennies: currentBalanceInPennies
         },
         type: "WATER_USAGE",
         amount_in_pennies: formula.calculate(gallonsUsed),
