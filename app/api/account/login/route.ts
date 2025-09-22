@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { getClientIPFromRequest, getUserAgentFromRequest } from "../../utils/utils";
 import { db } from "../../utils/db";
 import { UserRepository } from "../../repositories/userRepository";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -36,7 +37,7 @@ const insertLoginLogRecord = async ({
   `;
 };
 
-export async function POST(req: Request): Promise<Response> {
+const handler = async (req: Request): Promise<Response> => {
   try {
     let clientIPAddress = getClientIPFromRequest(req);
     let clientUserAgent = getUserAgentFromRequest(req);
@@ -115,4 +116,6 @@ export async function POST(req: Request): Promise<Response> {
     console.error("Login error:", error);
     return new Response("Unexpected error during login.", { status: 500 });
   }
-}
+};
+
+export const POST = withErrorHandler(handler);

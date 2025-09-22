@@ -81,8 +81,6 @@ const handler = async (req: Request) => {
     console.log(error);
     throw new ForbiddenError("Invalid username or password.");
   }
-
-  return new Response("Something went wrong.", { status: 500 });
 };
 
 export const PUT = withErrorHandler(handler);

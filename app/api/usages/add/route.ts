@@ -3,7 +3,8 @@ import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Usage from "../../models/Usages";
 import { AuditRepository } from "../../repositories/auditRepository";
-import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
+import { ForbiddenError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -28,12 +29,7 @@ const toModelAdapter = (usages: any): Usage[] => {
     });
 };
 
-export async function POST(req: Request) {
-  if (req.method !== "POST") {
-    // Handle any other HTTP method
-    throw new MethodNotAllowedError();
-  }
-
+const handler = async (req: Request) => {
   try {
     const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
@@ -78,6 +74,6 @@ export async function POST(req: Request) {
     console.log(error);
     throw new ForbiddenError("Invalid username or password.");
   }
+};
 
-  return new Response("Something went wrong.", { status: 500 });
-}
+export const POST = withErrorHandler(handler);

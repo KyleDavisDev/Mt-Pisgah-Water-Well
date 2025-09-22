@@ -10,7 +10,7 @@ import { PropertyRepository } from "../../repositories/propertyRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { InvoiceCreate } from "../../models/Invoice";
-import { MethodNotAllowedError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -27,11 +27,7 @@ const getPricingFormula = (year: number, month: number) => {
   }
 };
 
-export async function POST(req: Request): Promise<Response> {
-  if (req.method !== "POST") {
-    throw new MethodNotAllowedError();
-  }
-
+const handler = async (req: Request): Promise<Response> => {
   try {
     const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
@@ -111,4 +107,6 @@ export async function POST(req: Request): Promise<Response> {
     console.error("Error creating usage bills:", error);
     return new Response("Error creating usage bills", { status: 500 });
   }
-}
+};
+
+export const POST = withErrorHandler(handler);
