@@ -4,7 +4,7 @@ import { withErrorHandler } from "../../utils/handlers";
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const handler = async (req: Request): Promise<Response> => {
+const handler = async (): Promise<Response> => {
   try {
     // Set cookie
     const cookieStore = await cookies();
