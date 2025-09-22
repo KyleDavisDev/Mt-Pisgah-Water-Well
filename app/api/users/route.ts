@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
 import { UserRepository } from "../repositories/userRepository";
-import { MethodNotAllowedError } from "../utils/errors";
+import { ForbiddenError, MethodNotAllowedError } from "../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -32,8 +32,6 @@ export async function GET(req: Request) {
     });
   } catch (e) {
     console.log(e);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
-
-  return new Response("Something went wrong.", { status: 500 });
 }

@@ -9,7 +9,7 @@ import { UsageRepository } from "../../repositories/usageRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
-import { MethodNotAllowedError } from "../../utils/errors";
+import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -94,6 +94,6 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Error generating usage bill:", error);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
 }

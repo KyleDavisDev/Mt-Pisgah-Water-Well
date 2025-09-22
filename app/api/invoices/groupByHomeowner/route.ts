@@ -6,7 +6,7 @@ import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import Invoice from "../../models/Invoice";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
-import { MethodNotAllowedError } from "../../utils/errors";
+import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -79,6 +79,6 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.log(error);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
 }
