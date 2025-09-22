@@ -9,6 +9,7 @@ import { PropertyRepository } from "../../repositories/propertyRepository";
 import Usage from "../../models/Usages";
 import Homeowner from "../../models/Homeowners";
 import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -116,7 +117,7 @@ const defaultGrouping = (homeowners: Homeowner[], properties: Property[], usages
   });
 };
 
-export async function GET(req: Request) {
+const handler = async (req: Request) => {
   if (req.method !== "GET") {
     // Handle any other HTTP method
     throw new MethodNotAllowedError();
@@ -159,4 +160,6 @@ export async function GET(req: Request) {
     console.log(error);
     throw new ForbiddenError("Invalid username or password.");
   }
-}
+};
+
+export const GET = withErrorHandler(handler);

@@ -2,11 +2,12 @@ import { cookies } from "next/headers";
 import { db } from "../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 import { ForbiddenError, MethodNotAllowedError } from "../utils/errors";
+import { withErrorHandler } from "../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+const handler = async (req: Request) => {
   if (req.method !== "GET") {
     throw new MethodNotAllowedError();
   }
@@ -40,4 +41,6 @@ export async function GET(req: Request) {
     console.log(error);
     throw new ForbiddenError("Invalid username or password.");
   }
-}
+};
+
+export const GET = withErrorHandler(handler);

@@ -7,11 +7,12 @@ import { PropertyRepository } from "../../repositories/propertyRepository";
 import Invoice from "../../models/Invoice";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+const handler = async (req: Request) => {
   if (req.method !== "GET") {
     // Handle any other HTTP method
     throw new MethodNotAllowedError();
@@ -81,4 +82,6 @@ export async function GET(req: Request) {
     console.log(error);
     throw new ForbiddenError("Invalid username or password.");
   }
-}
+};
+
+export const GET = withErrorHandler(handler);
