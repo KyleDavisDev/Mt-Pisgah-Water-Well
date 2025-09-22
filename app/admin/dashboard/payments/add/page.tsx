@@ -244,9 +244,21 @@ const Page = () => {
                               <Select
                                 className={"[&_div]:mt-0 [&_div]:mb-0"}
                                 id={`payment_type_${index}`}
-                                selectedValue={"check"}
-                                onSelect={() => {}}
-                                options={[{ name: "Check", value: "check" }]}
+                                selectedValue={payments.find(x => x.propertyId === property.id)?.method || "check"}
+                                onSelect={e => {
+                                  const updatedPayments = payments.map(x => {
+                                    if (x.propertyId === property.id) {
+                                      x.method = e.target.value as string;
+                                    }
+                                    return x;
+                                  });
+
+                                  setPayments(updatedPayments);
+                                }}
+                                options={[
+                                  { name: "Check", value: "CHECK" },
+                                  { name: "Cash", value: "CASH" }
+                                ]}
                                 required={false}
                               />
                             </div>
