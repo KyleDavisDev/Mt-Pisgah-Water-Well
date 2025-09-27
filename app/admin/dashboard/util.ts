@@ -59,11 +59,15 @@ export const capitalizeFirstLetterAndLowercaseRest = (word: string): string => {
  *          Returns "$0.00" if the input is not a valid non-negative number.
  */
 export const formatPenniesToDollars = (amountInPennies: number | null | undefined): string => {
-  if (typeof amountInPennies !== "number" || isNaN(amountInPennies) || amountInPennies < 0) {
+  if (typeof amountInPennies !== "number" || isNaN(amountInPennies)) {
     console.error("Invalid amount provided:", amountInPennies);
     return "$0.00";
   }
-  return `$${(amountInPennies / 100).toFixed(2)}`;
+
+  const absAmount = Math.abs(amountInPennies);
+  const formatted = `$${(absAmount / 100).toFixed(2)}`;
+
+  return amountInPennies < 0 ? `-${formatted}` : formatted;
 };
 
 /**

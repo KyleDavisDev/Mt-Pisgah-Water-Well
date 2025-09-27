@@ -2,18 +2,20 @@ import { cookies } from "next/headers";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Homeowners from "../../models/Homeowners";
 import Property from "../../models/Properties";
-import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
-import { getAllActivePropertiesByHomeownerIdIn } from "../../repositories/propertiesRepository";
+import { HomeownerRepository } from "../../repositories/homeownerRepository";
+import { PropertyRepository } from "../../repositories/propertyRepository";
 import Invoice from "../../models/Invoice";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
+import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+const handler = async (req: Request) => {
   if (req.method !== "GET") {
     // Handle any other HTTP method
-    return new Response("Method Not Allowed", { status: 405 });
+    throw new MethodNotAllowedError();
   }
 
   try {
@@ -22,14 +24,14 @@ export async function GET(req: Request) {
     const username = await getUsernameFromCookie(jwtCookie);
     await validatePermission(username, "VIEW_BILLS");
 
-    const homeowners = await getAllActiveHomeowners();
+    const homeowners = await HomeownerRepository.getAllActiveHomeowners();
     if (!homeowners || homeowners.length === 0) {
       return Response.json({ homeowners: [] });
     }
 
     // Fetch properties for all homeowners
     const homeownerIds = homeowners.map(h => h.id);
-    const properties = await getAllActivePropertiesByHomeownerIdIn(homeownerIds);
+    const properties = await PropertyRepository.getAllActivePropertiesByHomeownerIdIn(homeownerIds);
     if (!properties || properties.length === 0) {
       return Response.json({
         homeowners: homeowners.map(h => ({ id: h.id.toString(), name: h.name, properties: [] }))
@@ -38,7 +40,11 @@ export async function GET(req: Request) {
 
     // Fetch the latest water usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const invoices = await InvoiceRepository.getInvoicesByPropertyIdsAndType(propertyIds, "WATER_USAGE");
+    const invoices = await InvoiceRepository.findAllActiveInvoicesByPropertyIdInAndTypeAndLimitBy(
+      propertyIds,
+      "WATER_USAGE",
+      6
+    );
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
@@ -78,8 +84,8 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.log(error);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
+};
 
-  return new Response("Something went wrong.", { status: 500 });
-}
+export const GET = withErrorHandler(handler);

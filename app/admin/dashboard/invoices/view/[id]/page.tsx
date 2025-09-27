@@ -4,17 +4,30 @@ import React from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { InvoiceDetailsMapper } from "./utils/invoiceDetailsMapper";
-import { InvoiceDetails, invoiceDTO, historicalUsageDTO, homeownerDTO, propertyDTO } from "./types";
-import { formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util";
+import { invoiceDTO, homeownerDTO, propertyDTO } from "./types";
+import { formatNumberWithCommas, formatPenniesToDollars, getMonthStrFromMonthIndex } from "../../../util";
 
 export default function BillView() {
   const params = useParams<{ id: string }>();
   const [bill, setBill] = React.useState<invoiceDTO | null>(null);
   const [homeowner, setHomeowner] = React.useState<homeownerDTO | null>(null);
   const [property, setProperty] = React.useState<propertyDTO | null>(null);
-  const [historicalUsage, setHistoricalUsage] = React.useState<historicalUsageDTO[] | null>(null);
+  const [historicalUsage, setHistoricalUsage] = React.useState<invoiceDTO[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+
+  // TODO: Redirect user instead? Shouldn't get here without NextJS breaking...
+  if (!params) {
+    return (
+      <div
+        className={
+          "shadow-lg p-10 min-w-[900px] min-h-[11in] mx-auto my-6 bg-white text-black font-sans leading-[1.4] box-border print:w-full print:min-h-screen print:shadow-none"
+        }
+      >
+        Error loading bill: {error}
+      </div>
+    );
+  }
 
   React.useEffect(() => {
     const fetchInvoiceById = async () => {
@@ -24,10 +37,10 @@ export default function BillView() {
           throw new Error("Failed to fetch bill");
         }
         const data = await response.json();
-        setBill(data.bill);
+        setBill(data.invoices[0]);
         setHomeowner(data.homeowner);
         setProperty(data.property);
-        setHistoricalUsage(data.historicalUsage);
+        setHistoricalUsage(data.invoices);
       } catch (err) {
         setError("Failed to load bill details");
         console.error(err);
@@ -69,7 +82,7 @@ export default function BillView() {
     );
   }
 
-  const billDetails: InvoiceDetails = InvoiceDetailsMapper(bill, homeowner, property, historicalUsage);
+  const billDetails = InvoiceDetailsMapper(bill, homeowner, property, historicalUsage);
 
   return (
     <div
@@ -83,6 +96,15 @@ export default function BillView() {
             <Image className={"mr-[10px]"} src="/water-well.png" height={40} width={40} alt={"Well Icon"} />
             <h2 className={"text-[20px] font-bold"}>{billDetails.waterCompany.name}</h2>
           </div>
+          <p className={"m-0"}>{billDetails.homeowner.name}</p>
+          <p className={"m-0"}>{billDetails.property.street}</p>
+          <p className={"m-0"}>
+            {billDetails.property.city}, {billDetails.property.state} {billDetails.property.zip}
+          </p>
+        </div>
+        <div className={"text-right text-[14px]"}>
+          <p>Invoice Created On: {billDetails.createdDate}</p>
+          <p className={"mb-[15px]"}>Invoice Number: {billDetails.id}</p>
           <p>{billDetails.waterCompany.address}</p>
           <p>
             {billDetails.waterCompany.city}, {billDetails.waterCompany.state} {billDetails.waterCompany.zip}
@@ -91,20 +113,10 @@ export default function BillView() {
           {billDetails.waterCompany.fax && <p>Fax: {billDetails.waterCompany.fax}</p>}
           <p>Email: {billDetails.waterCompany.email}</p>
         </div>
-        <div className={"text-right text-[14px]"}>
-          <p>Invoice Created On: {billDetails.createdDate}</p>
-          <p>Invoice Number: {billDetails.id}</p>
-        </div>
       </div>
 
       <div>
-        <div className={"[&_p]:mt-[4px] [&_p]:mb-[4px] [&_p]:mr-0 [&_p]:ml-0 [&_p]:text-[14px]"}>
-          <p>{billDetails.homeowner.name}</p>
-          <p>{billDetails.property.street}</p>
-          <p>
-            {billDetails.property.city}, {billDetails.property.state} {billDetails.property.zip}
-          </p>
-        </div>
+        <div className={"[&_p]:mt-[4px] [&_p]:mb-[4px] [&_p]:mr-0 [&_p]:ml-0 [&_p]:text-[14px]"}></div>
       </div>
 
       <div className={"bg-[#f8f8f8] p-[20px] rounded-sm mt-6 mb-6"}>
@@ -129,20 +141,24 @@ export default function BillView() {
           <h4 className={"text-[16px] mr-[15px] font-bold"}>This Month</h4>
           <div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
-              <span>Base Charge ({billDetails.bill.formula.baseGallons}):</span>
+              <span>Base Charge ({billDetails.bill.formula.baseGallons} gal):</span>
               <span>{billDetails.bill.baseCharge}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
-              <span>Excess Charge:</span>
-              <span>${billDetails.bill.excessUsageCharge.toFixed(2)}</span>
+              <span>Excess Charge ({`${billDetails.bill.formula.usageRateInPennies}¢ per gal`}):</span>
+              <span>{formatPenniesToDollars(billDetails.bill.excessUsageChargeInPennies)}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
               <span>Late Fee:</span>
-              <span>${billDetails.bill.lateFee.toFixed(2)}</span>
+              <span>{formatPenniesToDollars(billDetails.bill.lateFee)}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
               <span>Other Charges:</span>
               <span>${billDetails.bill.otherCharges.toFixed(2)}</span>
+            </div>
+            <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
+              <span>New Charges this month:</span>
+              <span>{billDetails.bill.totalAmount}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px]"}>
               <span>Amount Outstanding:</span>
@@ -160,22 +176,32 @@ export default function BillView() {
         </div>
 
         <div className={"w-full ml-[20px]"}>
-          <h4 className={"text-[16px] mr-[15px] font-bold"}>Previous Monthly Usages</h4>
+          <h4 className={"text-[16px] mr-[15px] font-bold"}>Monthly Usages</h4>
           <table className={"w-full border-collapse text-[14px]"}>
             <thead>
               <tr>
                 <th className={"p-[8px] text-left border border-tableBorder font-bold"}>Month</th>
+                <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Start</th>
+                <th className={"p-[8px] text-right border border-tableBorder font-bold"}>End</th>
                 <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Usage</th>
                 <th className={"p-[8px] text-right border border-tableBorder font-bold"}>Amount</th>
               </tr>
             </thead>
             <tbody>
               {billDetails.monthlyUsageHistory.map((monthlyUsage, index) => (
-                <tr className={`${index % 2 === 0 ? "bg-[#fafafa]" : ""}`} key={monthlyUsage.month}>
+                <tr className={`${index % 2 === 0 ? "bg-[#fafafa]" : ""}`} key={`${monthlyUsage.month}_${index}`}>
                   <td className={"p-[8px] text-left border border-tableBorder"}>
                     {getMonthStrFromMonthIndex(monthlyUsage.month)}
                   </td>
-                  <td className={"p-[8px] text-right border border-tableBorder"}>{monthlyUsage.gallonsUsed}</td>
+                  <td className={"p-[8px] text-right border border-tableBorder"}>
+                    {formatNumberWithCommas(monthlyUsage.gallonsStart)}
+                  </td>
+                  <td className={"p-[8px] text-right border border-tableBorder"}>
+                    {formatNumberWithCommas(monthlyUsage.gallonsEnd)}
+                  </td>
+                  <td className={"p-[8px] text-right border border-tableBorder"}>
+                    {formatNumberWithCommas(monthlyUsage.gallonsUsed)}
+                  </td>
                   <td className={"p-[8px] text-right border border-tableBorder"}>
                     {formatPenniesToDollars(monthlyUsage.amountInPennies)}
                   </td>

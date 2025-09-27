@@ -1,6 +1,6 @@
 import { db } from "../utils/db";
 import Invoice, { InvoiceCreate, InvoiceTotal } from "../models/Invoice";
-import { addAuditTableRecord } from "./auditRepository";
+import { AuditRepository } from "./auditRepository";
 
 export class InvoiceRepository {
   /**
@@ -32,14 +32,53 @@ export class InvoiceRepository {
   static getInvoicesByPropertyIdsAndType = async (propertyIds: number[], type: string): Promise<Invoice[]> => {
     if (!propertyIds || propertyIds.length === 0) return [];
 
-    return db<Invoice[]>`
-    SELECT *
-    FROM invoices
-    WHERE property_id IN ${db(propertyIds)}
-      AND type = ${type}
-    ORDER BY (metadata ->> 'billing_year')::INT DESC,
-             (metadata ->> 'billing_month')::INT DESC;
-  `;
+    const invoices = db<Invoice[]>`
+      SELECT *
+      FROM invoices
+      WHERE property_id IN ${db(propertyIds)}
+        AND type = ${type}
+        AND is_active = true
+      ORDER BY (metadata ->> 'billing_year')::INT DESC,
+               (metadata ->> 'billing_month')::INT DESC;
+    `;
+
+    return invoices;
+  };
+
+  /**
+   * Retrieves the most recent active invoice records for each property ID, limited to `limit` per property.
+   * @param propertyIds list of property IDs to filter by
+   * @param type - The type of usage bill to retrieve.
+   * @param limit the number of records to return per property
+   *
+   * @returns Promise resolving to an array of Invoice records
+   */
+  static findAllActiveInvoicesByPropertyIdInAndTypeAndLimitBy = async (
+    propertyIds: number[],
+    type: string,
+    limit: number
+  ): Promise<Invoice[]> => {
+    const invoices = await db<Invoice[]>`
+      WITH invoices_by_property AS (
+        SELECT *,
+               ROW_NUMBER() OVER (
+                 PARTITION BY property_id
+                 ORDER BY (metadata ->> 'billing_year')::INT DESC,
+                          (metadata ->> 'billing_month')::INT DESC,
+                          created_at DESC
+               ) AS row_number
+        FROM invoices
+        WHERE property_id IN ${db(propertyIds)}
+          AND is_active = true
+          AND type = ${type}
+      )
+      SELECT *
+      FROM invoices_by_property
+      WHERE row_number <= ${limit}
+      ORDER BY property_id, (metadata ->> 'billing_year')::INT DESC, (metadata ->> 'billing_month')::INT DESC, created_at DESC;
+    `;
+
+    return invoices ?? [];
   };
 
   /**
@@ -128,7 +167,7 @@ export class InvoiceRepository {
    * @returns {Promise<Invoice | null>} Resolves to the newly created invoice record.
    */
   static insertNewInvoiceAsTransactional = async (user: string, newData: InvoiceCreate): Promise<Invoice | null> => {
-    const auditLog = await addAuditTableRecord({
+    const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "invoices",
       recordId: 0,
       newData: JSON.stringify(newData),
@@ -181,7 +220,7 @@ export class InvoiceRepository {
     oldData: Invoice,
     newData: Invoice
   ): Promise<Invoice | null> => {
-    const auditLog = await addAuditTableRecord({
+    const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "invoices",
       recordId: oldData.id,
       oldData: JSON.stringify(oldData),
