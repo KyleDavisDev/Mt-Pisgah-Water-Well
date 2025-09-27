@@ -11,6 +11,9 @@ import { PRICING_FORMULAS } from "../pricingFormulas";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { InvoiceCreate } from "../../models/Invoice";
 import { withErrorHandler } from "../../utils/handlers";
+import { PricingFormula } from "../pricingFormulas/types";
+import { Discount } from "../../models/Discount";
+import { DiscountRepository } from "../../repositories/discountRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -25,6 +28,37 @@ const getPricingFormula = (year: number, month: number) => {
   } else {
     return PRICING_FORMULAS["tiered_2025_September_v1"];
   }
+};
+
+const calculateFinalInvoiceCostInPennies = (
+  gallons_used: number,
+  formula: PricingFormula,
+  discounts: Discount[]
+): number => {
+  // Calculate base cost using the provided pricing formula
+  let baseCost = formula.calculate(gallons_used);
+
+  let totalAmountInPenniesToDeduct = 0;
+  for (const discount of discounts) {
+    // Flat discount for the whole bill
+    if (discount.amount_in_pennies && !discount.gallons_applied_to) {
+      totalAmountInPenniesToDeduct += discount.amount_in_pennies;
+      continue;
+    }
+
+    // If discount has gallons_applied_to, only apply discount to that many gallons
+    if (discount.gallons_applied_to && discount.gallons_applied_to > 0 && discount.percent_off) {
+      const gallonsToBeDiscounted = Math.min(gallons_used, discount.gallons_applied_to);
+      const costOfGallonsToBeDiscounted = formula.calculate(gallonsToBeDiscounted);
+
+      totalAmountInPenniesToDeduct += Math.round(costOfGallonsToBeDiscounted * (discount.percent_off / 100));
+    }
+
+    // TODO: Apply discount to entire bill? Might not be needed if gallons_applied_to is big
+    // TODO: and always covers the necessary amount.
+  }
+
+  return Math.max(0, baseCost - totalAmountInPenniesToDeduct);
 };
 
 const handler = async (req: Request): Promise<Response> => {
@@ -68,9 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       if (!startingUsage || !endingUsage) continue;
 
-      const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
-
-      // Check if bill already exists
+      // Check if invoice already exists
       const existing = await InvoiceRepository.getActiveInvoiceByYearAndMonthAndPropertyIn(
         parseInt(year),
         parseInt(month),
@@ -79,8 +111,12 @@ const handler = async (req: Request): Promise<Response> => {
 
       if (existing.length > 0) continue;
 
-      const currentBalanceInPennies = await getCurrentPropertyAccountBalance(property.id);
+      const [currentBalanceInPennies, discounts] = Promise.all([
+        getCurrentPropertyAccountBalance(property.id),
+        DiscountRepository.getByPropertyId(property.id)
+      ]);
 
+      const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
       const formula = getPricingFormula(parseInt(year), parseInt(month));
       const newData: InvoiceCreate = {
         property_id: property.id,
@@ -91,10 +127,13 @@ const handler = async (req: Request): Promise<Response> => {
           gallons_start: startingUsage.gallons,
           gallons_end: endingUsage.gallons,
           formula_used: `${formula.name}`,
-          current_balance_in_pennies: currentBalanceInPennies
+          current_balance_in_pennies: currentBalanceInPennies,
+          discounts: discounts.map(d => {
+            return { name: d.name, description: d.description };
+          })
         },
         type: "WATER_USAGE",
-        amount_in_pennies: formula.calculate(gallonsUsed),
+        amount_in_pennies: calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts),
         is_active: true
       };
 
