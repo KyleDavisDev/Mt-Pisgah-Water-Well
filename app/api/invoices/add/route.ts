@@ -111,7 +111,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       if (existing.length > 0) continue;
 
-      const [currentBalanceInPennies, discounts] = Promise.all([
+      const [currentBalanceInPennies, discounts] = await Promise.all([
         getCurrentPropertyAccountBalance(property.id),
         DiscountRepository.getByPropertyId(property.id)
       ]);
