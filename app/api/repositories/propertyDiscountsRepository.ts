@@ -1,5 +1,5 @@
 import { db } from "../utils/db";
-import PropertyDiscount from "../models/PropertyDiscount";
+import { PropertyDiscount } from "../models/PropertyDiscount";
 
 export class propertyDiscountsRepository {
   /**
