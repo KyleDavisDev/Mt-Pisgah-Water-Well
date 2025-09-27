@@ -40,7 +40,7 @@ const handler = async (req: Request) => {
 
     // Fetch latest usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const usages = await UsageRepository.findAllActiveByPropertyIdInAndLimitBy(propertyIds, 100);
+    const usages = await UsageRepository.findAllActiveByPropertyIdInAndLimitBy(propertyIds, 6);
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
