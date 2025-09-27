@@ -40,7 +40,11 @@ const handler = async (req: Request) => {
 
     // Fetch the latest water usages for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const invoices = await InvoiceRepository.getInvoicesByPropertyIdsAndType(propertyIds, "WATER_USAGE");
+    const invoices = await InvoiceRepository.findAllActiveInvoicesByPropertyIdInAndTypeAndLimitBy(
+      propertyIds,
+      "WATER_USAGE",
+      6
+    );
 
     const returnData = homeowners
       .filter((homeowner: Homeowners) => {
