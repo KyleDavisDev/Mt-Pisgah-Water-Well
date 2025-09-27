@@ -22,7 +22,7 @@ const toModelAdapter = (payments: any): PaymentCreate[] => {
         is_active: true
       };
     })
-    .filter(x => x.amount_in_pennies !== 0)
+    .filter(x => x.amount_in_pennies > 0)
     .filter(x => x.property_id !== 0)
     .filter(x => x.method === "CHECK" || x.method === "CASH");
 };
@@ -40,7 +40,7 @@ const handler = async (req: Request) => {
 
     await PaymentRepository.insertMany(username, paymentsToSave);
 
-    return Response.json({ message: "Success!" });
+    return Response.json({ message: `Success! Saved ${paymentsToSave.length}` });
   } catch (error) {
     throw new ForbiddenError("Invalid username or password.");
   }
