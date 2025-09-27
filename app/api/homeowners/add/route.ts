@@ -1,16 +1,13 @@
 import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
+import { AuditRepository } from "../../repositories/auditRepository";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function POST(req: Request) {
-  if (req.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-
+const handler = async (req: Request) => {
   try {
     const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
@@ -34,7 +31,7 @@ export async function POST(req: Request) {
       return new Response("Missing required fields", { status: 400 });
     }
 
-    const auditLog = await addAuditTableRecord({
+    const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "homeowners",
       recordId: 0, // will update
       newData: JSON.stringify({ name, email, phone, mailingAddress, is_active: true }),
@@ -70,6 +67,6 @@ export async function POST(req: Request) {
     console.log(error);
     return new Response("Something went wrong.", { status: 500 });
   }
+};
 
-  return new Response("Something went wrong.", { status: 500 });
-}
+export const POST = withErrorHandler(handler);

@@ -1,7 +1,9 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import jwt from "jsonwebtoken";
-import { getActiveUserByPermissionAndUsername } from "../repositories/userRepository";
+import { UserRepository } from "../repositories/userRepository";
 import { BadRequestError, ForbiddenError } from "./errors";
+import { PaymentRepository } from "../repositories/paymentRepository";
+import { InvoiceRepository } from "../repositories/invoiceRepository";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -41,7 +43,7 @@ export const getUsernameFromCookie = async (jwtCookie: RequestCookie | undefined
 };
 
 export const validatePermission = async (username: string, permission: string): Promise<void> => {
-  const user = await getActiveUserByPermissionAndUsername(permission, username);
+  const user = await UserRepository.getActiveUserByPermissionAndUsername(permission, username);
 
   if (user === null) {
     console.warn(`User not found for ${username}`);
@@ -164,4 +166,26 @@ export const getStartAndEndOfProvidedMonthAndNextMonth = (
   const endOfNextMonth = `${nextYear}-${paddedNextMonth}-28`;
 
   return { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth };
+};
+
+/**
+ * Retrieves the current account balance for a specific property.
+ *
+ * This function calculates the balance by asynchronously fetching
+ * the total payments and total owed amounts associated with the
+ * provided property ID and then performing a subtraction
+ * (total payments - total owed).
+ *
+ * @param {number} propertyId - The unique identifier of the property.
+ * @returns {Promise<number>} A promise that resolves to the account balance
+ * in pennies for the given property ID.
+ */
+export const getCurrentPropertyAccountBalance = async (propertyId: number): Promise<number> => {
+  const [totalPayment, totalOwed] = await Promise.all([
+    PaymentRepository.findActiveTotalByPropertyIds([propertyId]),
+    InvoiceRepository.findActiveTotalByPropertyIds([propertyId])
+  ]);
+
+  // TODO: Is there a bug here? What's wrong with totalPayments[0]?
+  return totalPayment[0].amount_in_pennies - totalOwed[0].amount_in_pennies;
 };

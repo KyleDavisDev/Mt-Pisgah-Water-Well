@@ -1,14 +1,13 @@
 import { cookies } from "next/headers";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
+import { ForbiddenError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function PUT(req: Request) {
-  if (req.method !== "PUT") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
+const handler = async (req: Request) => {
   try {
     const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
@@ -35,8 +34,8 @@ export async function PUT(req: Request) {
     return Response.json({ message: "Success!" });
   } catch (error) {
     console.log(error);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
+};
 
-  return new Response("Something went wrong.", { status: 500 });
-}
+export const PUT = withErrorHandler(handler);

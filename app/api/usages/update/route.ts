@@ -1,16 +1,15 @@
 import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import { getUsageById } from "../../repositories/usageRepository";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
+import { UsageRepository } from "../../repositories/usageRepository";
+import { AuditRepository } from "../../repositories/auditRepository";
+import { ForbiddenError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function PUT(req: Request) {
-  if (req.method !== "PUT") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
+const handler = async (req: Request) => {
   try {
     const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
@@ -24,14 +23,14 @@ export async function PUT(req: Request) {
     }
 
     // Find record to be edited
-    const oldUsage = await getUsageById(id);
+    const oldUsage = await UsageRepository.getUsageById(id);
     if (!oldUsage) return new Response("Cannot find usage record", { status: 404 });
 
     // Get new record data
     const newUsage = { ...oldUsage, gallons, is_active: isActive === "true" };
 
     // log intent
-    const auditRecord = await addAuditTableRecord({
+    const auditRecord = await AuditRepository.addAuditTableRecord({
       oldData: JSON.stringify(oldUsage),
       newData: JSON.stringify(newUsage),
       recordId: oldUsage.id,
@@ -59,8 +58,8 @@ export async function PUT(req: Request) {
     return Response.json({ message: "Success!" });
   } catch (error) {
     console.log(error);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
+};
 
-  return new Response("Something went wrong.", { status: 500 });
-}
+export const PUT = withErrorHandler(handler);

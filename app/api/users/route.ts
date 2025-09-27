@@ -1,14 +1,16 @@
 import { cookies } from "next/headers";
 import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
-import { getAllActiveUsersByPermission, getAllUsers } from "../repositories/userRepository";
+import { UserRepository } from "../repositories/userRepository";
+import { ForbiddenError, MethodNotAllowedError } from "../utils/errors";
+import { withErrorHandler } from "../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+const handler = async (req: Request) => {
   if (req.method !== "GET") {
     // Handle any other HTTP method
-    return new Response("Method Not Allowed", { status: 405 });
+    throw new MethodNotAllowedError();
   }
 
   try {
@@ -20,7 +22,9 @@ export async function GET(req: Request) {
     const permissions = extractKeyFromRequest(req, "permissions");
     // TODO: data validation of permissions
 
-    const users = permissions ? await getAllActiveUsersByPermission(permissions) : await getAllUsers();
+    const users = permissions
+      ? await UserRepository.getAllActiveUsersByPermission(permissions)
+      : await UserRepository.getAllUsers();
 
     return Response.json({
       users: users.map(u => {
@@ -29,8 +33,8 @@ export async function GET(req: Request) {
     });
   } catch (e) {
     console.log(e);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
+};
 
-  return new Response("Something went wrong.", { status: 500 });
-}
+export const GET = withErrorHandler(handler);

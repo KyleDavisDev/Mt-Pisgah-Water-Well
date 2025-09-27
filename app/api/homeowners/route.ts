@@ -3,6 +3,7 @@ import { db } from "../utils/db";
 import Homeowners from "../models/Homeowners";
 import { getUsernameFromCookie, validatePermission } from "../utils/utils";
 import { withErrorHandler } from "../utils/handlers";
+import { MethodNotAllowedError } from "../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 const handler = async (req: Request) => {
   if (req.method !== "GET") {
     // Handle any other HTTP method
-    return new Response("Method Not Allowed", { status: 405 });
+    throw new MethodNotAllowedError();
   }
 
   const cookieStore = await cookies();

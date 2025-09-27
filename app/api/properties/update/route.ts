@@ -1,17 +1,15 @@
 import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import { addAuditTableRecord } from "../../repositories/auditRepository";
-import { getPropertyById } from "../../repositories/propertiesRepository";
+import { AuditRepository } from "../../repositories/auditRepository";
+import { PropertyRepository } from "../../repositories/propertyRepository";
+import { ForbiddenError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function PUT(req: Request) {
-  if (req.method !== "PUT") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-
+const handler = async (req: Request) => {
   try {
     const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
@@ -35,7 +33,7 @@ export async function PUT(req: Request) {
     }
 
     // Find record to be edited
-    const oldRecord = await getPropertyById(id);
+    const oldRecord = await PropertyRepository.getPropertyById(id);
 
     if (!oldRecord) {
       return new Response("Cannot find property record", { status: 404 });
@@ -46,7 +44,7 @@ export async function PUT(req: Request) {
 
     // TODO: move this to repository
     // log intent
-    const auditRecord = await addAuditTableRecord({
+    const auditRecord = await AuditRepository.addAuditTableRecord({
       oldData: JSON.stringify(oldRecord),
       newData: JSON.stringify(newObj),
       recordId: oldRecord.id,
@@ -76,8 +74,8 @@ export async function PUT(req: Request) {
     return Response.json({ message: "Success!" });
   } catch (error) {
     console.log(error);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
+};
 
-  return new Response("Something went wrong.", { status: 500 });
-}
+export const PUT = withErrorHandler(handler);

@@ -5,17 +5,19 @@ import {
   getUsernameFromCookie,
   validatePermission
 } from "../../utils/utils";
-import { getFirstUsageByDateCollectedRangeAndPropertyIn } from "../../repositories/usageRepository";
-import { getAllActiveProperties } from "../../repositories/propertiesRepository";
-import { getAllActiveHomeowners } from "../../repositories/homeownerRepository";
+import { UsageRepository } from "../../repositories/usageRepository";
+import { PropertyRepository } from "../../repositories/propertyRepository";
+import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
+import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
+import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+const handler = async (req: Request) => {
   if (req.method !== "GET") {
-    return new Response("Method Not Allowed", { status: 405 });
+    throw new MethodNotAllowedError();
   }
 
   try {
@@ -40,11 +42,15 @@ export async function GET(req: Request) {
       month[0]
     );
 
-    const properties = await getAllActiveProperties();
+    const properties = await PropertyRepository.getAllActiveProperties();
     const propertyIds = properties.map((p: any) => p.id);
 
-    const startingUsages = await getFirstUsageByDateCollectedRangeAndPropertyIn(startOfMonth, endOfMonth, propertyIds);
-    const endingUsages = await getFirstUsageByDateCollectedRangeAndPropertyIn(
+    const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
+      startOfMonth,
+      endOfMonth,
+      propertyIds
+    );
+    const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
       startOfNextMonth,
       endOfNextMonth,
       propertyIds
@@ -55,7 +61,7 @@ export async function GET(req: Request) {
       propertyIds
     );
 
-    const homeowners = await getAllActiveHomeowners();
+    const homeowners = await HomeownerRepository.getAllActiveHomeowners();
     const returnData = homeowners
       .filter(h => {
         return properties.some(p => p.homeowner_id === h.id);
@@ -89,8 +95,8 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Error generating usage bill:", error);
-    return new Response("Invalid username or password.", { status: 403 });
+    throw new ForbiddenError("Invalid username or password.");
   }
+};
 
-  return new Response("Something went wrong.", { status: 500 });
-}
+export const GET = withErrorHandler(handler);

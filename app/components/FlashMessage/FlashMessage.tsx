@@ -59,7 +59,7 @@ const FlashMessage: React.FC<FlashMessageProps> = props => {
 
   return (
     <div
-      className={`flex flex-row w-full mb-[15px] pt-[10px] pr-[15px] pb-[15px] pl-[15px] box-border
+      className={`flex flex-row w-full mb-[15px] pt-[10px] pr-[15px] pb-[10px] pl-[15px] box-border
       border-t-1 border-r-1 border-b-1 border-l-[15px]
       ${props.className ? props.className : ""}`}
       style={getContainerStyles(props.type)}

@@ -1,7 +1,6 @@
 import Payment, { PaymentCreate, PaymentTotal } from "../models/Payments";
 import { db } from "../utils/db";
-import { addAuditTableRecord } from "./auditRepository";
-import Invoice from "../models/Invoice";
+import { AuditRepository } from "./auditRepository";
 
 export class PaymentRepository {
   static async findById(id: string): Promise<Payment | null> {
@@ -70,7 +69,7 @@ export class PaymentRepository {
    * @returns {Promise<Payment | null>} Resolves to the newly created payment record.
    */
   static insert = async (user: string, record: PaymentCreate): Promise<Payment | null> => {
-    const auditLog = await addAuditTableRecord({
+    const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "payments",
       recordId: 0,
       newData: JSON.stringify(record),
@@ -142,7 +141,7 @@ export class PaymentRepository {
    * @returns {Promise<Invoice | null>} Resolves to the newly updated payment record.
    */
   static updateAsTransactional = async (user: string, oldData: Payment, newData: Payment): Promise<Payment | null> => {
-    const auditLog = await addAuditTableRecord({
+    const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "payments",
       recordId: oldData.id,
       oldData: JSON.stringify(oldData),

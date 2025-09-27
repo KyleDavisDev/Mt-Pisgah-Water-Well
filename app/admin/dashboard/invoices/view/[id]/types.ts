@@ -4,16 +4,9 @@ export interface BillUsage {
   usage: number;
 }
 
-export interface MonthlyUsage {
-  month: number;
-  year: number;
-  gallonsUsed: string;
-  amountInPennies: number;
-}
-
 export interface BillCharges {
   baseCharge: string;
-  excessUsageCharge: number;
+  excessUsageChargeInPennies: number;
   lateFee: number;
   otherCharges: number;
   amountOutstanding: number;
@@ -57,7 +50,7 @@ export interface InvoiceDetails {
   property: PropertyInfo;
   bill: BillCharges;
   currentUsage: BillUsage;
-  monthlyUsageHistory: MonthlyUsage[];
+  monthlyUsageHistory: invoiceDTO[];
 }
 
 export interface invoiceDTO {
@@ -70,6 +63,8 @@ export interface invoiceDTO {
     usageRateInPennies: number;
   };
   gallonsUsed: number;
+  gallonsStart: number;
+  gallonsEnd: number;
   month: number;
   year: number;
   isActive: boolean;
@@ -91,5 +86,7 @@ export interface historicalUsageDTO {
   month: number;
   year: number;
   gallonsUsed: string;
+  gallonsStart: string;
+  gallonsEnd: string;
   amountInPennies: number;
 }
