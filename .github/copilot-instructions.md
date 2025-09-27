@@ -33,6 +33,9 @@ The project follows a Next.js 13+ App Router structure:
 - Implement proper data validation and sanitization
 - Use proper TypeScript types and interfaces
 - Use async/await for asynchronous operations
+- Prefer methods that do one thing and one thing well
+- Prefer method names that describe what the method does. There shouldn't be any surprises.
+- Prefer methods that are easily re-usable.
 
 ## UI Guidelines
 
@@ -50,3 +53,82 @@ The project follows a Next.js 13+ App Router structure:
   - FlashMessage
 - Forms should include proper validation and error handling
 - Maintain a clean, professional interface suitable for utility management
+
+## Database Table Structure
+
+The following summarizes the main database tables, inferred from the models and repository patterns:
+
+- **homeowners**
+  - id: number
+  - name: string
+  - email: string | null
+  - phone_number: string | null
+  - mailing_address: string
+  - is_active: boolean
+
+- **properties**
+  - id: number
+  - street: string
+  - city: string
+  - state: string
+  - zip: string
+  - description: string | null
+  - homeowner_id: number
+  - is_active: boolean
+
+- **usages**
+  - id: number
+  - property_id: number
+  - date_collected: string (YYYY-MM-DD)
+  - gallons: number
+  - recorded_by_id: number
+  - is_active: boolean
+
+- **invoices**
+  - id: number
+  - property_id: number
+  - amount_in_pennies: number
+  - type: "WATER_USAGE" | "LATE_FEE"
+  - metadata: JSON (formula_used, gallons_used, billing_month, billing_year, etc.)
+  - created_at: string (ISO 8601)
+  - is_active: boolean
+
+- **payments**
+  - id: number
+  - amount_in_pennies: number
+  - method: string
+  - property_id: number
+  - created_at: string (ISO 8601)
+  - is_active: boolean
+  - transaction_issued_by: string | null
+  - transaction_id: string | null
+
+- **users**
+  - id: number
+  - name: string
+  - username: string
+  - password: string (hashed)
+  - is_active: boolean
+
+- **permissions**
+  - id: number
+  - value: string
+  - description: string | null
+  - is_active: boolean
+
+- **user_permissions**
+  - id: number
+  - userId: number
+  - permissionId: number
+  - isActive: boolean
+
+- **audit_log**
+  - id: number
+  - table_name: string
+  - record_id: number
+  - action_type: "INSERT" | "UPDATE" | "DELETE"
+  - old_data: string | null
+  - new_data: string | null
+  - action_by_id: number
+  - action_timestamp: string (ISO 8601)
+  - is_complete: boolean
