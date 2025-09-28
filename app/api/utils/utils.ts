@@ -181,11 +181,14 @@ export const getStartAndEndOfProvidedMonthAndNextMonth = (
  * in pennies for the given property ID.
  */
 export const getCurrentPropertyAccountBalance = async (propertyId: number): Promise<number> => {
+  if (propertyId <= 0) return 0;
+
   const [totalPayment, totalOwed] = await Promise.all([
     PaymentRepository.findActiveTotalByPropertyIds([propertyId]),
     InvoiceRepository.findActiveTotalByPropertyIds([propertyId])
   ]);
 
-  // TODO: Is there a bug here? What's wrong with totalPayments[0]?
-  return totalPayment[0].amount_in_pennies - totalOwed[0].amount_in_pennies;
+  // It's possible for `totalPayment` to be empty here like in the case of the Well property
+  // since that property, technically, doesn't make any payments.
+  return (totalPayment ? totalPayment[0].amount_in_pennies : 0) - totalOwed[0].amount_in_pennies;
 };
