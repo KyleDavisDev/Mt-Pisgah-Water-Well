@@ -190,5 +190,7 @@ export const getCurrentPropertyAccountBalance = async (propertyId: number): Prom
 
   // It's possible for `totalPayment` to be empty here like in the case of the Well property
   // since that property, technically, doesn't make any payments.
-  return (!!totalPayment[0] ? totalPayment[0].amount_in_pennies : 0) - totalOwed[0].amount_in_pennies;
+  return (
+    (!!totalPayment[0] ? totalPayment[0].amount_in_pennies : 0) - (!!totalOwed[0] ? totalOwed[0].amount_in_pennies : 0)
+  );
 };
