@@ -118,6 +118,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
       const formula = getPricingFormula(parseInt(year), parseInt(month));
+      let amountInPennies = calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts);
       const newData: InvoiceCreate = {
         property_id: property.id,
         metadata: {
@@ -127,13 +128,14 @@ const handler = async (req: Request): Promise<Response> => {
           gallons_start: startingUsage.gallons,
           gallons_end: endingUsage.gallons,
           formula_used: `${formula.name}`,
-          current_balance_in_pennies: currentBalanceInPennies,
+          balance_in_pennies_start: currentBalanceInPennies,
+          balance_in_pennies_end: currentBalanceInPennies - amountInPennies,
           discounts: discounts.map(d => {
             return { name: d.name, description: d.description };
           })
         },
         type: "WATER_USAGE",
-        amount_in_pennies: calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts),
+        amount_in_pennies: amountInPennies,
         is_active: true
       };
 

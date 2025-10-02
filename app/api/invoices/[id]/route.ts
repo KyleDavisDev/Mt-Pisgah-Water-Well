@@ -48,7 +48,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     return Response.json({
       homeowner: { name: homeowner.name },
       property: { street: property.street, city: property.city, state: property.state, zip: property.zip },
-      currentBalanceInPennies: bill.metadata.current_balance_in_pennies,
+      balanceInPenniesStart: bill.metadata.balance_in_pennies_start,
+      balanceInPenniesEnd: bill.metadata.balance_in_pennies_end,
       invoices: [bill, ...historicalInvoices].map(invoice => ({
         id: invoice.id,
         amountInPennies: invoice.amount_in_pennies,
