@@ -132,3 +132,20 @@ The following summarizes the main database tables, inferred from the models and 
   - action_by_id: number
   - action_timestamp: string (ISO 8601)
   - is_complete: boolean
+
+## Available API Routes
+
+Below is a list of available API routes under the `/app/api` directory. Each route is listed with its path. Each route is self-explanatory and you will get back the data you expect.
+
+- `/api/properties` — Property management endpoints
+- `/api/properties/[propertyId]/invoices` — Invoices for a specific property
+- `/api/properties/[propertyId]/payments` — Payments for a specific property
+- `/api/homeowners` — Homeowner management endpoints
+- `/api/usages` — Water usage tracking endpoints
+- `/api/invoices` — Invoice management endpoints
+- `/api/payments` — Payment processing endpoints
+- `/api/users` — User management endpoints
+- `/api/permissions` — Permissions management endpoints
+- `/api/audit_log` — Audit log endpoints
+
+*If you need more detailed descriptions for any route, let me know which ones!*
