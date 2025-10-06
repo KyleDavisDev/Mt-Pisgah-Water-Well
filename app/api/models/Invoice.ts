@@ -17,8 +17,13 @@ export interface InvoiceTotal {
   amount_in_pennies: number;
 }
 
-export interface InvoiceMetadata extends Record<string, unknown> {
-  discounts: { name: string; description: string | null | undefined }[];
+export interface InvoiceDiscount {
+  name: string;
+  description: string | null;
+}
+
+export interface InvoiceMetadata {
+  discounts: InvoiceDiscount[];
   gallons_end: number;
   billing_year: number;
   formula_used: string;
