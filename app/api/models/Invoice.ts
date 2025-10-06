@@ -17,12 +17,12 @@ export interface InvoiceTotal {
   amount_in_pennies: number;
 }
 
-export interface InvoiceDiscount {
+export type InvoiceDiscount = {
   name: string;
-  description: string | null;
-}
+  description: string;
+};
 
-export interface InvoiceMetadata {
+export type InvoiceMetadata = {
   discounts: InvoiceDiscount[];
   gallons_end: number;
   billing_year: number;
@@ -32,4 +32,4 @@ export interface InvoiceMetadata {
   gallons_start: number;
   balance_in_pennies_start: number;
   balance_in_pennies_end: number;
-}
+};

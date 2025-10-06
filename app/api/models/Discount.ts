@@ -1,7 +1,7 @@
 export interface Discount {
   id: number;
   name: string;
-  description?: string | null;
+  description: string;
   amount_in_pennies?: number | null;
   percent_off?: number | null;
   gallons_applied_to?: number | null;
