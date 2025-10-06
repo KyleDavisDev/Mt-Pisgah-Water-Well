@@ -9,8 +9,10 @@ export interface BillCharges {
   excessUsageChargeInPennies: number;
   lateFee: number;
   otherCharges: number;
-  amountOutstanding: number;
-  totalAmount: string;
+  amountOwingInPennies: number;
+  totalChargeAmountInPennies: number;
+  accountBalanceBeforeInPennies: number;
+  accountBalanceAfterInPennies: number;
   formula: {
     description: string;
     baseFeeInPennies: number;
