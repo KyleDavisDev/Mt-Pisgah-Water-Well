@@ -17,8 +17,13 @@ export interface InvoiceTotal {
   amount_in_pennies: number;
 }
 
+export interface InvoiceDiscount {
+  name: string;
+  description: string | null;
+}
+
 export interface InvoiceMetadata {
-  discounts: { name: string; description: string | null | undefined }[];
+  discounts: InvoiceDiscount[];
   gallons_end: number;
   billing_year: number;
   formula_used: string;
