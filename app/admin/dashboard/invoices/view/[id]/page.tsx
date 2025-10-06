@@ -131,7 +131,9 @@ export default function BillView() {
           </div>
           <div className={"flex-1 text-center"}>
             <h5 className={"text-[14px] mb-[8px] text-[#666666]"}>Amount Due</h5>
-            <p className={"text-[18px] m-0 font-bold"}>{billDetails.bill.totalAmount}</p>
+            <p className={"text-[18px] m-0 font-bold"}>
+              {formatPenniesToDollars(billDetails.bill.amountOwingInPennies)}
+            </p>
           </div>
         </div>
       </div>
@@ -145,24 +147,28 @@ export default function BillView() {
               <span>{billDetails.bill.baseCharge}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
-              <span>Excess Charge ({`${billDetails.bill.formula.usageRateInPennies}¢ per gal`}):</span>
+              <span>Excess Charge ({`${billDetails.bill.formula.usageRateInPennies * 5}¢ per 5 gal`}):</span>
               <span>{formatPenniesToDollars(billDetails.bill.excessUsageChargeInPennies)}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
               <span>Late Fee:</span>
               <span>{formatPenniesToDollars(billDetails.bill.lateFee)}</span>
             </div>
-            <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
+            <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[36px]"}>
               <span>Other Charges:</span>
               <span>${billDetails.bill.otherCharges.toFixed(2)}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
+              <span>Account Balance before:</span>
+              <span>{formatPenniesToDollars(billDetails.bill.accountBalanceBeforeInPennies)}</span>
+            </div>
+            <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
               <span>New Charges this month:</span>
-              <span>{billDetails.bill.totalAmount}</span>
+              <span>{formatPenniesToDollars(billDetails.bill.totalChargeAmountInPennies)}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px]"}>
-              <span>Amount Outstanding:</span>
-              <span>${billDetails.bill.amountOutstanding.toFixed(2)}</span>
+              <span>Account Balance after:</span>
+              <span>{formatPenniesToDollars(billDetails.bill.accountBalanceAfterInPennies)}</span>
             </div>
             <div
               className={
@@ -170,7 +176,7 @@ export default function BillView() {
               }
             >
               <span>Total amount owing:</span>
-              <span>{billDetails.bill.totalAmount}</span>
+              <span>{formatPenniesToDollars(billDetails.bill.amountOwingInPennies)}</span>
             </div>
           </div>
         </div>
