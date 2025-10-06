@@ -54,7 +54,7 @@ const calculateFinalInvoiceCostInPennies = (
       totalAmountInPenniesToDeduct += Math.round(costOfGallonsToBeDiscounted * (discount.percent_off / 100));
     }
 
-    // TODO: Apply discount to entire bill? Might not be needed if gallons_applied_to is big
+    // TODO: Apply discount to entire bill? Might not be needed if gallons_applied_to is sufficiently big
     // TODO: and always covers the necessary amount.
   }
 
@@ -118,7 +118,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
       const formula = getPricingFormula(parseInt(year), parseInt(month));
-      let amountInPennies = calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts);
+      const invoiceCostInPennies = calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts);
       const newData: InvoiceCreate = {
         property_id: property.id,
         metadata: {
@@ -129,13 +129,13 @@ const handler = async (req: Request): Promise<Response> => {
           gallons_end: endingUsage.gallons,
           formula_used: `${formula.name}`,
           balance_in_pennies_start: currentBalanceInPennies,
-          balance_in_pennies_end: currentBalanceInPennies - amountInPennies,
+          balance_in_pennies_end: currentBalanceInPennies - invoiceCostInPennies,
           discounts: discounts.map(d => {
             return { name: d.name, description: d.description };
           })
         },
         type: "WATER_USAGE",
-        amount_in_pennies: amountInPennies,
+        amount_in_pennies: invoiceCostInPennies,
         is_active: true
       };
 
