@@ -16,6 +16,23 @@ export class PaymentRepository {
     return payment ?? null;
   }
 
+  /**
+   * Returns all active payments for a given property ID.
+   * @param propertyId The property ID to filter payments by.
+   * @returns Promise resolving to an array of active Payment records.
+   */
+  static async findAllActiveByPropertyId(propertyId: number): Promise<Payment[]> {
+    if (!propertyId) return [];
+    const payments = await db<Payment[]>`
+        SELECT *
+        FROM payments
+        WHERE property_id = ${propertyId}
+          AND is_active = true
+        ORDER BY created_at DESC;
+      `;
+    return payments ?? [];
+  }
+
   static async findActiveTotalByPropertyIds(propertyIds: number[]): Promise<PaymentTotal[]> {
     const payments = await db<PaymentTotal[]>`
       SELECT property_id,

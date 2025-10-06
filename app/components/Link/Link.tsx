@@ -7,6 +7,7 @@ export interface LinkProps {
   inverseColors?: boolean;
   style?: React.CSSProperties | undefined;
   className?: string;
+  target?: string;
 }
 
 const LinkComponent: React.FunctionComponent<LinkProps> = (props: LinkProps) => {
@@ -15,8 +16,8 @@ const LinkComponent: React.FunctionComponent<LinkProps> = (props: LinkProps) => 
       <Link
         className={`decoration-0 font-(family-name:FuturaMedium) ${props.className}`}
         href={props.href}
-        legacyBehavior
         style={{ ...props.style }}
+        target={props.target}
       >
         {props.children}
       </Link>

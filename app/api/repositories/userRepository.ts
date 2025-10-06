@@ -1,5 +1,6 @@
 import User from "../models/Users";
 import { db } from "../utils/db";
+import { withRetry } from "../utils/utils";
 
 export class UserRepository {
   /**
@@ -22,7 +23,8 @@ export class UserRepository {
    * @returns Promise resolving to an array of User records
    */
   static getAllActiveUsersByPermission = async (permissions: string[]): Promise<User[]> => {
-    const users = await db<User[]>`
+    return withRetry(async () => {
+      const users = await db<User[]>`
       SELECT u.*
       FROM users u
                JOIN user_permissions up on u.id = up.user_id
@@ -32,7 +34,8 @@ export class UserRepository {
         AND u.is_active = true
         AND p.value in ${db(permissions)}`;
 
-    return users ?? [];
+      return users ?? [];
+    });
   };
 
   /**
@@ -43,22 +46,24 @@ export class UserRepository {
    * @returns Promise resolving to User or null
    */
   static getActiveUserByPermissionAndUsername = async (permission: string, username: string): Promise<User | null> => {
-    const users = await db<User[]>`
-      SELECT u.*
-      FROM users u
-               JOIN user_permissions up on u.id = up.user_id
-               JOIN permissions p ON up.permission_id = p.id
-      WHERE (p.value = ${permission} OR p.value = 'ADMIN')
-        AND u.username = ${username}
-        AND u.is_active = true
-        AND up.is_active = true
-        AND p.is_active = true`;
+    return withRetry(async () => {
+      const users = await db<User[]>`
+        SELECT u.*
+        FROM users u
+                 JOIN user_permissions up on u.id = up.user_id
+                 JOIN permissions p ON up.permission_id = p.id
+        WHERE (p.value = ${permission} OR p.value = 'ADMIN')
+          AND u.username = ${username}
+          AND u.is_active = true
+          AND up.is_active = true
+          AND p.is_active = true`;
 
-    if (users.length !== 1) {
-      return null;
-    }
+      if (users.length !== 1) {
+        return null;
+      }
 
-    return users[0];
+      return users[0];
+    });
   };
 
   /**
@@ -69,21 +74,23 @@ export class UserRepository {
    * @throws An error if no user is found or if more than one user is returned.
    */
   static getUserByUsername = async (username: string): Promise<User> => {
-    if (username.trim().length === 0) {
-      throw new Error("Invalid username provided.");
-    }
+    return withRetry(async () => {
+      if (username.trim().length === 0) {
+        throw new Error("Invalid username provided.");
+      }
 
-    const users = await db<User[]>`
+      const users = await db<User[]>`
       SELECT *
       FROM users
       where username = ${username}
       LIMIT 1;
   `;
 
-    if (users.length !== 1) {
-      throw new Error(`User not found for username: ${username}`);
-    }
+      if (users.length !== 1) {
+        throw new Error(`User not found for username: ${username}`);
+      }
 
-    return users[0];
+      return users[0];
+    });
   };
 }

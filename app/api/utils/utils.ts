@@ -194,3 +194,42 @@ export const getCurrentPropertyAccountBalance = async (propertyId: number): Prom
     (!!totalPayment[0] ? totalPayment[0].amount_in_pennies : 0) - (!!totalOwed[0] ? totalOwed[0].amount_in_pennies : 0)
   );
 };
+
+/**
+ * Executes an asynchronous function with retry logic for transient errors.
+ *
+ * Retries the provided async function up to `retries` times, waiting `delayMs` milliseconds between attempts if a
+ * connection-related error is detected (e.g., database shutdown, too many connections).
+ * Will throw the last encountered error if all retries fail.
+ *
+ * @template T - The return type of the async function.
+ * @param {() => Promise<T>} fn - The async function to execute.
+ * @param {number} [retries=3] - The maximum number of attempts.
+ * @param {number} [delayMs=300] - Delay in milliseconds between retries.
+ * @returns {Promise<T>} The result of the async function if successful.
+ * @throws The last error encountered if all retries fail.
+ */
+export async function withRetry<T>(fn: () => Promise<T>, retries: number = 50, delayMs: number = 300): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      return await fn();
+    } catch (err: any) {
+      // Check for connection-related errors
+      if (
+        err?.code === "57P01" || // Postgres admin_shutdown
+        err?.code === "53300" || // Postgres too_many_connections
+        err?.message?.includes("too many clients") ||
+        err?.message?.includes("connection")
+      ) {
+        lastError = err;
+        if (attempt < retries - 1) {
+          await new Promise(res => setTimeout(res, delayMs));
+          continue;
+        }
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+}

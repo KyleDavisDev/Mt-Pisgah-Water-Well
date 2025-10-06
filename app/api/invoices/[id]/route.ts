@@ -48,7 +48,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     return Response.json({
       homeowner: { name: homeowner.name },
       property: { street: property.street, city: property.city, state: property.state, zip: property.zip },
-      currentBalanceInPennies: bill.metadata.current_balance_in_pennies,
+      balanceInPenniesStart: bill.metadata.balance_in_pennies_start,
+      balanceInPenniesEnd: bill.metadata.balance_in_pennies_end,
       invoices: [bill, ...historicalInvoices].map(invoice => ({
         id: invoice.id,
         amountInPennies: invoice.amount_in_pennies,
@@ -58,6 +59,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         gallonsEnd: invoice.metadata.gallons_end,
         gallonsUsed: invoice.metadata.gallons_used,
         createdAt: invoice.created_at,
+        balanceInPenniesStart: invoice.metadata.balance_in_pennies_start,
+        balanceInPenniesEnd: invoice.metadata.balance_in_pennies_end,
         formula: {
           description: PRICING_FORMULAS[invoice.metadata.formula_used].description,
           baseFeeInPennies: PRICING_FORMULAS[invoice.metadata.formula_used].baseFeeInPennies,
