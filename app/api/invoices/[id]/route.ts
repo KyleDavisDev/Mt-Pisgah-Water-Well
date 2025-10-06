@@ -59,6 +59,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         gallonsEnd: invoice.metadata.gallons_end,
         gallonsUsed: invoice.metadata.gallons_used,
         createdAt: invoice.created_at,
+        balance_in_pennies_start: invoice.metadata.balance_in_pennies_start,
+        balance_in_pennies_end: invoice.metadata.balance_in_pennies_end,
         formula: {
           description: PRICING_FORMULAS[invoice.metadata.formula_used].description,
           baseFeeInPennies: PRICING_FORMULAS[invoice.metadata.formula_used].baseFeeInPennies,
