@@ -56,6 +56,8 @@ export interface InvoiceDetails {
 export interface invoiceDTO {
   id: string;
   amountInPennies: number;
+  balanceInPenniesStart: number;
+  balanceInPenniesEnd: number;
   formula: {
     description: string;
     baseFeeInPennies: number;
