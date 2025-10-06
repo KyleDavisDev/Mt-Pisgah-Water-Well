@@ -5,7 +5,7 @@ export default interface Invoice {
   property_id: number;
   amount_in_pennies: number;
   type: InvoiceType;
-  metadata: InvoiceMetadata; // formula_used, gallons_used, billing_month, billing_year, late fee reason, etc.
+  metadata: InvoiceMetadata;
   created_at: string; // ISO 8601 timestamp
   is_active: boolean;
 }
