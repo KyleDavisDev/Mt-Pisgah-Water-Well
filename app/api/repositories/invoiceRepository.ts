@@ -1,6 +1,7 @@
 import { db } from "../utils/db";
 import Invoice, { InvoiceCreate, InvoiceTotal } from "../models/Invoice";
 import { AuditRepository } from "./auditRepository";
+import { JSONValue } from "postgres";
 
 export class InvoiceRepository {
   /**
@@ -188,7 +189,7 @@ export class InvoiceRepository {
       VALUES (${newData.property_id},
               ${newData.amount_in_pennies},
               ${newData.type},
-              ${db.json(newData.metadata)},
+              ${db.json(newData.metadata as JSONValue)},
               ${newData.is_active})
       RETURNING *;
     `;
