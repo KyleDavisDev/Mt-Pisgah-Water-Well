@@ -19,7 +19,7 @@ export interface InvoiceTotal {
 
 export interface InvoiceDiscount {
   name: string;
-  description: string | null;
+  description: string | null | undefined;
 }
 
 export interface InvoiceMetadata {
