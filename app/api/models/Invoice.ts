@@ -17,7 +17,7 @@ export interface InvoiceTotal {
   amount_in_pennies: number;
 }
 
-export interface InvoiceMetadata {
+export interface InvoiceMetadata extends Record<string, unknown> {
   discounts: { name: string; description: string | null | undefined }[];
   gallons_end: number;
   billing_year: number;
