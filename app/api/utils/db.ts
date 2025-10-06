@@ -12,5 +12,5 @@ export const db = postgres({
   database: dbName, // Name of database to connect to
   username: dbUser, // Username of database user
   password: dbPassword, // Password of database user
-  max_lifetime: null
+  max: 80
 });
