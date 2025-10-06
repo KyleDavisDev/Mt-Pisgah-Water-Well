@@ -231,6 +231,17 @@ const SidebarMenu = () => {
         )}
       </div>
       <div className="pl-0">
+        <div
+          className={
+            "list-none border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a]:pl-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+          }
+        >
+          <Link href={"/admin/dashboard/properties/account-balance"} onClick={() => handleMobileClick()}>
+            Account Balance
+          </Link>
+        </div>
+      </div>
+      <div className="pl-0">
         <div className="p-[15px] border-b border-[rgb(237,241,247)] select-none hover:cursor-pointer hover:text-blue-600">
           <Button onClick={() => handleLogoutClick()} displayType={"outline"}>
             Logout
