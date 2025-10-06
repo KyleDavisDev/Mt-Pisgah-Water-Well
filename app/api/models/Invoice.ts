@@ -18,12 +18,13 @@ export interface InvoiceTotal {
 }
 
 export interface InvoiceMetadata {
-  discounts?: [{ name: string; description: string }];
-  gallons_end?: number;
-  billing_year?: number;
-  formula_used?: string;
-  gallons_used?: number;
-  billing_month?: number;
-  gallons_start?: number;
-  current_balance_in_pennies?: number;
+  discounts: { name: string; description: string | null | undefined }[];
+  gallons_end: number;
+  billing_year: number;
+  formula_used: string;
+  gallons_used: number;
+  billing_month: number;
+  gallons_start: number;
+  balance_in_pennies_start: number;
+  balance_in_pennies_end: number;
 }
