@@ -9,7 +9,7 @@ import { UsageRepository } from "../../repositories/usageRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
-import { InvoiceCreate } from "../../models/Invoice";
+import { InvoiceCreate, InvoiceDiscount } from "../../models/Invoice";
 import { withErrorHandler } from "../../utils/handlers";
 import { PricingFormula } from "../pricingFormulas/types";
 import { Discount } from "../../models/Discount";
@@ -119,6 +119,9 @@ const handler = async (req: Request): Promise<Response> => {
       const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
       const formula = getPricingFormula(parseInt(year), parseInt(month));
       const invoiceCostInPennies = calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts);
+      const discountsForInvoice: InvoiceDiscount[] = discounts.map(d => {
+        return { name: d.name, description: d.description };
+      });
       const newData: InvoiceCreate = {
         property_id: property.id,
         metadata: {
@@ -130,9 +133,7 @@ const handler = async (req: Request): Promise<Response> => {
           formula_used: `${formula.name}`,
           balance_in_pennies_start: currentBalanceInPennies,
           balance_in_pennies_end: currentBalanceInPennies - invoiceCostInPennies,
-          discounts: discounts.map(d => {
-            return { name: d.name, description: d.description };
-          })
+          discounts: discountsForInvoice
         },
         type: "WATER_USAGE",
         amount_in_pennies: invoiceCostInPennies,
