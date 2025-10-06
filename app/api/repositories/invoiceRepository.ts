@@ -188,7 +188,7 @@ export class InvoiceRepository {
       VALUES (${newData.property_id},
               ${newData.amount_in_pennies},
               ${newData.type},
-              ${db.json(newData.metadata)},
+              ${db.json(JSON.stringify(newData.metadata))},
               ${newData.is_active})
       RETURNING *;
     `;
