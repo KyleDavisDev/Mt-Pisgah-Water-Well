@@ -44,12 +44,12 @@ export const InvoiceDetailsMapper = (
     bill: {
       totalChargeAmountInPennies: totalChargeAmountInPennies,
       accountBalanceBeforeInPennies: invoice.balanceInPenniesStart,
-      accountBalanceAfterInPennies: invoice.balanceInPenniesEnd,
+      accountBalanceAfterInPennies: Math.max(invoice.balanceInPenniesEnd, 0),
       baseCharge: formatPenniesToDollars(invoice.formula.baseFeeInPennies),
       excessUsageChargeInPennies: excessUsageChargeInPennies,
       lateFee,
       otherCharges,
-      amountOwingInPennies: invoice.balanceInPenniesEnd > 0 ? 0 : invoice.balanceInPenniesEnd,
+      amountOwingInPennies: invoice.balanceInPenniesEnd > 0 ? 0 : Math.abs(invoice.balanceInPenniesEnd),
       formula: {
         baseFeeInPennies: invoice.formula.baseFeeInPennies,
         baseGallons: invoice.formula.baseGallons,
