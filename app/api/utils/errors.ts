@@ -32,3 +32,9 @@ export class MethodNotAllowedError extends HttpError {
     super(message, 405);
   }
 }
+
+export class InternalServerError extends HttpError {
+  constructor(message = "Server Error") {
+    super(message, 500);
+  }
+}
