@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
 import { getUsernameFromCookie, validatePermission } from "../../../utils/utils";
-import { BadRequestError } from "../../../utils/errors";
+import { BadRequestError, InternalServerError } from "../../../utils/errors";
 import { InvoiceRepository } from "../../../repositories/invoiceRepository";
 
 // NextJS quirk to make the route dynamic
@@ -39,6 +39,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       })
     });
   } catch (error) {
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    throw new InternalServerError("Internal server error");
   }
 }
