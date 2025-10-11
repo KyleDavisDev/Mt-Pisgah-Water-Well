@@ -154,7 +154,10 @@ const Page = () => {
     const newDeltas = { ...deltas };
     const newUsage = safeParseStr(usages[id].new);
     const previousUsage = safeParseStr(usages[id].previous);
-    newDeltas[id] = newUsage - previousUsage;
+
+    // If person didn't enter anything, assume no changes.
+    newDeltas[id] = newUsage === 0 ? 0 : newUsage - previousUsage;
+
     setDeltas(newDeltas);
     setFlashMessage({
       isVisible: false,

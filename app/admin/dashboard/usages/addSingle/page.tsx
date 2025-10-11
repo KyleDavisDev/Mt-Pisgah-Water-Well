@@ -132,8 +132,12 @@ const Page = () => {
   const updateDeltas = (id: string) => {
     const newDeltas = { ...deltas };
     const newUsage = safeParseStr(usages[id].new);
+
     const previousUsage = safeParseStr(usages[id].previous);
-    newDeltas[id] = newUsage - previousUsage;
+
+    // If person didn't enter anything, assume no changes.
+    newDeltas[id] = newUsage === 0 ? 0 : newUsage - previousUsage;
+
     setDeltas(newDeltas);
   };
 
@@ -142,7 +146,7 @@ const Page = () => {
 
     let usage = usages[id];
 
-    if (deltas[id] <= 0) return false;
+    if (deltas[id] < 0) return false;
     if (loading) return false;
 
     setLoading(true);
