@@ -2,7 +2,6 @@ import { cookies } from "next/headers";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { PaymentCreate } from "../../models/Payments";
 import { PaymentRepository } from "../../repositories/paymentRepository";
-import { ForbiddenError } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
@@ -28,22 +27,18 @@ const toModelAdapter = (payments: any): PaymentCreate[] => {
 };
 
 const handler = async (req: Request) => {
-  try {
-    const cookieStore = await cookies();
-    const jwtCookie = cookieStore.get("jwt");
-    const username = await getUsernameFromCookie(jwtCookie);
-    await validatePermission(username, "CREATE_PAYMENT");
+  const cookieStore = await cookies();
+  const jwtCookie = cookieStore.get("jwt");
+  const username = await getUsernameFromCookie(jwtCookie);
+  await validatePermission(username, "CREATE_PAYMENT");
 
-    // TODO: Data validation
-    const { payments } = await req.json();
-    const paymentsToSave = toModelAdapter(payments);
+  // TODO: Data validation
+  const { payments } = await req.json();
+  const paymentsToSave = toModelAdapter(payments);
 
-    await PaymentRepository.insertMany(username, paymentsToSave);
+  await PaymentRepository.insertMany(username, paymentsToSave);
 
-    return Response.json({ message: `Success! Saved ${paymentsToSave.length}` });
-  } catch (error) {
-    throw new ForbiddenError("Invalid username or password.");
-  }
+  return Response.json({ message: `Success! Saved ${paymentsToSave.length}` });
 };
 
 export const POST = withErrorHandler(handler);

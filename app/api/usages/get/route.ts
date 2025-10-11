@@ -8,7 +8,6 @@ import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import Usage from "../../models/Usages";
 import Homeowner from "../../models/Homeowners";
-import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
@@ -118,47 +117,37 @@ const defaultGrouping = (homeowners: Homeowner[], properties: Property[], usages
 };
 
 const handler = async (req: Request) => {
-  if (req.method !== "GET") {
-    // Handle any other HTTP method
-    throw new MethodNotAllowedError();
+  const cookieStore = await cookies();
+  const jwtCookie = cookieStore.get("jwt");
+  const username = await getUsernameFromCookie(jwtCookie);
+  await validatePermission(username, "VIEW_USAGES");
+
+  const groupBy = extractKeyFromRequest(req, "groupBy");
+
+  const homeowners = await HomeownerRepository.getAllActiveHomeowners();
+  if (!homeowners || homeowners.length === 0) {
+    return Response.json({ homeowners: [] });
   }
 
-  try {
-    const cookieStore = await cookies();
-    const jwtCookie = cookieStore.get("jwt");
-    const username = await getUsernameFromCookie(jwtCookie);
-    await validatePermission(username, "VIEW_USAGES");
+  // Fetch properties for all homeowners
+  const homeownerIds = homeowners.map(h => h.id);
+  const properties = await PropertyRepository.getAllActivePropertiesByHomeownerIdIn(homeownerIds);
+  if (!properties || properties.length === 0) {
+    return Response.json({
+      homeowners: homeowners.map(h => ({ id: h.id.toString(), name: h.name, properties: [] }))
+    });
+  }
 
-    const groupBy = extractKeyFromRequest(req, "groupBy");
+  // Fetch latest usages for all properties in a single query
+  const propertyIds = properties.map(p => p.id);
+  const usages = await UsageRepository.findAllActiveByPropertyIdInAndLimitBy(propertyIds, 100);
 
-    const homeowners = await HomeownerRepository.getAllActiveHomeowners();
-    if (!homeowners || homeowners.length === 0) {
-      return Response.json({ homeowners: [] });
-    }
-
-    // Fetch properties for all homeowners
-    const homeownerIds = homeowners.map(h => h.id);
-    const properties = await PropertyRepository.getAllActivePropertiesByHomeownerIdIn(homeownerIds);
-    if (!properties || properties.length === 0) {
-      return Response.json({
-        homeowners: homeowners.map(h => ({ id: h.id.toString(), name: h.name, properties: [] }))
-      });
-    }
-
-    // Fetch latest usages for all properties in a single query
-    const propertyIds = properties.map(p => p.id);
-    const usages = await UsageRepository.findAllActiveByPropertyIdInAndLimitBy(propertyIds, 100);
-
-    if (groupBy?.length === 1 && groupBy[0] === "HOMEOWNER") {
-      return homeownerGrouping(homeowners, properties, usages);
-    } else if (groupBy?.length === 1 && groupBy[0] === "WALKABLE") {
-      return walkableGrouping(homeowners, properties, usages);
-    } else {
-      return defaultGrouping(homeowners, properties, usages);
-    }
-  } catch (error) {
-    console.log(error);
-    throw new ForbiddenError("Invalid username or password.");
+  if (groupBy?.length === 1 && groupBy[0] === "HOMEOWNER") {
+    return homeownerGrouping(homeowners, properties, usages);
+  } else if (groupBy?.length === 1 && groupBy[0] === "WALKABLE") {
+    return walkableGrouping(homeowners, properties, usages);
+  } else {
+    return defaultGrouping(homeowners, properties, usages);
   }
 };
 

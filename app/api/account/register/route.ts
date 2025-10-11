@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { UserRepository } from "../../repositories/userRepository";
 import { AuditRepository } from "../../repositories/auditRepository";
 import { withErrorHandler } from "../../utils/handlers";
+import { BadRequestError, InternalServerError } from "../../utils/errors";
 
 const pwConcat = process.env.PASSWORD_CONCAT;
 const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
@@ -13,11 +14,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Basic validation
     if (!name || !username || !password) {
-      return new Response("Missing required fields.", { status: 400 });
+      throw new BadRequestError("Missing required fields.");
     }
 
     if (!pwConcat || !saltRounds) {
-      return new Response("Server misconfiguration.", { status: 500 });
+      throw new InternalServerError("Server misconfiguration.");
     }
 
     try {
@@ -40,7 +41,7 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     if (!auditLog) {
-      return new Response("Unable to insert audit_log record", { status: 500 });
+      throw new InternalServerError("Unable to insert audit_log record");
     }
 
     try {
@@ -65,7 +66,7 @@ const handler = async (req: Request): Promise<Response> => {
     return Response.json({ message: "User created successfully" }, { status: 201 });
   } catch (error) {
     console.error("User creation failed:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    throw new InternalServerError("Internal Server Error");
   }
 };
 
