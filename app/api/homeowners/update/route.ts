@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { AuditRepository } from "../../repositories/auditRepository";
-import { BadRequestError, ForbiddenError, ResourceNotFound } from "../../utils/errors";
+import { BadRequestError, ForbiddenError, ResourceNotFoundError } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
 import { HomeownerRepository } from "../../repositories/homeownerRepository";
 
@@ -37,7 +37,7 @@ const handler = async (req: Request) => {
     const oldRecord = await HomeownerRepository.getHomeownerByPropertyId(parseInt(id, 10));
 
     if (!oldRecord) {
-      throw new ResourceNotFound("Cannot find homeowners record");
+      throw new ResourceNotFoundError("Cannot find homeowners record");
     }
 
     // Get new record data

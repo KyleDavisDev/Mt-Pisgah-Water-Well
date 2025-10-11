@@ -5,7 +5,7 @@ import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import { PRICING_FORMULAS } from "../pricingFormulas";
-import { MethodNotAllowedError, ResourceNotFound } from "../../utils/errors";
+import { MethodNotAllowedError, ResourceNotFoundError } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
@@ -21,7 +21,7 @@ const handler = async (req: Request, { params }: { params: Promise<{ id: string 
   const { id } = await params;
   const bill = await InvoiceRepository.getInvoiceById(id);
   if (!bill) {
-    throw new ResourceNotFound("Bill not found");
+    throw new ResourceNotFoundError("Bill not found");
   }
 
   // Fetch associated homeowner data, property address, historical usages, and late fees in parallel
@@ -38,7 +38,7 @@ const handler = async (req: Request, { params }: { params: Promise<{ id: string 
   ]);
 
   if (!homeowner || !property) {
-    throw new ResourceNotFound("Homeowner and Property info not found");
+    throw new ResourceNotFoundError("Homeowner and Property info not found");
   }
 
   return Response.json({
