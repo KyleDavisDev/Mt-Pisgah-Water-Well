@@ -3,7 +3,7 @@ import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Homeowner from "../../models/Homeowners";
 import { AuditRepository } from "../../repositories/auditRepository";
-import { ForbiddenError } from "../../utils/errors";
+import { BadRequestError, ForbiddenError, ResourceNotFound } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
@@ -19,7 +19,7 @@ const handler = async (req: Request) => {
     const { name, email, phone, mailingAddress, id, isActive } = await req.json();
 
     if (!name || !mailingAddress || !id || isActive === undefined) {
-      return new Response("Missing required fields", { status: 400 });
+      throw new BadRequestError("Missing required fields");
     }
 
     if (
@@ -30,7 +30,7 @@ const handler = async (req: Request) => {
       (email !== null && typeof email !== "string") ||
       (phone !== null && typeof phone !== "string")
     ) {
-      return new Response("Invalid field format", { status: 400 });
+      throw new BadRequestError("Invalid field format");
     }
 
     // Find record to be edited
@@ -41,7 +41,7 @@ const handler = async (req: Request) => {
     `;
 
     if (!oldRecords) {
-      return new Response("Cannot find homeowners record", { status: 404 });
+      throw new ResourceNotFound("Cannot find homeowners record");
     }
 
     // Get new record data
@@ -78,7 +78,6 @@ const handler = async (req: Request) => {
 
     return Response.json({ message: "Success!" });
   } catch (error) {
-    console.log(error);
     throw new ForbiddenError("Invalid username or password.");
   }
 };
