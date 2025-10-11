@@ -3,6 +3,7 @@ import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { AuditRepository } from "../../repositories/auditRepository";
 import { withErrorHandler } from "../../utils/handlers";
+import { BadRequestError, InternalServerError, UnauthorizedError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -12,11 +13,11 @@ const handler = async (req: Request) => {
     const cookieStore = await cookies();
     const jwtCookie = cookieStore.get("jwt");
     if (!jwtCookie) {
-      return new Response("Unauthorized", { status: 401 });
+      throw new UnauthorizedError();
     }
     const username = await getUsernameFromCookie(jwtCookie);
     if (!username) {
-      return new Response("Unauthorized", { status: 401 });
+      throw new UnauthorizedError();
     }
     await validatePermission(username, "ADD_HOMEOWNER");
 
@@ -28,7 +29,7 @@ const handler = async (req: Request) => {
       (email !== null && typeof email !== "string") ||
       (phone !== null && typeof phone !== "string")
     ) {
-      return new Response("Missing required fields", { status: 400 });
+      throw new BadRequestError("Missing required fields");
     }
 
     const auditLog = await AuditRepository.addAuditTableRecord({
@@ -40,7 +41,7 @@ const handler = async (req: Request) => {
     });
 
     if (!auditLog) {
-      return new Response("Unable to insert audit_log record", { status: 500 });
+      throw new InternalServerError("Unable to insert audit_log record");
     }
 
     try {
@@ -65,7 +66,7 @@ const handler = async (req: Request) => {
     return Response.json({ message: "Success!" });
   } catch (error) {
     console.log(error);
-    return new Response("Something went wrong.", { status: 500 });
+    throw new InternalServerError("Something went wrong.");
   }
 };
 
