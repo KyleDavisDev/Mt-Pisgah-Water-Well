@@ -4,6 +4,7 @@ import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { UsageRepository } from "../../repositories/usageRepository";
 import { AuditRepository } from "../../repositories/auditRepository";
 import { withErrorHandler } from "../../utils/handlers";
+import { BadRequestError, ResourceNotFoundError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -17,12 +18,12 @@ const handler = async (req: Request) => {
   const { id, gallons, isActive } = await req.json();
 
   if (!id || !gallons || !isActive) {
-    return new Response("Missing required fields", { status: 400 });
+    throw new BadRequestError("Missing required fields");
   }
 
   // Find record to be edited
   const oldUsage = await UsageRepository.getUsageById(id);
-  if (!oldUsage) return new Response("Cannot find usage record", { status: 404 });
+  if (!oldUsage) throw new ResourceNotFoundError("Cannot find usage record");
 
   // Get new record data
   const newUsage = { ...oldUsage, gallons, is_active: isActive === "true" };

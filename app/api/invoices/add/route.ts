@@ -14,6 +14,7 @@ import { withErrorHandler } from "../../utils/handlers";
 import { PricingFormula } from "../pricingFormulas/types";
 import { Discount } from "../../models/Discount";
 import { DiscountRepository } from "../../repositories/discountRepository";
+import { BadRequestError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -71,7 +72,7 @@ const handler = async (req: Request): Promise<Response> => {
   const { month, year } = await req.json();
 
   if (!month || !year) {
-    return new Response("Missing month or year", { status: 400 });
+    throw new BadRequestError("Missing month or year");
   }
 
   const { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth } = getStartAndEndOfProvidedMonthAndNextMonth(
