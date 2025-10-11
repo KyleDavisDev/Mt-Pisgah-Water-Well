@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import Homeowner from "../../models/Homeowners";
 import { AuditRepository } from "../../repositories/auditRepository";
 import { BadRequestError, ForbiddenError, ResourceNotFound } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
