@@ -5,6 +5,7 @@ import Homeowner from "../../models/Homeowners";
 import { AuditRepository } from "../../repositories/auditRepository";
 import { BadRequestError, ForbiddenError, ResourceNotFound } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
+import { HomeownerRepository } from "../../repositories/homeownerRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -34,24 +35,20 @@ const handler = async (req: Request) => {
     }
 
     // Find record to be edited
-    const oldRecords = await db<Homeowner[]>`
-        SELECT *
-        FROM homeowners
-        where id = ${id}
-    `;
+    const oldRecord = await HomeownerRepository.getHomeownerByPropertyId(parseInt(id, 10));
 
-    if (!oldRecords) {
+    if (!oldRecord) {
       throw new ResourceNotFound("Cannot find homeowners record");
     }
 
     // Get new record data
-    const newObj = { ...oldRecords[0], name, email, phone, mailingAddress, id, is_active: isActive === "true" };
+    const newObj = { ...oldRecord, name, email, phone, mailingAddress, id, is_active: isActive === "true" };
 
     // log intent
     const auditRecord = await AuditRepository.addAuditTableRecord({
-      oldData: JSON.stringify(oldRecords[0]),
+      oldData: JSON.stringify(oldRecord),
       newData: JSON.stringify(newObj),
-      recordId: oldRecords[0].id,
+      recordId: oldRecord.id,
       tableName: "homeowners",
       actionType: "UPDATE",
       actionBy: username
