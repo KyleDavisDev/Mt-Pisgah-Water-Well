@@ -86,6 +86,19 @@ const Page = () => {
     );
   }
 
+  const downloadInvoice = (id: string) => {
+    console.log("am ihere?");
+    console.log(id);
+    const url = `/api/invoices/${id}/download`;
+    // Create a hidden <a> to force a download without navigation.
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = ""; // forces download in most browsers
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   return (
     <ArticleHolder>
       <h3>Invoices</h3>
@@ -160,6 +173,7 @@ const Page = () => {
                               >
                                 View Invoice
                               </Button>
+                              <Button onClick={() => downloadInvoice(invoice.id)}>Download</Button>
                             </td>
                           </tr>
                         ))}
