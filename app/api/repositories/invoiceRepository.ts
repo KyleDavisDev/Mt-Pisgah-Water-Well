@@ -129,18 +129,18 @@ export class InvoiceRepository {
     if (!limit || limit <= 0 || billingMonth < 1 || billingMonth > 12 || billingYear < 0) return [];
 
     const bills = await db<Invoice[]>`
-    SELECT *
-    FROM invoices
-    WHERE is_active = true
-      AND property_id = ${propertyId}
-      AND type = 'WATER_USAGE'
-      AND (
-      (metadata ->> 'billing_year')::INT < ${billingYear} OR
-      ((metadata ->> 'billing_year')::INT = ${billingYear} AND (metadata ->> 'billing_month')::INT < ${billingMonth})
-      )
-    ORDER BY (metadata ->> 'billing_year')::INT DESC, (metadata ->> 'billing_month')::INT DESC
-    LIMIT ${limit};
-  `;
+      SELECT *
+      FROM invoices
+      WHERE is_active = true
+        AND property_id = ${propertyId}
+        AND type = 'WATER_USAGE'
+        AND (
+          (metadata ->> 'billing_year')::INT < ${billingYear} OR
+          ((metadata ->> 'billing_year')::INT = ${billingYear} AND (metadata ->> 'billing_month')::INT < ${billingMonth})
+        )
+      ORDER BY (metadata ->> 'billing_year')::INT DESC, (metadata ->> 'billing_month')::INT DESC
+      LIMIT ${limit};
+    `;
 
     return bills ?? [];
   };
