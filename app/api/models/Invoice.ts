@@ -10,7 +10,7 @@ export default interface Invoice {
   is_active: boolean;
 }
 
-export type InvoiceCreate = Omit<Invoice, "id" | "created_at">;
+export type InvoiceCreate = Omit<Invoice, "id">;
 
 export interface InvoiceTotal {
   property_id: number;
