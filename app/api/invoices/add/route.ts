@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import {
-  getCurrentPropertyAccountBalance,
+  addRandomDaysToDate,
+  getPropertyAccountBalanceAtDate,
   getStartAndEndOfProvidedMonthAndNextMonth,
   getUsernameFromCookie,
   validatePermission
@@ -69,7 +70,7 @@ const handler = async (req: Request): Promise<Response> => {
   await validatePermission(username, "CREATE_INVOICE");
 
   // TODO: Data validation
-  const { month, year } = await req.json();
+  const { month, year, propertyId } = await req.json();
 
   if (!month || !year) {
     throw new BadRequestError("Missing month or year");
@@ -80,9 +81,9 @@ const handler = async (req: Request): Promise<Response> => {
     month
   );
 
-  const properties = await PropertyRepository.getAllActiveProperties();
-
+  const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
   const propertyIds = properties.map((p: any) => p.id);
+
   const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
     startOfMonth,
     endOfMonth,
@@ -112,7 +113,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (existing.length > 0) continue;
 
     const [currentBalanceInPennies, discounts] = await Promise.all([
-      getCurrentPropertyAccountBalance(property.id),
+      getPropertyAccountBalanceAtDate(property.id, `${year}-${month}-15`),
       DiscountRepository.getByPropertyId(property.id)
     ]);
 
@@ -137,7 +138,8 @@ const handler = async (req: Request): Promise<Response> => {
       },
       type: "WATER_USAGE",
       amount_in_pennies: invoiceCostInPennies,
-      is_active: true
+      is_active: true,
+      created_at: addRandomDaysToDate(startOfNextMonth, 1, 5)
     };
 
     await InvoiceRepository.insertNewInvoiceAsTransactional(username, newData);
