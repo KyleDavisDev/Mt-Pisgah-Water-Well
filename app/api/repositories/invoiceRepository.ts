@@ -158,6 +158,23 @@ export class InvoiceRepository {
     return payments ?? [];
   };
 
+  static findActiveTotalByPropertyIdsAndCreatedBefore = async (
+    propertyIds: number[],
+    createdBefore: string
+  ): Promise<InvoiceTotal[]> => {
+    const payments = await db<InvoiceTotal[]>`
+      SELECT property_id,
+             COALESCE(SUM(i.amount_in_pennies), 0) AS amount_in_pennies
+      FROM invoices i
+      WHERE i.property_id IN ${db(propertyIds)}
+        AND i.created_at < ${createdBefore}
+        AND i.is_active = true
+      GROUP BY i.property_id;
+    `;
+
+    return payments ?? [];
+  };
+
   /**
    * Inserts a new invoice record into the database within a transactional context.
    *
@@ -184,12 +201,14 @@ export class InvoiceRepository {
                             amount_in_pennies,
                             type,
                             metadata,
-                            is_active)
+                            is_active,
+                            created_at)
       VALUES (${newData.property_id},
               ${newData.amount_in_pennies},
               ${newData.type},
               ${db.json(newData.metadata)},
-              ${newData.is_active})
+              ${newData.is_active},
+              ${newData.created_at})
       RETURNING *;
     `;
 
