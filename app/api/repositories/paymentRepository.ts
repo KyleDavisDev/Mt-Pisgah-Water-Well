@@ -46,6 +46,23 @@ export class PaymentRepository {
     return payments ?? [];
   }
 
+  static async findActiveTotalByPropertyIdsAndCreatedBefore(
+    propertyIds: number[],
+    createdBefore: string
+  ): Promise<PaymentTotal[]> {
+    const payments = await db<PaymentTotal[]>`
+      SELECT property_id,
+             COALESCE(SUM(p.amount_in_pennies), 0) AS amount_in_pennies
+      FROM payments p
+      WHERE p.property_id IN ${db(propertyIds)}
+        AND p.is_active = true
+        AND p.created_at < ${createdBefore}
+      GROUP BY p.property_id;
+    `;
+
+    return payments ?? [];
+  }
+
   /**
    * Retrieves the most recent active payment records for each property ID, limited to `limit` per property.
    * @param propertyIds list of property IDs to filter by
