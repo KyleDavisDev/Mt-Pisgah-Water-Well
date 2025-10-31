@@ -1,9 +1,11 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../repositories/userRepository";
-import { BadRequestError, ForbiddenError } from "./errors";
+import { BadRequestError, ForbiddenError, ResourceNotFoundError } from "./errors";
 import { PaymentRepository } from "../repositories/paymentRepository";
 import { InvoiceRepository } from "../repositories/invoiceRepository";
+import { HomeownerRepository } from "../repositories/homeownerRepository";
+import { PropertyRepository } from "../repositories/propertyRepository";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -168,6 +170,17 @@ export const getStartAndEndOfProvidedMonthAndNextMonth = (
   return { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth };
 };
 
+export const addRandomDaysToDate = (date: string, minDays: number = 1, maxDays: number = 30) => {
+  // TODO: Basic validations
+
+  const offsetDays = Math.floor(Math.random() * (maxDays - minDays + 1)) + minDays;
+
+  const dt = new Date(date);
+  dt.setUTCDate(dt.getUTCDate() + offsetDays);
+
+  return `${dt.getUTCFullYear()}-${(dt.getUTCMonth() + 1).toString().padStart(2, "0")}-${dt.getUTCDate().toString().padStart(2, "0")}`;
+};
+
 /**
  * Retrieves the current account balance for a specific property.
  *
@@ -193,6 +206,40 @@ export const getCurrentPropertyAccountBalance = async (propertyId: number): Prom
   return (
     (!!totalPayment[0] ? totalPayment[0].amount_in_pennies : 0) - (!!totalOwed[0] ? totalOwed[0].amount_in_pennies : 0)
   );
+};
+
+/**
+ * Retrieves the current account balance for a specific property.
+ *
+ * This function calculates the balance by asynchronously fetching
+ * the total payments and total owed amounts associated with the
+ * provided property ID and then performing a subtraction
+ * (total payments - total owed).
+ *
+ * @param {number} propertyId - The unique identifier of the property.
+ * @param date - The date to look at the balance at
+ * @returns {Promise<number>} A promise that resolves to the account balance
+ * in pennies for the given property ID.
+ */
+export const getPropertyAccountBalanceAtDate = async (propertyId: number, date: string): Promise<number> => {
+  if (propertyId <= 0) return 0;
+
+  // TODO: Validate date string
+
+  const [totalPayment, totalInvoiced] = await Promise.all([
+    PaymentRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], date),
+    InvoiceRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], date)
+  ]);
+
+  // It's possible for `totalPayment` to be empty here like in the case of the Well property
+  // since that property, technically, doesn't make any payments.
+  const totalPaid = !totalPayment[0] ? 0 : totalPayment[0].amount_in_pennies;
+
+  const totalCharged = !totalInvoiced[0] ? 0 : totalInvoiced[0].amount_in_pennies;
+
+  console.log(`For ${date} there is a totalPayment of ${totalPaid} and a totalOwed of ${totalCharged}`);
+
+  return totalPaid - totalCharged;
 };
 
 /**
@@ -233,3 +280,25 @@ export async function withRetry<T>(fn: () => Promise<T>, retries: number = 50, d
   }
   throw lastError;
 }
+
+export const fetchInvoiceDetails = async (id: string) => {
+  const bill = await InvoiceRepository.getInvoiceById(id);
+  if (!bill) {
+    throw new ResourceNotFoundError("Bill not found");
+  }
+
+  // Fetch associated homeowner data, property address, historical usages, and late fees in parallel
+  const [homeowner, property, historicalInvoices, lateFees] = await Promise.all([
+    HomeownerRepository.getHomeownerByPropertyId(bill.property_id),
+    PropertyRepository.getPropertyById(bill.property_id),
+    InvoiceRepository.getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
+      bill.property_id,
+      11,
+      bill.metadata.billing_month,
+      bill.metadata.billing_year
+    ),
+    Promise.resolve(() => 0) // TODO: late fees
+  ]);
+
+  return { bill, homeowner, property, historicalInvoices };
+};
