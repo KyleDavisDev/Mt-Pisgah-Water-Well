@@ -84,7 +84,8 @@ The following summarizes the main database tables, inferred from the models and 
   - recorded_by_id: number
   - is_active: boolean
 
-- **invoices**
+
+- **invoices** (Will be deprecated in favor of `fees` + `bills` paradigm)
   - id: number
   - property_id: number
   - amount_in_pennies: number
@@ -92,6 +93,26 @@ The following summarizes the main database tables, inferred from the models and 
   - metadata: JSON (formula_used, gallons_used, billing_month, billing_year, etc.)
   - created_at: string (ISO 8601)
   - is_active: boolean
+
+- **fees**
+- id: number
+- property_id: number
+- bill_id: number
+- amount_in_pennies: number
+- category: "WATER_USAGE" | "ADMINISTRATIVE" | "LATE_FEE" | "SERVICE_FEE" | "CUSTOM";
+- metadata: JSON (formula_used, gallons_used, description, etc.)
+- created_at: string (ISO 8601)
+- is_active: boolean
+
+- **bills**
+- id: number
+- property_id: number
+- total_in_pennies: number
+- billing_month: number
+- billing_year: number
+- metadata: JSON (The "frozen-in-time" values from `fees`)
+- created_at: string (ISO 8601)
+- is_active: boolean
 
 - **payments**
   - id: number
