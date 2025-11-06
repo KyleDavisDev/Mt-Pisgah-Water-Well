@@ -1,7 +1,7 @@
 import { db } from "../utils/db";
 import Fee, { FeeCreate } from "../models/Fee";
 import { AuditRepository } from "./auditRepository";
-import { getStartAndEndOfProvidedMonthAndNextMonth } from "../utils/utils";
+import { getAdjacentMonthRanges } from "../utils/utils";
 
 export class FeeRepository {
   /**
@@ -59,17 +59,14 @@ export class FeeRepository {
   ): Promise<Fee[]> => {
     if (!Array.isArray(propertyIds) || propertyIds.length === 0) return [];
 
-    const { startOfMonth, startOfNextMonth } = getStartAndEndOfProvidedMonthAndNextMonth(
-      year.toString(10),
-      month.toString(10)
-    );
+    const { startOfCurrentMonth, startOfNextMonth } = getAdjacentMonthRanges(year.toString(10), month.toString(10));
 
     const fees = await db<Fee[]>`
     SELECT *
     FROM fees
     WHERE is_active = true
       AND property_id IN ${db(propertyIds)}
-        AND created_at >= ${startOfMonth}
+        AND created_at >= ${startOfCurrentMonth}
     AND created_at < ${startOfNextMonth}
   `;
 
