@@ -47,7 +47,7 @@ export default function BillViewContent({ billDetails }: BillViewContentProps) {
         <div className={"[&_p]:mt-[4px] [&_p]:mb-[4px] [&_p]:mr-0 [&_p]:ml-0 [&_p]:text-[14px]"}></div>
       </div>
 
-      <div className={"bg-[#f8f8f8] p-[20px] rounded-sm mt-6 mb-6"}>
+      <div className={"bg-[#dfdfdf] p-[20px] rounded-sm mt-6 mb-6"}>
         <div className={"flex flex-row items-center"}>
           <div className={"flex-1 text-center"}>
             <h5 className={"text-[14px] mb-[8px] text-[#666666]"}>Month</h5>
