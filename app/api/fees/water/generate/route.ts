@@ -16,7 +16,7 @@ import { FeeRepository } from "../../../repositories/FeeRepository";
 import { PricingFormula } from "../../../invoices/pricingFormulas/types";
 import { PropertyRepository } from "../../../repositories/propertyRepository";
 
-export const createWaterUsageFees = async (
+export const createAndInsertWaterUsageFees = async (
   dateCollected: string,
   propertyIds: number[],
   username: string
@@ -100,7 +100,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
 
-  const fees = createWaterUsageFees(
+  const fees = createAndInsertWaterUsageFees(
     `${year}-${month}-02`,
     properties.map(x => x.id),
     username
