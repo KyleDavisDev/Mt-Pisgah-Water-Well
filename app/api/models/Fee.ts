@@ -20,6 +20,8 @@ export type WaterUsageMetaData = {
   gallons_end: number;
   gallons_used: number;
   formula_used: string;
+  usage_month: number;
+  usage_year: number;
 };
 
 export type AdministrativeMetaData = {
