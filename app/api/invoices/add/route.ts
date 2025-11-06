@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import {
   addRandomDaysToDate,
   getPropertyAccountBalanceAtDate,
-  getStartAndEndOfProvidedMonthAndNextMonth,
+  getAdjacentMonthRanges,
   getUsernameFromCookie,
   validatePermission
 } from "../../utils/utils";
@@ -16,21 +16,10 @@ import { PricingFormula } from "../pricingFormulas/types";
 import { Discount } from "../../models/Discount";
 import { DiscountRepository } from "../../repositories/discountRepository";
 import { BadRequestError } from "../../utils/errors";
+import { getWaterPricingFormula } from "../../fees/createFee";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
-
-const getPricingFormula = (year: number, month: number) => {
-  // On Sept 6 2025, there was a W.S.C. meeting and a new formula was adopted.
-  const cutoffYear = 2025;
-  const cutoffMonth = 9;
-
-  if (year < cutoffYear || (year === cutoffYear && month < cutoffMonth)) {
-    return PRICING_FORMULAS["tiered_2025_v1"];
-  } else {
-    return PRICING_FORMULAS["tiered_2025_September_v1"];
-  }
-};
 
 const calculateFinalInvoiceCostInPennies = (
   gallons_used: number,
@@ -76,7 +65,7 @@ const handler = async (req: Request): Promise<Response> => {
     throw new BadRequestError("Missing month or year");
   }
 
-  const { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth } = getStartAndEndOfProvidedMonthAndNextMonth(
+  const { startOfCurrentMonth, endOfCurrentMonth, startOfNextMonth, endOfNextMonth } = getAdjacentMonthRanges(
     year,
     month
   );
@@ -85,8 +74,8 @@ const handler = async (req: Request): Promise<Response> => {
   const propertyIds = properties.map((p: any) => p.id);
 
   const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
-    startOfMonth,
-    endOfMonth,
+    startOfCurrentMonth,
+    endOfCurrentMonth,
     propertyIds
   );
   const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
@@ -118,7 +107,7 @@ const handler = async (req: Request): Promise<Response> => {
     ]);
 
     const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
-    const formula = getPricingFormula(parseInt(year), parseInt(month));
+    const formula = getWaterPricingFormula(parseInt(year), parseInt(month));
     const invoiceCostInPennies = calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts);
     const discountsForInvoice: InvoiceDiscount[] = discounts.map(d => {
       return { name: d.name, description: d.description };
