@@ -6,6 +6,7 @@ import { PaymentRepository } from "../repositories/paymentRepository";
 import { InvoiceRepository } from "../repositories/invoiceRepository";
 import { HomeownerRepository } from "../repositories/homeownerRepository";
 import { PropertyRepository } from "../repositories/propertyRepository";
+import { BillRepository } from "../repositories/billRepository";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -253,13 +254,13 @@ export const getCurrentPropertyAccountBalance = async (propertyId: number): Prom
 
   const [totalPayment, totalOwed] = await Promise.all([
     PaymentRepository.findActiveTotalByPropertyIds([propertyId]),
-    InvoiceRepository.findActiveTotalByPropertyIds([propertyId])
+    BillRepository.findActiveTotalByPropertyIds([propertyId])
   ]);
 
   // It's possible for `totalPayment` to be empty here like in the case of the Well property
   // since that property, technically, doesn't make any payments.
   return (
-    (!!totalPayment[0] ? totalPayment[0].amount_in_pennies : 0) - (!!totalOwed[0] ? totalOwed[0].amount_in_pennies : 0)
+    (!!totalPayment[0] ? totalPayment[0].amount_in_pennies : 0) - (!!totalOwed[0] ? totalOwed[0].total_in_pennies : 0)
   );
 };
 
@@ -281,16 +282,16 @@ export const getPropertyAccountBalanceAtDate = async (propertyId: number, date: 
 
   // TODO: Validate date string
 
-  const [totalPayment, totalInvoiced] = await Promise.all([
+  const [totalPayment, totalBilled] = await Promise.all([
     PaymentRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], date),
-    InvoiceRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], date)
+    BillRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], date)
   ]);
 
   // It's possible for `totalPayment` to be empty here like in the case of the Well property
   // since that property, technically, doesn't make any payments.
   const totalPaid = !totalPayment[0] ? 0 : totalPayment[0].amount_in_pennies;
 
-  const totalCharged = !totalInvoiced[0] ? 0 : totalInvoiced[0].amount_in_pennies;
+  const totalCharged = !totalBilled[0] ? 0 : totalBilled[0].total_in_pennies;
 
   return totalPaid - totalCharged;
 };
