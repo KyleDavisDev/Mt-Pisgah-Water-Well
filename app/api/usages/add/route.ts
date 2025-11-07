@@ -5,7 +5,7 @@ import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Usage from "../../models/Usages";
 import { AuditRepository } from "../../repositories/auditRepository";
 import { withErrorHandler } from "../../utils/handlers";
-import { createAndInsertWaterUsageFees } from "../../fees/water/generate/route";
+import { createAndInsertWaterUsageFees } from "../../fees/water/add/route";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
