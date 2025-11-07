@@ -9,11 +9,11 @@ import {
 } from "../../../utils/utils";
 import { BadRequestError } from "../../../utils/errors";
 import { UsageRepository } from "../../../repositories/usageRepository";
-import { getWaterPricingFormula } from "../../createFee";
+import { getWaterPricingFormulaByYearAndMonth } from "../../createFee";
 import { withErrorHandler } from "../../../utils/handlers";
 import Fee, { FeeCreate, WaterUsageMetaData } from "../../../models/Fee";
 import { FeeRepository } from "../../../repositories/FeeRepository";
-import { PricingFormula } from "../../../invoices/pricingFormulas/types";
+import { PricingFormula } from "../pricingFormulas/types";
 import { PropertyRepository } from "../../../repositories/propertyRepository";
 
 export const createAndInsertWaterUsageFees = async (
@@ -56,7 +56,10 @@ export const createAndInsertWaterUsageFees = async (
 
     const prevMonth = parseYMD(startOfPreviousMonth);
     // TODO: Might have an off-by-one here.
-    const formula: PricingFormula = getWaterPricingFormula(parseInt(prevMonth.year), parseInt(prevMonth.month));
+    const formula: PricingFormula = getWaterPricingFormulaByYearAndMonth(
+      parseInt(prevMonth.year),
+      parseInt(prevMonth.month)
+    );
 
     const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
 
