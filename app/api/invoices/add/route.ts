@@ -8,7 +8,6 @@ import {
 } from "../../utils/utils";
 import { UsageRepository } from "../../repositories/usageRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
-import { PRICING_FORMULAS } from "../pricingFormulas";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { InvoiceCreate, InvoiceDiscount } from "../../models/Invoice";
 import { withErrorHandler } from "../../utils/handlers";
@@ -16,7 +15,7 @@ import { PricingFormula } from "../pricingFormulas/types";
 import { Discount } from "../../models/Discount";
 import { DiscountRepository } from "../../repositories/discountRepository";
 import { BadRequestError } from "../../utils/errors";
-import { getWaterPricingFormula } from "../../fees/createFee";
+import { getWaterPricingFormulaByYearAndMonth } from "../../fees/createFee";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -107,7 +106,7 @@ const handler = async (req: Request): Promise<Response> => {
     ]);
 
     const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
-    const formula = getWaterPricingFormula(parseInt(year), parseInt(month));
+    const formula = getWaterPricingFormulaByYearAndMonth(parseInt(year), parseInt(month));
     const invoiceCostInPennies = calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts);
     const discountsForInvoice: InvoiceDiscount[] = discounts.map(d => {
       return { name: d.name, description: d.description };
