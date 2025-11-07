@@ -68,6 +68,7 @@ export class FeeRepository {
       AND property_id IN ${db(propertyIds)}
         AND created_at >= ${startOfCurrentMonth}
     AND created_at < ${startOfNextMonth}
+    ORDER BY created_at desc
   `;
 
     return fees ?? [];
