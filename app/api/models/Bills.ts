@@ -17,10 +17,32 @@ export type BillDiscount = {
 };
 
 export type BillMetaData = {
-  water_usage: WaterUsageMetaData;
-  discounts?: BillDiscount[];
-  administrative?: AdministrativeMetaData;
-  late?: LateMetaData;
-  service?: ServiceMetaData;
-  custom?: CustomMetaData;
+  account_balance: AccountMetaData;
+  water_usage: WaterBillMetaData;
+  discount?: BillDiscount;
+  administrative?: AdministrativeBillMetaData;
+  late?: LateBillMetaData;
+  service?: ServiceBillMetaData;
+  custom?: CustomBillMetaData;
 };
+
+export type AccountMetaData = {
+  balance_in_pennies_start: number;
+  balance_in_pennies_end: number;
+};
+
+export type WaterBillMetaData = WaterUsageMetaData & {
+  amount_in_pennies: number;
+};
+
+export type AdministrativeBillMetaData = AdministrativeMetaData & { amount_in_pennies: number };
+export type LateBillMetaData = LateMetaData & { amount_in_pennies: number };
+export type ServiceBillMetaData = ServiceMetaData & { amount_in_pennies: number };
+export type CustomBillMetaData = CustomMetaData & { amount_in_pennies: number };
+
+export type BillCreate = Omit<Bill, "id">;
+
+export interface BillTotal {
+  property_id: number;
+  total_in_pennies: number;
+}
