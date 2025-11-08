@@ -26,7 +26,7 @@ import Fee, {
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const calculateFinalInvoiceCostInPennies = (fees: Fee[], discount: Discount | null): number => {
+const calculateFinalCostInPennies = (fees: Fee[], discount: Discount | null): number => {
   let totalAmountInPenniesToDeduct = 0;
   if (discount) {
     // Flat discount for the whole bill
@@ -101,7 +101,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // 3. Get the final cost of the invoice
-    const invoiceCostInPennies = calculateFinalInvoiceCostInPennies(fees, discount);
+    const invoiceCostInPennies = calculateFinalCostInPennies(fees, discount);
 
     // 4. Construct insertion object
     const newData: BillCreate = {
