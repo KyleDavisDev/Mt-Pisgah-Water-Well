@@ -1,6 +1,8 @@
 import { db } from "../utils/db";
 import Bill, { BillCreate, BillTotal } from "../models/Bills";
 import { AuditRepository } from "./auditRepository";
+import Fee from "../models/Fee";
+import { FeeRepository } from "./FeeRepository";
 
 export class BillRepository {
   /**
@@ -117,10 +119,15 @@ export class BillRepository {
    *
    * @param {String} user - The user who is doing the inserting.
    * @param {BillCreate} newData - The invoice data to insert.
+   * @param {Fee[]} fees - The fees to associate with the newly-created bill.
    *
    * @returns {Promise<Bill | null>} Resolves to the newly created invoice record.
    */
-  static insertNewBillAsTransactional = async (user: string, newData: BillCreate): Promise<Bill | null> => {
+  static insertNewBillAsTransactional = async (
+    user: string,
+    newData: BillCreate,
+    fees: Fee[]
+  ): Promise<Bill | null> => {
     const auditLog = await AuditRepository.addAuditTableRecord({
       tableName: "bills",
       recordId: 0,
@@ -136,8 +143,8 @@ export class BillRepository {
       const justInsertedBill = await db<Bill[]>`
       INSERT INTO bills (property_id,
                             total_in_pennies,
-                             billing_month,
-                             billing_year,
+                            billing_month,
+                            billing_year,
                             metadata,
                             is_active,
                             created_at)
@@ -150,6 +157,13 @@ export class BillRepository {
               ${newData.created_at})
       RETURNING *;
     `;
+
+      await Promise.all(
+        fees.map(async fee => {
+          const updatedFee = { ...fee, bill_id: justInsertedBill[0].id };
+          await FeeRepository.updateFeeAsTransactional(user, fee, updatedFee);
+        })
+      );
 
       await db`
       UPDATE audit_log
