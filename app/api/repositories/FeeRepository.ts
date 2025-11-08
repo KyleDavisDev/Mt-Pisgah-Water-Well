@@ -178,7 +178,13 @@ export class FeeRepository {
     await db.begin(async db => {
       await db`
       UPDATE fees
-      set is_active = ${newData.is_active}
+      SET property_id = ${newData.property_id},
+          bill_id = ${newData.bill_id},
+          amount_in_pennies = ${newData.amount_in_pennies},
+          category = ${newData.category},
+          metadata = ${db.json(newData.metadata)},
+          is_active = ${newData.is_active},
+          created_at = ${newData.created_at}
       WHERE id = ${oldData.id};
     `;
 
