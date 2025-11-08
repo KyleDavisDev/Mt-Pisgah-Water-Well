@@ -11,11 +11,11 @@ import { PropertyRepository } from "../../repositories/propertyRepository";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { InvoiceCreate, InvoiceDiscount } from "../../models/Invoice";
 import { withErrorHandler } from "../../utils/handlers";
-import { PricingFormula } from "../pricingFormulas/types";
 import { Discount } from "../../models/Discount";
 import { DiscountRepository } from "../../repositories/discountRepository";
 import { BadRequestError } from "../../utils/errors";
 import { getWaterPricingFormulaByYearAndMonth } from "../../fees/createFee";
+import { PricingFormula } from "../../fees/water/pricingFormulas/types";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
