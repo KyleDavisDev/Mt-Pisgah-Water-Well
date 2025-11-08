@@ -1,5 +1,6 @@
 import { PRICING_FORMULAS } from "./water/pricingFormulas";
 import { PricingFormula } from "./water/pricingFormulas/types";
+import Fee, { FeeType } from "../models/Fee";
 
 export const getWaterPricingFormulaByYearAndMonth = (year: number, month: number): PricingFormula => {
   // Simple, scrappy way to turn year and month to the expected format.
@@ -23,4 +24,22 @@ export const getWaterPricingFormulaByDate = (providedDate: Date): PricingFormula
 
 export const getWaterPricingFormulaByName = (name: string): PricingFormula => {
   return PRICING_FORMULAS[name];
+};
+
+type FeeCategoryMap = Record<FeeType, Fee[]>;
+
+export const splitFeesByCategory = (fees: Fee[]): FeeCategoryMap => {
+  // Initialize all categories to empty arrays
+  const initial: FeeCategoryMap = {
+    WATER_USAGE: [],
+    ADMINISTRATIVE: [],
+    LATE_FEE: [],
+    SERVICE_FEE: [],
+    CUSTOM: []
+  };
+
+  return fees.reduce((acc, fee) => {
+    acc[fee.category].push(fee);
+    return acc;
+  }, initial);
 };
