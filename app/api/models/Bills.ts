@@ -18,12 +18,12 @@ export type BillDiscount = {
 
 export type BillMetaData = {
   account_balance: AccountMetaData;
-  water_usage: WaterBillMetaData;
+  water_usage?: WaterBillMetaData;
   discount?: BillDiscount;
-  administrative?: AdministrativeBillMetaData;
-  late?: LateBillMetaData;
-  service?: ServiceBillMetaData;
-  custom?: CustomBillMetaData;
+  administrative?: AdministrativeBillMetaData[];
+  late?: LateBillMetaData[];
+  services?: ServiceBillMetaData[];
+  customs?: CustomBillMetaData[];
 };
 
 export type AccountMetaData = {
