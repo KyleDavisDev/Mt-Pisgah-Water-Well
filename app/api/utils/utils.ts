@@ -7,6 +7,7 @@ import { InvoiceRepository } from "../repositories/invoiceRepository";
 import { HomeownerRepository } from "../repositories/homeownerRepository";
 import { PropertyRepository } from "../repositories/propertyRepository";
 import { BillRepository } from "../repositories/billRepository";
+import { FeeRepository } from "../repositories/FeeRepository";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -280,18 +281,22 @@ export const getCurrentPropertyAccountBalance = async (propertyId: number): Prom
 export const getPropertyAccountBalanceAtDate = async (propertyId: number, date: string): Promise<number> => {
   if (propertyId <= 0) return 0;
 
+  const { year, month } = parseYMD(date);
+
+  const { endOfPreviousMonth, endOfCurrentMonth } = getAdjacentMonthRanges(year, month);
+
   // TODO: Validate date string
 
-  const [totalPayment, totalBilled] = await Promise.all([
-    PaymentRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], date),
-    BillRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], date)
+  const [totalPayment, totalFeed] = await Promise.all([
+    PaymentRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], endOfCurrentMonth),
+    FeeRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], endOfPreviousMonth)
   ]);
 
   // It's possible for `totalPayment` to be empty here like in the case of the Well property
   // since that property, technically, doesn't make any payments.
   const totalPaid = !totalPayment[0] ? 0 : totalPayment[0].amount_in_pennies;
 
-  const totalCharged = !totalBilled[0] ? 0 : totalBilled[0].total_in_pennies;
+  const totalCharged = !totalFeed[0] ? 0 : totalFeed[0].total_in_pennies;
 
   return totalPaid - totalCharged;
 };
