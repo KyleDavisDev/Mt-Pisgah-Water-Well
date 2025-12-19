@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
+
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Usage from "../../models/Usages";
 import { AuditRepository } from "../../repositories/auditRepository";
 import { withErrorHandler } from "../../utils/handlers";
+import { createAndInsertWaterUsageFees } from "../../fees/water/add/route";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -66,6 +68,12 @@ const handler = async (req: Request) => {
       console.error("Failed to insert USAGE record", e);
     }
   }
+
+  await createAndInsertWaterUsageFees(
+    sqlUsages[0].date_collected,
+    sqlUsages.map(s => s.property_id),
+    username
+  );
 
   return Response.json({ message: "Success!" });
 };

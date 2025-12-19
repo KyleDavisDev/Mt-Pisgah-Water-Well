@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import {
   extractKeyFromRequest,
-  getStartAndEndOfProvidedMonthAndNextMonth,
+  getAdjacentMonthRanges,
   getUsernameFromCookie,
   validatePermission
 } from "../../utils/utils";
@@ -32,7 +32,7 @@ const handler = async (req: Request) => {
     throw new BadRequestError("'month' and 'year' cannot be arrays");
   }
 
-  const { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth } = getStartAndEndOfProvidedMonthAndNextMonth(
+  const { startOfCurrentMonth, endOfCurrentMonth, startOfNextMonth, endOfNextMonth } = getAdjacentMonthRanges(
     year[0],
     month[0]
   );
@@ -41,8 +41,8 @@ const handler = async (req: Request) => {
   const propertyIds = properties.map((p: any) => p.id);
 
   const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
-    startOfMonth,
-    endOfMonth,
+    startOfCurrentMonth,
+    endOfCurrentMonth,
     propertyIds
   );
   const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
