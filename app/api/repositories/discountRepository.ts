@@ -64,11 +64,11 @@ export class DiscountRepository {
 
   /**
    * Retrieves first discount for a given property by propertyId.
-   * @param date The date for which the property discount applies to.
    * @param propertyId The unique identifier of the property
+   * @param date The date for which the property discount applies to.
    * @returns Promise resolving to Discount record or null
    */
-  static async getFirstActiveValidOnDateByPropertyId(date: string, propertyId: number): Promise<Discount | null> {
+  static async getFirstActiveValidOnDateAndPropertyId(propertyId: number, date: string): Promise<Discount | null> {
     const discounts = await db<Discount[]>`
         SELECT d.*
         FROM discounts d
