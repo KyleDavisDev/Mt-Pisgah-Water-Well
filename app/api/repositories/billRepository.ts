@@ -115,13 +115,13 @@ export class BillRepository {
   };
 
   /**
-   * Inserts a new invoice record into the database within a transactional context.
+   * Inserts a new bill record into the database within a transactional context.
    *
    * @param {String} user - The user who is doing the inserting.
-   * @param {BillCreate} newData - The invoice data to insert.
+   * @param {BillCreate} newData - The bill data to insert.
    * @param {Fee[]} fees - The fees to associate with the newly-created bill.
    *
-   * @returns {Promise<Bill | null>} Resolves to the newly created invoice record.
+   * @returns {Promise<Bill | null>} Resolves to the newly created bill record.
    */
   static insertNewBillAsTransactional = async (
     user: string,
@@ -160,8 +160,35 @@ export class BillRepository {
 
       await Promise.all(
         fees.map(async fee => {
+          // Unable nest transactions and use FeeRepository.updateFeeAsTransactional so need to do this approach instead.
           const updatedFee = { ...fee, bill_id: justInsertedBill[0].id };
-          await FeeRepository.updateFeeAsTransactional(user, fee, updatedFee);
+
+          const auditLog = await AuditRepository.addAuditTableRecord({
+            tableName: "fees",
+            recordId: fee.id,
+            oldData: JSON.stringify(fee),
+            newData: JSON.stringify(newData),
+            actionBy: user,
+            actionType: "UPDATE"
+          });
+
+          await db`
+            UPDATE fees
+            SET property_id = ${updatedFee.property_id},
+                bill_id = ${updatedFee.bill_id},
+                amount_in_pennies = ${updatedFee.amount_in_pennies},
+                category = ${updatedFee.category},
+                metadata = ${db.json(updatedFee.metadata)},
+                is_active = ${updatedFee.is_active},
+                created_at = ${updatedFee.created_at}
+            WHERE id = ${fee.id};
+          `;
+
+          await db`
+            UPDATE audit_log
+            SET is_complete= true
+            WHERE id = ${auditLog.id};
+          `;
         })
       );
 
