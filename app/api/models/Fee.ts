@@ -41,3 +41,8 @@ export type CustomMetaData = {
 };
 
 export type FeeCreate = Omit<Fee, "id">;
+
+export interface FeeTotal {
+  property_id: number;
+  total_in_pennies: number;
+}
