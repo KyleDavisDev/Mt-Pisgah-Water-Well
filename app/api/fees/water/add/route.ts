@@ -55,7 +55,6 @@ export const createAndInsertWaterUsageFees = async (
     if (existing.length > 0) continue;
 
     const prevMonth = parseYMD(startOfPreviousMonth);
-    // TODO: Might have an off-by-one here.
     const formula: PricingFormula = getWaterPricingFormulaByYearAndMonth(
       parseInt(prevMonth.year),
       parseInt(prevMonth.month)
