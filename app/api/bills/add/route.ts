@@ -55,7 +55,7 @@ const calculateFinalCostInPennies = (fees: Fee[], discount: Discount | null): nu
   // Calculate base cost by simply adding together all of the fees.
   const totalInFees = fees.reduce((accum: number, curr: Fee) => accum + (curr.amount_in_pennies ?? 0), 0);
 
-  return Math.max(0, totalInFees - totalAmountInPenniesToDeduct);
+  return totalInFees - totalAmountInPenniesToDeduct;
 };
 
 const handler = async (req: Request): Promise<Response> => {
@@ -71,7 +71,7 @@ const handler = async (req: Request): Promise<Response> => {
     throw new BadRequestError("Missing month or year");
   }
 
-  const { startOfNextMonth } = getAdjacentMonthRanges(year, month);
+  const { endOfCurrentMonth } = getAdjacentMonthRanges(year, month);
 
   const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
   const propertyIds = properties.map((p: any) => p.id);
@@ -79,21 +79,22 @@ const handler = async (req: Request): Promise<Response> => {
   let createdBillsCount = 0;
 
   for (const propertyId of propertyIds) {
-    // 1. Check if Bill already exists
-    const existingBill = await BillRepository.getActiveBillByYearAndMonthAndPropertyIn(year, month, [propertyId]);
-    if (existingBill && existingBill.length > 0) {
-      continue; // Skip if bill exists
-    }
-
-    // 2. Database lookups: Get fees, current balance, and any discounts
+    // 1. Database lookups: Get fees, current balance, and any discounts
     const [fees, currentBalanceInPennies, discount] = await Promise.all([
       FeeRepository.getUnbilledActiveFeesByYearMonthAndPropertyIds(parseInt(year, 10), parseInt(month, 10), [
         propertyId
       ]),
-      getPropertyAccountBalanceAtDate(propertyId, `${year}-${month}-15`),
-      DiscountRepository.getFirstActiveValidOnDateByPropertyId(`${year}-${month}-15`, propertyId)
+      getPropertyAccountBalanceAtDate(propertyId, endOfCurrentMonth),
+      DiscountRepository.getFirstActiveValidOnDateAndPropertyId(propertyId, `${year}-${month}-15`)
     ]);
 
+    // 2. Sanity checks
+    if (fees && fees.length === 0) {
+      console.log(
+        `Found zero unbilled fees for propertyId:${propertyId} with year:${year} and month:${month}. Skipping.`
+      );
+      continue; // Skip if bill exists
+    }
     const feesByCategory = splitFeesByCategory(fees);
     if (feesByCategory["WATER_USAGE"].length > 1) {
       // TODO: What do we do here? There should not be more than one water usage fee per month. Skip for now.
@@ -169,7 +170,7 @@ const handler = async (req: Request): Promise<Response> => {
       billing_month: month,
       billing_year: year,
       is_active: true,
-      created_at: addRandomDaysToDate(startOfNextMonth, 1, 3)
+      created_at: addRandomDaysToDate(`${year}-${month}-02`, 1, 3)
     };
 
     await BillRepository.insertNewBillAsTransactional(username, newData, fees);
