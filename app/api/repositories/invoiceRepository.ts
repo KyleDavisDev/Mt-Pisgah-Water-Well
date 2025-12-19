@@ -129,18 +129,18 @@ export class InvoiceRepository {
     if (!limit || limit <= 0 || billingMonth < 1 || billingMonth > 12 || billingYear < 0) return [];
 
     const bills = await db<Invoice[]>`
-    SELECT *
-    FROM invoices
-    WHERE is_active = true
-      AND property_id = ${propertyId}
-      AND type = 'WATER_USAGE'
-      AND (
-      (metadata ->> 'billing_year')::INT < ${billingYear} OR
-      ((metadata ->> 'billing_year')::INT = ${billingYear} AND (metadata ->> 'billing_month')::INT < ${billingMonth})
-      )
-    ORDER BY (metadata ->> 'billing_year')::INT DESC, (metadata ->> 'billing_month')::INT DESC
-    LIMIT ${limit};
-  `;
+      SELECT *
+      FROM invoices
+      WHERE is_active = true
+        AND property_id = ${propertyId}
+        AND type = 'WATER_USAGE'
+        AND (
+          (metadata ->> 'billing_year')::INT < ${billingYear} OR
+          ((metadata ->> 'billing_year')::INT = ${billingYear} AND (metadata ->> 'billing_month')::INT < ${billingMonth})
+        )
+      ORDER BY (metadata ->> 'billing_year')::INT DESC, (metadata ->> 'billing_month')::INT DESC
+      LIMIT ${limit};
+    `;
 
     return bills ?? [];
   };
@@ -152,6 +152,23 @@ export class InvoiceRepository {
       FROM invoices i
       WHERE i.property_id IN ${db(propertyIds)}
       AND i.is_active = true
+      GROUP BY i.property_id;
+    `;
+
+    return payments ?? [];
+  };
+
+  static findActiveTotalByPropertyIdsAndCreatedBefore = async (
+    propertyIds: number[],
+    createdBefore: string
+  ): Promise<InvoiceTotal[]> => {
+    const payments = await db<InvoiceTotal[]>`
+      SELECT property_id,
+             COALESCE(SUM(i.amount_in_pennies), 0) AS amount_in_pennies
+      FROM invoices i
+      WHERE i.property_id IN ${db(propertyIds)}
+        AND i.created_at < ${createdBefore}
+        AND i.is_active = true
       GROUP BY i.property_id;
     `;
 
@@ -184,12 +201,14 @@ export class InvoiceRepository {
                             amount_in_pennies,
                             type,
                             metadata,
-                            is_active)
+                            is_active,
+                            created_at)
       VALUES (${newData.property_id},
               ${newData.amount_in_pennies},
               ${newData.type},
               ${db.json(newData.metadata)},
-              ${newData.is_active})
+              ${newData.is_active},
+              ${newData.created_at})
       RETURNING *;
     `;
 

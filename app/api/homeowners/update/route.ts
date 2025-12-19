@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import { db } from "../../utils/db";
 import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
-import Homeowner from "../../models/Homeowners";
 import { AuditRepository } from "../../repositories/auditRepository";
-import { ForbiddenError } from "../../utils/errors";
+import { BadRequestError, ForbiddenError, ResourceNotFoundError } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
+import { HomeownerRepository } from "../../repositories/homeownerRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ const handler = async (req: Request) => {
     const { name, email, phone, mailingAddress, id, isActive } = await req.json();
 
     if (!name || !mailingAddress || !id || isActive === undefined) {
-      return new Response("Missing required fields", { status: 400 });
+      throw new BadRequestError("Missing required fields");
     }
 
     if (
@@ -30,28 +30,24 @@ const handler = async (req: Request) => {
       (email !== null && typeof email !== "string") ||
       (phone !== null && typeof phone !== "string")
     ) {
-      return new Response("Invalid field format", { status: 400 });
+      throw new BadRequestError("Invalid field format");
     }
 
     // Find record to be edited
-    const oldRecords = await db<Homeowner[]>`
-        SELECT *
-        FROM homeowners
-        where id = ${id}
-    `;
+    const oldRecord = await HomeownerRepository.getHomeownerByPropertyId(parseInt(id, 10));
 
-    if (!oldRecords) {
-      return new Response("Cannot find homeowners record", { status: 404 });
+    if (!oldRecord) {
+      throw new ResourceNotFoundError("Cannot find homeowners record");
     }
 
     // Get new record data
-    const newObj = { ...oldRecords[0], name, email, phone, mailingAddress, id, is_active: isActive === "true" };
+    const newObj = { ...oldRecord, name, email, phone, mailingAddress, id, is_active: isActive === "true" };
 
     // log intent
     const auditRecord = await AuditRepository.addAuditTableRecord({
-      oldData: JSON.stringify(oldRecords[0]),
+      oldData: JSON.stringify(oldRecord),
       newData: JSON.stringify(newObj),
-      recordId: oldRecords[0].id,
+      recordId: oldRecord.id,
       tableName: "homeowners",
       actionType: "UPDATE",
       actionBy: username
@@ -78,7 +74,6 @@ const handler = async (req: Request) => {
 
     return Response.json({ message: "Success!" });
   } catch (error) {
-    console.log(error);
     throw new ForbiddenError("Invalid username or password.");
   }
 };

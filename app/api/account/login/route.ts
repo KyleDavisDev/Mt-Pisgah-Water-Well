@@ -5,6 +5,7 @@ import { getClientIPFromRequest, getUserAgentFromRequest } from "../../utils/uti
 import { db } from "../../utils/db";
 import { UserRepository } from "../../repositories/userRepository";
 import { withErrorHandler } from "../../utils/handlers";
+import { BadRequestError, HttpError, InternalServerError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -13,7 +14,9 @@ const pwConcat = process.env.PASSWORD_CONCAT;
 const saltRounds = process.env.SALT_ROUNDS;
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
-const genericNotFoundMessage = () => new Response("Invalid username or password.", { status: 400 });
+const genericNotFoundMessage = (): HttpError => {
+  return new BadRequestError("Invalid username or password.");
+};
 
 interface InsertLoginLogParams {
   username: string;
@@ -45,11 +48,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Basic input validation
     if (!username || !password || typeof username !== "string" || typeof password !== "string") {
-      return new Response("Must provide valid username and password.", { status: 400 });
+      throw new BadRequestError("Must provide valid username and password.");
     }
 
     if (!pwConcat || !saltRounds || !jwtPrivateKey) {
-      return new Response("Server misconfiguration.", { status: 500 });
+      throw new InternalServerError("Server misconfiguration.");
     }
 
     let user;
@@ -65,7 +68,7 @@ const handler = async (req: Request): Promise<Response> => {
         ip: clientIPAddress,
         userAgent: clientUserAgent
       });
-      return genericNotFoundMessage();
+      throw genericNotFoundMessage();
     }
 
     // Quick sanity check
@@ -76,11 +79,11 @@ const handler = async (req: Request): Promise<Response> => {
         ip: clientIPAddress,
         userAgent: clientUserAgent
       });
-      return genericNotFoundMessage();
+      throw genericNotFoundMessage();
     }
 
     // Check password
-    const match = await bcrypt.compare(password + pwConcat, user.password);
+    const match = bcrypt.compare(password + pwConcat, user.password);
     if (!match) {
       await insertLoginLogRecord({
         username,
@@ -88,7 +91,7 @@ const handler = async (req: Request): Promise<Response> => {
         ip: clientIPAddress,
         userAgent: clientUserAgent
       });
-      return genericNotFoundMessage();
+      throw genericNotFoundMessage();
     }
 
     await insertLoginLogRecord({
@@ -114,7 +117,7 @@ const handler = async (req: Request): Promise<Response> => {
     return Response.json({ message: "Success!" });
   } catch (error) {
     console.error("Login error:", error);
-    return new Response("Unexpected error during login.", { status: 500 });
+    throw new InternalServerError("Unexpected error during login.");
   }
 };
 

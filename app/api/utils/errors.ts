@@ -27,8 +27,20 @@ export class ForbiddenError extends HttpError {
   }
 }
 
+export class ResourceNotFoundError extends HttpError {
+  constructor(message = "Resource Not Found") {
+    super(message, 404);
+  }
+}
+
 export class MethodNotAllowedError extends HttpError {
   constructor(message = "Method Not Allowed") {
     super(message, 405);
+  }
+}
+
+export class InternalServerError extends HttpError {
+  constructor(message = "Server Error") {
+    super(message, 500);
   }
 }

@@ -1,34 +1,24 @@
 import { cookies } from "next/headers";
 import {
-  getCurrentPropertyAccountBalance,
-  getStartAndEndOfProvidedMonthAndNextMonth,
+  addRandomDaysToDate,
+  getPropertyAccountBalanceAtDate,
+  getAdjacentMonthRanges,
   getUsernameFromCookie,
   validatePermission
 } from "../../utils/utils";
 import { UsageRepository } from "../../repositories/usageRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
-import { PRICING_FORMULAS } from "../pricingFormulas";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
 import { InvoiceCreate, InvoiceDiscount } from "../../models/Invoice";
 import { withErrorHandler } from "../../utils/handlers";
-import { PricingFormula } from "../pricingFormulas/types";
 import { Discount } from "../../models/Discount";
 import { DiscountRepository } from "../../repositories/discountRepository";
+import { BadRequestError } from "../../utils/errors";
+import { getWaterPricingFormulaByYearAndMonth } from "../../fees/createFee";
+import { PricingFormula } from "../../fees/water/pricingFormulas/types";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
-
-const getPricingFormula = (year: number, month: number) => {
-  // On Sept 6 2025, there was a W.S.C. meeting and a new formula was adopted.
-  const cutoffYear = 2025;
-  const cutoffMonth = 9;
-
-  if (year < cutoffYear || (year === cutoffYear && month < cutoffMonth)) {
-    return PRICING_FORMULAS["tiered_2025_v1"];
-  } else {
-    return PRICING_FORMULAS["tiered_2025_September_v1"];
-  }
-};
 
 const calculateFinalInvoiceCostInPennies = (
   gallons_used: number,
@@ -62,93 +52,89 @@ const calculateFinalInvoiceCostInPennies = (
 };
 
 const handler = async (req: Request): Promise<Response> => {
-  try {
-    const cookieStore = await cookies();
-    const jwtCookie = cookieStore.get("jwt");
-    const username = await getUsernameFromCookie(jwtCookie);
-    await validatePermission(username, "CREATE_INVOICE");
+  const cookieStore = await cookies();
+  const jwtCookie = cookieStore.get("jwt");
+  const username = await getUsernameFromCookie(jwtCookie);
+  await validatePermission(username, "CREATE_INVOICE");
 
-    // TODO: Data validation
-    const { month, year } = await req.json();
+  // TODO: Data validation
+  const { month, year, propertyId } = await req.json();
 
-    if (!month || !year) {
-      return new Response("Missing month or year", { status: 400 });
-    }
-
-    const { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth } = getStartAndEndOfProvidedMonthAndNextMonth(
-      year,
-      month
-    );
-
-    const properties = await PropertyRepository.getAllActiveProperties();
-
-    const propertyIds = properties.map((p: any) => p.id);
-    const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
-      startOfMonth,
-      endOfMonth,
-      propertyIds
-    );
-    const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
-      startOfNextMonth,
-      endOfNextMonth,
-      propertyIds
-    );
-
-    let createdBillsCount = 0;
-
-    for (const property of properties) {
-      const startingUsage = startingUsages.find((u: any) => u.property_id === property.id);
-      const endingUsage = endingUsages.find((u: any) => u.property_id === property.id);
-
-      if (!startingUsage || !endingUsage) continue;
-
-      // Check if invoice already exists
-      const existing = await InvoiceRepository.getActiveInvoiceByYearAndMonthAndPropertyIn(
-        parseInt(year),
-        parseInt(month),
-        [property.id]
-      );
-
-      if (existing.length > 0) continue;
-
-      const [currentBalanceInPennies, discounts] = await Promise.all([
-        getCurrentPropertyAccountBalance(property.id),
-        DiscountRepository.getByPropertyId(property.id)
-      ]);
-
-      const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
-      const formula = getPricingFormula(parseInt(year), parseInt(month));
-      const invoiceCostInPennies = calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts);
-      const discountsForInvoice: InvoiceDiscount[] = discounts.map(d => {
-        return { name: d.name, description: d.description };
-      });
-      const newData: InvoiceCreate = {
-        property_id: property.id,
-        metadata: {
-          billing_month: parseInt(month),
-          billing_year: parseInt(year),
-          gallons_used: gallonsUsed,
-          gallons_start: startingUsage.gallons,
-          gallons_end: endingUsage.gallons,
-          formula_used: `${formula.name}`,
-          balance_in_pennies_start: currentBalanceInPennies,
-          balance_in_pennies_end: currentBalanceInPennies - invoiceCostInPennies,
-          discounts: discountsForInvoice
-        },
-        type: "WATER_USAGE",
-        amount_in_pennies: invoiceCostInPennies,
-        is_active: true
-      };
-
-      await InvoiceRepository.insertNewInvoiceAsTransactional(username, newData);
-      createdBillsCount++;
-    }
-
-    return Response.json({ message: `${createdBillsCount} bill(s) created.` });
-  } catch (error) {
-    console.error("Error creating usage bills:", error);
-    return new Response("Error creating usage bills", { status: 500 });
+  if (!month || !year) {
+    throw new BadRequestError("Missing month or year");
   }
+
+  const { startOfCurrentMonth, endOfCurrentMonth, startOfNextMonth, endOfNextMonth } = getAdjacentMonthRanges(
+    year,
+    month
+  );
+
+  const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
+  const propertyIds = properties.map((p: any) => p.id);
+
+  const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
+    startOfCurrentMonth,
+    endOfCurrentMonth,
+    propertyIds
+  );
+  const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
+    startOfNextMonth,
+    endOfNextMonth,
+    propertyIds
+  );
+
+  let createdBillsCount = 0;
+
+  for (const property of properties) {
+    const startingUsage = startingUsages.find((u: any) => u.property_id === property.id);
+    const endingUsage = endingUsages.find((u: any) => u.property_id === property.id);
+
+    if (!startingUsage || !endingUsage) continue;
+
+    // Check if invoice already exists
+    const existing = await InvoiceRepository.getActiveInvoiceByYearAndMonthAndPropertyIn(
+      parseInt(year),
+      parseInt(month),
+      [property.id]
+    );
+
+    if (existing.length > 0) continue;
+
+    const [currentBalanceInPennies, discounts] = await Promise.all([
+      getPropertyAccountBalanceAtDate(property.id, `${year}-${month}-15`),
+      DiscountRepository.getByPropertyId(property.id)
+    ]);
+
+    const gallonsUsed = endingUsage.gallons - startingUsage.gallons;
+    const formula = getWaterPricingFormulaByYearAndMonth(parseInt(year), parseInt(month));
+    const invoiceCostInPennies = calculateFinalInvoiceCostInPennies(gallonsUsed, formula, discounts);
+    const discountsForInvoice: InvoiceDiscount[] = discounts.map(d => {
+      return { name: d.name, description: d.description };
+    });
+    const newData: InvoiceCreate = {
+      property_id: property.id,
+      metadata: {
+        billing_month: parseInt(month),
+        billing_year: parseInt(year),
+        gallons_used: gallonsUsed,
+        gallons_start: startingUsage.gallons,
+        gallons_end: endingUsage.gallons,
+        formula_used: `${formula.name}`,
+        balance_in_pennies_start: currentBalanceInPennies,
+        balance_in_pennies_end: currentBalanceInPennies - invoiceCostInPennies,
+        discounts: discountsForInvoice
+      },
+      type: "WATER_USAGE",
+      amount_in_pennies: invoiceCostInPennies,
+      is_active: true,
+      created_at: addRandomDaysToDate(startOfNextMonth, 1, 5)
+    };
+
+    await InvoiceRepository.insertNewInvoiceAsTransactional(username, newData);
+    createdBillsCount++;
+  }
+
+  return Response.json({ message: `${createdBillsCount} bill(s) created.` });
 };
 
 export const POST = withErrorHandler(handler);

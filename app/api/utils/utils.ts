@@ -1,9 +1,13 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../repositories/userRepository";
-import { BadRequestError, ForbiddenError } from "./errors";
+import { BadRequestError, ForbiddenError, ResourceNotFoundError } from "./errors";
 import { PaymentRepository } from "../repositories/paymentRepository";
 import { InvoiceRepository } from "../repositories/invoiceRepository";
+import { HomeownerRepository } from "../repositories/homeownerRepository";
+import { PropertyRepository } from "../repositories/propertyRepository";
+import { BillRepository } from "../repositories/billRepository";
+import { FeeRepository } from "../repositories/FeeRepository";
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
@@ -120,26 +124,64 @@ const padMonthInteger = (month: number): string => {
 };
 
 /**
- * Given a year and month, returns the start and end of that month,
- * as well as the start and end of the next month.
+ * Parse a date string in `yyyy-mm-dd` form and return zero-padded components with safe defaults.
+ *
+ * @param {string} date - Date string expected in `yyyy-mm-dd` format.
+ * @returns {{ year: string; month: string; day: string }} An object containing:
+ *   - `year`: 4-digit year (default: 1970)
+ *   - `month`: 2-digit month (default: 01)
+ *   - `day`: 2-digit day (default: 01)
+ */
+export const parseYMD = (date: string): { year: string; month: string; day: string } => {
+  const DEFAULT = { year: "1970", month: "01", day: "01" };
+
+  if (!date) return DEFAULT;
+
+  const match = date.match(/^(\d{1,4})-(\d{1,2})-(\d{1,2})$/);
+  if (!match) return DEFAULT;
+
+  let [, yearRaw, monthRaw, dayRaw] = match;
+
+  const year = yearRaw.padStart(4, "0");
+
+  const monthNum = parseInt(monthRaw, 10);
+  const month = isNaN(monthNum) || monthNum < 1 || monthNum > 12 ? "01" : monthNum.toString().padStart(2, "0");
+
+  const dayNum = parseInt(dayRaw, 10);
+  const day = isNaN(dayNum) || dayNum < 1 || dayNum > 31 ? "01" : dayNum.toString().padStart(2, "0");
+
+  return { year, month, day };
+};
+
+/**
+ * Given a year and month, returns the start and end of that month, as well as the start and end of the next month
+ * and the previous month.
  *
  * @param {string} year - The 4-digit year (e.g., '2025').
  * @param {string} month - The 1- or 2-digit month (e.g., '1' or '01'). Will be normalized to '01'–'12'.
  * @returns {Object} An object containing:
- *   - startOfMonth: e.g., '2025-02-01'
- *   - endOfMonth: e.g., '2025-02-28'
+ *   - startOfPreviousMonth: e.g., '2025-01-01'
+ *   - endOfPreviousMonth: e.g., '2025-01-28'
+ *   - startOfCurrentMonth: e.g., '2025-02-01'
+ *   - endOfCurrentMonth: e.g., '2025-02-28'
  *   - startOfNextMonth: e.g., '2025-03-01'
  *   - endOfNextMonth: e.g., '2025-03-28'
  *
- * Note: February and other months are simplified to 28 days
- * to avoid needing actual calendar day logic.
+ * Note: All months are simplified to having 28 days in order to avoid needing actual calendar day logic.
  */
-export const getStartAndEndOfProvidedMonthAndNextMonth = (
+export const getAdjacentMonthRanges = (
   year: string,
   month: string
-): { startOfMonth: string; endOfMonth: string; startOfNextMonth: string; endOfNextMonth: string } => {
-  // Ensure year is a 4-digit string
-  let safeYear = year.padStart(4, "0");
+): {
+  startOfPreviousMonth: string;
+  endOfPreviousMonth: string;
+  startOfCurrentMonth: string;
+  endOfCurrentMonth: string;
+  startOfNextMonth: string;
+  endOfNextMonth: string;
+} => {
+  // Ensure year is a 4-digit string and parse numeric year
+  const safeYear = year.padStart(4, "0");
   const numericYear = parseInt(safeYear, 10);
 
   // Normalize and clamp month to range 1–12
@@ -149,23 +191,51 @@ export const getStartAndEndOfProvidedMonthAndNextMonth = (
   }
   const formattedMonth = padMonthInteger(numericMonth);
 
-  const startOfMonth = `${year}-${formattedMonth}-01`;
-  const endOfMonth = `${year}-${formattedMonth}-28`;
+  // Current month start/end (28-day simplification)
+  const startOfCurrentMonth = `${safeYear}-${formattedMonth}-01`;
+  const endOfCurrentMonth = `${safeYear}-${formattedMonth}-28`;
 
+  // Previous month computation
+  let prevMonth = numericMonth - 1;
+  let prevYear = numericYear;
+  if (prevMonth < 1) {
+    prevMonth = 12;
+    prevYear = numericYear - 1;
+  }
+  const paddedPrevMonth = padMonthInteger(prevMonth);
+  const startOfPreviousMonth = `${prevYear.toString().padStart(4, "0")}-${paddedPrevMonth}-01`;
+  const endOfPreviousMonth = `${prevYear.toString().padStart(4, "0")}-${paddedPrevMonth}-28`;
+
+  // Next month computation
   let nextMonth = numericMonth + 1;
   let nextYear = numericYear;
-
   if (nextMonth > 12) {
     nextMonth = 1;
     nextYear += 1;
   }
-
   const paddedNextMonth = padMonthInteger(nextMonth);
+  const startOfNextMonth = `${nextYear.toString().padStart(4, "0")}-${paddedNextMonth}-01`;
+  const endOfNextMonth = `${nextYear.toString().padStart(4, "0")}-${paddedNextMonth}-28`;
 
-  const startOfNextMonth = `${nextYear}-${paddedNextMonth}-01`;
-  const endOfNextMonth = `${nextYear}-${paddedNextMonth}-28`;
+  return {
+    startOfPreviousMonth,
+    endOfPreviousMonth,
+    startOfCurrentMonth,
+    endOfCurrentMonth,
+    startOfNextMonth,
+    endOfNextMonth
+  };
+};
 
-  return { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth };
+export const addRandomDaysToDate = (date: string, minDays: number = 1, maxDays: number = 30) => {
+  // TODO: Basic validations
+
+  const offsetDays = Math.floor(Math.random() * (maxDays - minDays + 1)) + minDays;
+
+  const dt = new Date(date);
+  dt.setUTCDate(dt.getUTCDate() + offsetDays);
+
+  return `${dt.getUTCFullYear()}-${(dt.getUTCMonth() + 1).toString().padStart(2, "0")}-${dt.getUTCDate().toString().padStart(2, "0")}`;
 };
 
 /**
@@ -185,14 +255,50 @@ export const getCurrentPropertyAccountBalance = async (propertyId: number): Prom
 
   const [totalPayment, totalOwed] = await Promise.all([
     PaymentRepository.findActiveTotalByPropertyIds([propertyId]),
-    InvoiceRepository.findActiveTotalByPropertyIds([propertyId])
+    BillRepository.findActiveTotalByPropertyIds([propertyId])
   ]);
 
   // It's possible for `totalPayment` to be empty here like in the case of the Well property
   // since that property, technically, doesn't make any payments.
   return (
-    (!!totalPayment[0] ? totalPayment[0].amount_in_pennies : 0) - (!!totalOwed[0] ? totalOwed[0].amount_in_pennies : 0)
+    (!!totalPayment[0] ? totalPayment[0].amount_in_pennies : 0) - (!!totalOwed[0] ? totalOwed[0].total_in_pennies : 0)
   );
+};
+
+/**
+ * Retrieves the current account balance for a specific property.
+ *
+ * This function calculates the balance by asynchronously fetching
+ * the total payments and total owed amounts associated with the
+ * provided property ID and then performing a subtraction
+ * (total payments - total owed).
+ *
+ * @param {number} propertyId - The unique identifier of the property.
+ * @param date - The date to look at the balance at
+ * @returns {Promise<number>} A promise that resolves to the account balance
+ * in pennies for the given property ID.
+ */
+export const getPropertyAccountBalanceAtDate = async (propertyId: number, date: string): Promise<number> => {
+  if (propertyId <= 0) return 0;
+
+  const { year, month } = parseYMD(date);
+
+  const { endOfPreviousMonth, endOfCurrentMonth } = getAdjacentMonthRanges(year, month);
+
+  // TODO: Validate date string
+
+  const [totalPayment, totalFeed] = await Promise.all([
+    PaymentRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], endOfCurrentMonth),
+    FeeRepository.findActiveTotalByPropertyIdsAndCreatedBefore([propertyId], endOfPreviousMonth)
+  ]);
+
+  // It's possible for `totalPayment` to be empty here like in the case of the Well property
+  // since that property, technically, doesn't make any payments.
+  const totalPaid = !totalPayment[0] ? 0 : totalPayment[0].amount_in_pennies;
+
+  const totalCharged = !totalFeed[0] ? 0 : totalFeed[0].total_in_pennies;
+
+  return totalPaid - totalCharged;
 };
 
 /**
@@ -233,3 +339,25 @@ export async function withRetry<T>(fn: () => Promise<T>, retries: number = 50, d
   }
   throw lastError;
 }
+
+export const fetchInvoiceDetails = async (id: string) => {
+  const bill = await InvoiceRepository.getInvoiceById(id);
+  if (!bill) {
+    throw new ResourceNotFoundError("Bill not found");
+  }
+
+  // Fetch associated homeowner data, property address, historical usages, and late fees in parallel
+  const [homeowner, property, historicalInvoices, lateFees] = await Promise.all([
+    HomeownerRepository.getHomeownerByPropertyId(bill.property_id),
+    PropertyRepository.getPropertyById(bill.property_id),
+    InvoiceRepository.getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
+      bill.property_id,
+      11,
+      bill.metadata.billing_month,
+      bill.metadata.billing_year
+    ),
+    Promise.resolve(() => 0) // TODO: late fees
+  ]);
+
+  return { bill, homeowner, property, historicalInvoices };
+};

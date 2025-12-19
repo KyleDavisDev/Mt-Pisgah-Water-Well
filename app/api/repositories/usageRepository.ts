@@ -29,11 +29,6 @@ export class UsageRepository {
     end: string,
     properties: number[]
   ): Promise<Usage[]> => {
-    // Return early if no properties provided
-    if (start === "" || end === "" || !properties || properties.length === 0) {
-      return [];
-    }
-
     const usages = await db<Usage[]>`
     SELECT DISTINCT ON (u.property_id) u.*
     FROM usages u

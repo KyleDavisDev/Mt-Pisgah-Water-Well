@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import {
   extractKeyFromRequest,
-  getStartAndEndOfProvidedMonthAndNextMonth,
+  getAdjacentMonthRanges,
   getUsernameFromCookie,
   validatePermission
 } from "../../utils/utils";
@@ -9,94 +9,85 @@ import { UsageRepository } from "../../repositories/usageRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
-import { ForbiddenError, MethodNotAllowedError } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
+import { BadRequestError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
 const handler = async (req: Request) => {
-  if (req.method !== "GET") {
-    throw new MethodNotAllowedError();
+  const cookieStore = await cookies();
+  const jwtCookie = cookieStore.get("jwt");
+  const username = await getUsernameFromCookie(jwtCookie);
+  await validatePermission(username, "VIEW_USAGES");
+
+  const month = extractKeyFromRequest(req, "month");
+  const year = extractKeyFromRequest(req, "year");
+
+  if (!month || !year) {
+    throw new BadRequestError("Missing 'month' or 'year' query parameter");
   }
 
-  try {
-    const cookieStore = await cookies();
-    const jwtCookie = cookieStore.get("jwt");
-    const username = await getUsernameFromCookie(jwtCookie);
-    await validatePermission(username, "VIEW_USAGES");
+  if (month.length > 1 || year.length > 1) {
+    throw new BadRequestError("'month' and 'year' cannot be arrays");
+  }
 
-    const month = extractKeyFromRequest(req, "month");
-    const year = extractKeyFromRequest(req, "year");
+  const { startOfCurrentMonth, endOfCurrentMonth, startOfNextMonth, endOfNextMonth } = getAdjacentMonthRanges(
+    year[0],
+    month[0]
+  );
 
-    if (!month || !year) {
-      return new Response("Missing 'month' or 'year' query parameter", { status: 400 });
-    }
+  const properties = await PropertyRepository.getAllActiveProperties();
+  const propertyIds = properties.map((p: any) => p.id);
 
-    if (month.length > 1 || year.length > 1) {
-      return new Response("'month' and 'year' cannot be arrays", { status: 400 });
-    }
+  const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
+    startOfCurrentMonth,
+    endOfCurrentMonth,
+    propertyIds
+  );
+  const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
+    startOfNextMonth,
+    endOfNextMonth,
+    propertyIds
+  );
+  const alreadyCreatedBills = await InvoiceRepository.getActiveInvoiceByYearAndMonthAndPropertyIn(
+    parseInt(year[0], 10),
+    parseInt(month[0], 10),
+    propertyIds
+  );
 
-    const { startOfMonth, endOfMonth, startOfNextMonth, endOfNextMonth } = getStartAndEndOfProvidedMonthAndNextMonth(
-      year[0],
-      month[0]
-    );
+  const homeowners = await HomeownerRepository.getAllActiveHomeowners();
+  const returnData = homeowners
+    .filter(h => {
+      return properties.some(p => p.homeowner_id === h.id);
+    })
+    .map(homeowner => {
+      return {
+        id: homeowner.id.toString(),
+        name: homeowner.name,
+        properties: properties
+          .filter(p => p.homeowner_id === homeowner.id)
+          .map(p => {
+            const firstUsage = startingUsages.find(f => f.property_id === p.id);
+            const lastUsage = endingUsages.find(l => l.property_id === p.id);
+            const isAlreadyCreated = alreadyCreatedBills.find(b => b.property_id === p.id);
 
-    const properties = await PropertyRepository.getAllActiveProperties();
-    const propertyIds = properties.map((p: any) => p.id);
-
-    const startingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
-      startOfMonth,
-      endOfMonth,
-      propertyIds
-    );
-    const endingUsages = await UsageRepository.getFirstUsageByDateCollectedRangeAndPropertyIn(
-      startOfNextMonth,
-      endOfNextMonth,
-      propertyIds
-    );
-    const alreadyCreatedBills = await InvoiceRepository.getActiveInvoiceByYearAndMonthAndPropertyIn(
-      parseInt(year[0], 10),
-      parseInt(month[0], 10),
-      propertyIds
-    );
-
-    const homeowners = await HomeownerRepository.getAllActiveHomeowners();
-    const returnData = homeowners
-      .filter(h => {
-        return properties.some(p => p.homeowner_id === h.id);
-      })
-      .map(homeowner => {
-        return {
-          id: homeowner.id.toString(),
-          name: homeowner.name,
-          properties: properties
-            .filter(p => p.homeowner_id === homeowner.id)
-            .map(p => {
-              const firstUsage = startingUsages.find(f => f.property_id === p.id);
-              const lastUsage = endingUsages.find(l => l.property_id === p.id);
-              const isAlreadyCreated = alreadyCreatedBills.find(b => b.property_id === p.id);
-
-              return {
-                id: p.id.toString(),
-                address: p.street,
-                description: p.description,
-                startingGallons: firstUsage ? firstUsage.gallons : "--",
-                endingGallons: lastUsage ? lastUsage.gallons : "--",
-                gallonsUsed: lastUsage && firstUsage ? lastUsage.gallons - firstUsage.gallons : "--",
-                isAlreadyCreated: !!isAlreadyCreated
-              };
-            })
-        };
-      });
-
-    return Response.json({
-      homeowners: returnData
+            return {
+              id: p.id.toString(),
+              address: p.street,
+              description: p.description,
+              startingGallons: firstUsage ? firstUsage.gallons : "--",
+              endingGallons: lastUsage ? lastUsage.gallons : "--",
+              gallonsUsed: lastUsage && firstUsage ? lastUsage.gallons - firstUsage.gallons : "--",
+              isAlreadyCreated: !!isAlreadyCreated
+            };
+          })
+      };
     });
-  } catch (error) {
-    console.error("Error generating usage bill:", error);
-    throw new ForbiddenError("Invalid username or password.");
-  }
+
+  return Response.json({
+    homeowners: returnData
+  });
 };
 
 export const GET = withErrorHandler(handler);

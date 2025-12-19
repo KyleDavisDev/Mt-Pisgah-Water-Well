@@ -61,4 +61,25 @@ export class DiscountRepository {
       `;
     return discounts ?? [];
   }
+
+  /**
+   * Retrieves first discount for a given property by propertyId.
+   * @param propertyId The unique identifier of the property
+   * @param date The date for which the property discount applies to.
+   * @returns Promise resolving to Discount record or null
+   */
+  static async getFirstActiveValidOnDateAndPropertyId(propertyId: number, date: string): Promise<Discount | null> {
+    const discounts = await db<Discount[]>`
+        SELECT d.*
+        FROM discounts d
+        INNER JOIN property_discounts pd ON pd.discount_id = d.id
+        WHERE pd.property_id = ${propertyId}
+          AND d.is_active = true
+          AND pd.is_active = true
+        AND pd.valid_from <= ${date}
+        AND pd.valid_to > ${date}
+        LIMIT 1;
+      `;
+    return discounts ? discounts[0] : null;
+  }
 }
