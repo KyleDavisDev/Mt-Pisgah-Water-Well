@@ -1,5 +1,5 @@
 import { db } from "../utils/db";
-import Fee, { FeeCreate } from "../models/Fee";
+import Fee, { FeeCreate, FeeTotal } from "../models/Fee";
 import { AuditRepository } from "./auditRepository";
 import { getAdjacentMonthRanges } from "../utils/utils";
 
@@ -86,7 +86,7 @@ export class FeeRepository {
     month: number,
     propertyIds: number[]
   ): Promise<Fee[]> => {
-    const { startOfCurrentMonth, startOfNextMonth } = getAdjacentMonthRanges(year.toString(10), month.toString(10));
+    const { startOfCurrentMonth, endOfCurrentMonth } = getAdjacentMonthRanges(year.toString(10), month.toString(10));
 
     const fees = await db<Fee[]>`
     SELECT *
@@ -94,12 +94,29 @@ export class FeeRepository {
     WHERE is_active = true
       AND property_id IN ${db(propertyIds)}
       AND created_at >= ${startOfCurrentMonth}
-      AND created_at < ${startOfNextMonth}
+      AND created_at < ${endOfCurrentMonth}
       AND bill_id IS NULL
     ORDER BY created_at desc
   `;
 
     return fees ?? [];
+  };
+
+  static findActiveTotalByPropertyIdsAndCreatedBefore = async (
+    propertyIds: number[],
+    createdBefore: string
+  ): Promise<FeeTotal[]> => {
+    const payments = await db<FeeTotal[]>`
+      SELECT property_id,
+             COALESCE(SUM(i.amount_in_pennies), 0) AS total_in_pennies
+      FROM fees i
+      WHERE i.property_id IN ${db(propertyIds)}
+        AND i.created_at < ${createdBefore}
+        AND i.is_active = true
+      GROUP BY i.property_id;
+    `;
+
+    return payments ?? [];
   };
 
   /**
