@@ -62,7 +62,7 @@ const handler = async (req: Request, { params }: { params: Promise<{ id: string 
     "Content-Length": pdfBuffer.length.toString()
   });
 
-  // @ts-ignore
+  // @ts-expect-error WIP
   return new Response(pdfBuffer, { status: 200, headers });
 };
 

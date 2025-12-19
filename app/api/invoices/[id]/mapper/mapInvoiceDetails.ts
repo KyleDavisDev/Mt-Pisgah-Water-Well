@@ -1,8 +1,9 @@
 import Homeowner from "../../../models/Homeowners";
 import Property from "../../../models/Properties";
 import Invoice from "../../../models/Invoice";
-import { PRICING_FORMULAS } from "../../pricingFormulas";
+
 import { InvoiceDetails } from "../types";
+import { PRICING_FORMULAS } from "../../../fees/water/pricingFormulas";
 
 const WATER_COMPANY_INFO = {
   name: "Sherwood-Mt. Pisgah W.S.C",
