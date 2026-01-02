@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
 
-import { fetchInvoiceDetails, getUsernameFromCookie, validatePermission } from "../../utils/utils";
+import { fetchBillDetails, fetchInvoiceDetails, getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { ResourceNotFoundError } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
-import { invoiceDetailsMapper } from "../mapper/billMapper";
+import { billDetailsMapper } from "../mapper/billMapper";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -21,13 +21,20 @@ const handler = async (req: Request, { params }: { params: Promise<{ id: string 
     throw new ResourceNotFoundError();
   }
 
-  const { bill, homeowner, property, historicalInvoices } = await fetchInvoiceDetails(id);
+  const { bill, homeowner, property, historicalWaterFees } = await fetchBillDetails(id);
 
   if (!homeowner || !property) {
     throw new ResourceNotFoundError("Homeowner and Property info not found");
   }
 
-  return Response.json(invoiceDetailsMapper(bill, homeowner, property, historicalInvoices));
+  return Response.json(
+    billDetailsMapper({
+      currentBill: bill,
+      homeowner: homeowner,
+      property,
+      historicalWaterFees
+    })
+  );
 };
 
 export const GET = withErrorHandler(handler);

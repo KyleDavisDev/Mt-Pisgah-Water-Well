@@ -361,3 +361,22 @@ export const fetchInvoiceDetails = async (id: string) => {
 
   return { bill, homeowner, property, historicalInvoices };
 };
+
+export const fetchBillDetails = async (id: string) => {
+  const bill = await BillRepository.getBillById(id);
+  if (!bill) {
+    throw new ResourceNotFoundError("Bill not found");
+  }
+
+  const { endOfCurrentMonth } = getAdjacentMonthRanges(bill.billing_year.toString(10), bill.billing_month.toString(10));
+
+  // Fetch associated homeowner data, property address, historical fees, and late fees in parallel
+  const [homeowner, property, historicalWaterFees, fees] = await Promise.all([
+    HomeownerRepository.getHomeownerByPropertyId(bill.property_id),
+    PropertyRepository.getPropertyById(bill.property_id),
+    FeeRepository.getBilledWaterFeesByPropertyIdCreatedBeforeMonthAndYearDesc(bill.property_id, 11, endOfCurrentMonth),
+    Promise.resolve(() => 0) // TODO: late fees
+  ]);
+
+  return { bill, homeowner, property, historicalWaterFees };
+};
