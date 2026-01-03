@@ -242,4 +242,37 @@ export class BillRepository {
 
     return newData;
   };
+
+  /**
+   * Retrieves the most recent active bill records for each property ID, limited to `limit` per property.
+   * @param propertyIds list of property IDs to search for
+   * @param limit the number of records to return per property
+   *
+   * @returns Promise resolving to an array of Bill records
+   */
+  static findAllActiveByPropertyIdInAndTypeAndLimitBy = async (
+    propertyIds: number[],
+    limit: number
+  ): Promise<Bill[]> => {
+    const invoices = await db<Bill[]>`
+      WITH bills_by_property AS (
+        SELECT *,
+               ROW_NUMBER() OVER (
+                 PARTITION BY property_id
+                 ORDER BY billing_year DESC,
+                          billing_month DESC,
+                          created_at DESC
+               ) AS row_number
+        FROM bills
+        WHERE property_id IN ${db(propertyIds)}
+          AND is_active = true
+      )
+      SELECT *
+      FROM bills_by_property
+      WHERE row_number <= ${limit}
+      ORDER BY property_id, billing_year DESC, billing_month DESC, created_at DESC;
+    `;
+
+    return invoices ?? [];
+  };
 }

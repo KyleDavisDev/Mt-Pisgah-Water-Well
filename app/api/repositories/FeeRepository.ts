@@ -214,4 +214,33 @@ export class FeeRepository {
 
     return newData;
   };
+
+  /**
+   * Retrieves the most recent N active water fees for a property,
+   * on or before the specified created date descending.
+   *
+   * @param {number} propertyId - The property ID to fetch fees for.
+   * @param {number} limit - The maximum number of usage bills to retrieve.
+   * @param {string} createdBefore - Created before datetime
+   * @returns {Promise<Fee[]>} A promise that resolves to an array of fees.
+   */
+  static getBilledWaterFeesByPropertyIdCreatedBeforeMonthAndYearDesc = async (
+    propertyId: number,
+    limit: number,
+    createdBefore: string
+  ): Promise<Fee[]> => {
+    const bills = await db<Fee[]>`
+      SELECT *
+      FROM fees
+      WHERE property_id = ${propertyId}
+        AND category = 'WATER_USAGE'
+        AND created_at < ${createdBefore}
+        AND is_active = true
+        AND bill_id is not null
+      ORDER BY created_at DESC
+      LIMIT ${limit};
+    `;
+
+    return bills ?? [];
+  };
 }
