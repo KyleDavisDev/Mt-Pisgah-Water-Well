@@ -13,7 +13,7 @@ export const getWaterPricingFormulaByYearAndMonth = (year: number, month: number
 
 export const getWaterPricingFormulaByDate = (providedDate: Date): PricingFormula => {
   // On Sept 6 2025, there was a W.S.C. meeting and a new formula was adopted.
-  const cutoffDate = new Date("2025-06-01");
+  const cutoffDate = new Date("2025-09-01");
 
   if (providedDate < cutoffDate) {
     return PRICING_FORMULAS["tiered_2025_v1"];
