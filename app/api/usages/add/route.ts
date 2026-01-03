@@ -69,6 +69,7 @@ const handler = async (req: Request) => {
     }
   }
 
+  // TODO: Think about partial successes
   await createAndInsertWaterUsageFees(
     sqlUsages[0].date_collected,
     sqlUsages.map(s => s.property_id),
