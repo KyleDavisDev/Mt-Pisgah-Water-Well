@@ -184,8 +184,18 @@ const SidebarMenu = () => {
                 "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
               }
             >
-              <Link href={"/admin/dashboard/bills/all"} onClick={() => handleMobileClick()}>
+              <Link href={"/admin/dashboard/invoices/all"} onClick={() => handleMobileClick()}>
                 View All Invoices
+              </Link>
+            </div>
+
+            <div
+              className={
+                "list-none pl-[15px] border-b border-[rgb(237,241,247)] flex flex-row [&>a]:no-underline [&>a]:text-gray-800 [&>a]:w-full [&>a]:p-[15px] [&>a:hover]:cursor-pointer [&>a:hover]:text-blue-600"
+              }
+            >
+              <Link href={"/admin/dashboard/bills/all"} onClick={() => handleMobileClick()}>
+                View All Bills
               </Link>
             </div>
             <div
