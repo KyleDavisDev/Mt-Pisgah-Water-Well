@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { getUsernameFromCookie } from "../../../utils/utils";
 import { BadRequestError } from "../../../utils/errors";
 import { withErrorHandler } from "../../../utils/handlers";
-import { FeeRepository } from "../../../repositories/FeeRepository";
 import { PropertyRepository } from "../../../repositories/propertyRepository";
 import { createAndInsertWaterUsageFees } from "./createAndInsertWaterUsageFees";
 
