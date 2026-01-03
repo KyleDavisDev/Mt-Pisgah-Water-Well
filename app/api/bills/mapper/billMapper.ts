@@ -63,8 +63,12 @@ export const billDetailsMapper = ({
     id: currentBill.id,
     createdDate: currentBill.created_at,
     billingPeriod: {
-      billingMonth: currentBill.billing_month,
-      billingYear: currentBill.billing_year
+      month: currentBill.billing_month,
+      year: currentBill.billing_year
+    },
+    usagePeriod: {
+      month: currentBill.billing_month - 1 === 0 ? 12 : currentBill.billing_month - 1,
+      year: currentBill.billing_month - 1 === 0 ? currentBill.billing_year - 1 : currentBill.billing_year
     },
     company: WATER_COMPANY_INFO,
     homeowner: {
