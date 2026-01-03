@@ -168,7 +168,7 @@ const handler = async (req: Request): Promise<Response> => {
       billing_month: month,
       billing_year: year,
       is_active: true,
-      created_at: addRandomDaysToDate(`${year}-${month}-02`, 1, 3)
+      created_at: addRandomDaysToDate(`${year}-${month}-02`, 1, 2)
     };
 
     await BillRepository.insertNewBillAsTransactional(username, newData, fees);
