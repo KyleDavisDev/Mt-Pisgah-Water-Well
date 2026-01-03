@@ -47,8 +47,12 @@ export interface BillDetails {
   id: number;
   createdDate: string;
   billingPeriod: {
-    billingMonth: number;
-    billingYear: number;
+    month: number;
+    year: number;
+  };
+  usagePeriod: {
+    month: number;
+    year: number;
   };
   company: WaterCompanyInfo;
   homeowner: HomeownerInfo;
