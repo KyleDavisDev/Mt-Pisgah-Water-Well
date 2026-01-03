@@ -33,7 +33,6 @@ const Page = () => {
         return response.json();
       })
       .then(data => {
-        console.log(data.homeowners);
         setHomeowners(data.homeowners);
       })
       .catch(error => {
@@ -169,7 +168,7 @@ const Page = () => {
                               </Button>
                               <Button
                                 onClick={() => {
-                                  window.open(`/admin/dashboard/bill/view/${invoice.id}`, "_blank");
+                                  window.open(`/admin/dashboard/bills/${invoice.id}`, "_blank");
                                 }}
                               >
                                 View Invoice

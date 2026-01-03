@@ -6,6 +6,7 @@ export function withErrorHandler(handler: AsyncHandler): AsyncHandler {
   return async (...args) => {
     try {
       // Pass everything to the original handler
+      console.log("AM I HERE?");
       return await handler(...args);
     } catch (err) {
       console.log(err);

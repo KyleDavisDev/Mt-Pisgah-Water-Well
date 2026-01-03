@@ -4,9 +4,8 @@ import {
   formatNumberWithCommas,
   formatPenniesToDollars,
   getMonthStrFromMonthIndex
-} from "../../../util";
-import { InvoiceDetails } from "../../../../../api/invoices/[id]/types";
-import { BillDetails } from "../../../../../api/bills/types/types";
+} from "../../util";
+import { BillDetails } from "../../../../api/bills/types/types";
 
 export interface BillViewContentProps {
   billDetails: BillDetails;
