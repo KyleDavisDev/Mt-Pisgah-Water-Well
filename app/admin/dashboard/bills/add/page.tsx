@@ -46,15 +46,22 @@ const Page = () => {
   const fetchAmountUsedByMonthAndYear = () => {
     if (loading) return;
 
-    const numericMonth = MONTHS.indexOf(selectedMonth);
+    let year = parseInt(selectedYear, 10);
+    let numericMonth = MONTHS.indexOf(selectedMonth);
     if (numericMonth === -1) return;
 
+    // Add carryover of one month to account for what the BE expects
+    numericMonth += 1;
+    if (numericMonth > 12) {
+      numericMonth = 1;
+      year += 1;
+    }
     const formattedMonth = getPrefixedMonthValue(numericMonth);
 
     setLoading(true);
     onFlashClose();
 
-    fetch(`/api/usages/amount_used?month=${formattedMonth}&year=${selectedYear}`, { method: "GET" })
+    fetch(`/api/usages/amount_used?month=${formattedMonth}&year=${year}`, { method: "GET" })
       .then(response => response.json())
       .then(data => {
         setHomeowners(data.homeowners);
