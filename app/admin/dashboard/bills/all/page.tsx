@@ -117,9 +117,9 @@ const Page = () => {
                           <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                             Pay Period
                           </th>
-                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
-                            Active
-                          </th>
+                          {/*<th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>*/}
+                          {/*  Active*/}
+                          {/*</th>*/}
                           <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                             Date Created
                           </th>
@@ -142,9 +142,9 @@ const Page = () => {
                             <td
                               className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
                             >{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
-                            <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
-                              {invoice.isActive}
-                            </td>
+                            {/*<td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>*/}
+                            {/*  {invoice.isActive}*/}
+                            {/*</td>*/}
                             <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                               {formatISODateToUserFriendlyLocal(invoice.dateCreated)}
                             </td>
@@ -173,7 +173,7 @@ const Page = () => {
                               >
                                 View Invoice
                               </Button>
-                              <Button onClick={() => downloadInvoice(invoice.id)}>Download</Button>
+                              {/*<Button onClick={() => downloadInvoice(invoice.id)}>Download</Button>*/}
                             </td>
                           </tr>
                         ))}
