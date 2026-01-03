@@ -5,7 +5,6 @@ import Bill from "../../models/Bills";
 import { BillDetails } from "../types/types";
 import { PRICING_FORMULAS } from "../../fees/water/pricingFormulas";
 import Fee, { WaterUsageMetaData } from "../../models/Fee";
-import { parseYMD } from "../../utils/utils";
 
 const WATER_COMPANY_INFO = {
   name: "Sherwood-Mt. Pisgah W.S.C",
@@ -93,7 +92,7 @@ export const billDetailsMapper = ({
       }
     },
     currentUsage: {
-      start: currentWaterUsage.gallons_start, // These would need to come from actual meter readings
+      start: currentWaterUsage.gallons_start,
       end: currentWaterUsage.gallons_end,
       usage: currentWaterUsage.gallons_used
     },
