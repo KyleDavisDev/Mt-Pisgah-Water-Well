@@ -22,11 +22,13 @@ export const invoiceDetailsMapper = (
   property: Property,
   historicalInvoices: Invoice[]
 ): InvoiceDetails => {
-  const sortedMonthlyUsageHistory = historicalInvoices.sort((a, b) =>
-    b.metadata.billing_year !== a.metadata.billing_year
-      ? b.metadata.billing_year - a.metadata.billing_year
-      : b.metadata.billing_month - a.metadata.billing_month
-  );
+  const sortedMonthlyUsageHistory = historicalInvoices
+    .concat([currentInvoice])
+    .sort((a, b) =>
+      b.metadata.billing_year !== a.metadata.billing_year
+        ? b.metadata.billing_year - a.metadata.billing_year
+        : b.metadata.billing_month - a.metadata.billing_month
+    );
 
   const baseCharge = PRICING_FORMULAS[currentInvoice.metadata.formula_used].baseFeeInPennies;
   const excessUsageChargeInPennies =
