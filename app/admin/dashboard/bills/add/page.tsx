@@ -40,7 +40,7 @@ const Page = () => {
 
   // Prefixes a "0" to the single-digit month if needed.
   const getPrefixedMonthValue = (numericMonth: number) => {
-    return numericMonth + 1 < 10 ? "0" + (numericMonth + 1).toString() : (numericMonth + 1).toString();
+    return numericMonth < 10 ? "0" + (numericMonth + 1).toString() : numericMonth.toString();
   };
 
   const fetchAmountUsedByMonthAndYear = () => {
