@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams } from "next/navigation";
 
-import { BillDetails } from "../../../../../api/bills/types/types";
+import { BillDetails } from "../../../../api/bills/types/types";
 import BillViewContent from "./BillViewContent";
 
 const Page = () => {
@@ -33,7 +33,6 @@ const Page = () => {
           throw new Error("Failed to fetch bill");
         }
         const data = await response.json();
-        console.log(data);
         setInvoiceDetails(data);
       } catch (err) {
         setError("Failed to load bill details");

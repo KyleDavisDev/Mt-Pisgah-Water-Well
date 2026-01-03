@@ -33,7 +33,6 @@ const Page = () => {
         return response.json();
       })
       .then(data => {
-        console.log(data.homeowners);
         setHomeowners(data.homeowners);
       })
       .catch(error => {
@@ -118,9 +117,9 @@ const Page = () => {
                           <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                             Pay Period
                           </th>
-                          <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
-                            Active
-                          </th>
+                          {/*<th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>*/}
+                          {/*  Active*/}
+                          {/*</th>*/}
                           <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                             Date Created
                           </th>
@@ -143,9 +142,9 @@ const Page = () => {
                             <td
                               className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
                             >{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
-                            <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
-                              {invoice.isActive}
-                            </td>
+                            {/*<td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>*/}
+                            {/*  {invoice.isActive}*/}
+                            {/*</td>*/}
                             <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                               {formatISODateToUserFriendlyLocal(invoice.dateCreated)}
                             </td>
@@ -169,12 +168,12 @@ const Page = () => {
                               </Button>
                               <Button
                                 onClick={() => {
-                                  window.open(`/admin/dashboard/bill/view/${invoice.id}`, "_blank");
+                                  window.open(`/admin/dashboard/bills/${invoice.id}`, "_blank");
                                 }}
                               >
                                 View Invoice
                               </Button>
-                              <Button onClick={() => downloadInvoice(invoice.id)}>Download</Button>
+                              {/*<Button onClick={() => downloadInvoice(invoice.id)}>Download</Button>*/}
                             </td>
                           </tr>
                         ))}

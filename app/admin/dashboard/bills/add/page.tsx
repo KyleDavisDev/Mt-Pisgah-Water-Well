@@ -30,7 +30,8 @@ const Page = () => {
   const [homeowners, setHomeowners] = React.useState<Homeowner[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = React.useState<string>("Jan");
-  const [selectedYear, setSelectedYear] = React.useState<string>("2025");
+  // TODO: Make year dynamic based off of current year.
+  const [selectedYear, setSelectedYear] = React.useState<string>("2026");
   const [flashMessage, setFlashMessage] = React.useState<FlashMessageProps>({
     isVisible: false,
     text: "",
@@ -69,14 +70,22 @@ const Page = () => {
   const createInvoices = async () => {
     if (loading) return;
 
-    const numericMonth = MONTHS.indexOf(selectedMonth);
+    let year = parseInt(selectedYear, 10);
+    let numericMonth = MONTHS.indexOf(selectedMonth);
     if (numericMonth === -1) return;
+
+    // Add carryover of one month to account for what the BE expects
+    numericMonth += 1;
+    if (numericMonth > 12) {
+      numericMonth = 1;
+      year += 1;
+    }
 
     setLoading(true);
     try {
       const body = {
         month: getPrefixedMonthValue(numericMonth),
-        year: selectedYear
+        year: year.toString(10)
       };
 
       const response = await fetch("/api/bills/add", {
@@ -238,7 +247,7 @@ const Page = () => {
         {homeowners.length > 0 && (
           <div style={{ marginTop: "20px", textAlign: "center" }}>
             <Button onClick={createInvoices} disabled={loading}>
-              {loading ? "Creating..." : "Create Bills"}
+              {loading ? "Creating..." : "Create Invoices"}
             </Button>
           </div>
         )}
