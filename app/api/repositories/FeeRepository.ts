@@ -82,11 +82,11 @@ export class FeeRepository {
    * @returns {Promise<Fee[]>} A promise that resolves to an array of matching fees.
    */
   static getUnbilledActiveFeesByYearMonthAndPropertyIds = async (
-    year: number,
-    month: number,
+    year: string,
+    month: string,
     propertyIds: number[]
   ): Promise<Fee[]> => {
-    const { startOfCurrentMonth, endOfCurrentMonth } = getAdjacentMonthRanges(year.toString(10), month.toString(10));
+    const { startOfCurrentMonth, endOfCurrentMonth } = getAdjacentMonthRanges(year, month);
 
     const fees = await db<Fee[]>`
     SELECT *
