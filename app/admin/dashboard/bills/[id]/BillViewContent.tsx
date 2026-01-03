@@ -52,7 +52,7 @@ export default function BillViewContent({ billDetails }: BillViewContentProps) {
           <div className={"flex-1 text-center"}>
             <h5 className={"text-[14px] mb-[8px] text-[#666666]"}>Month</h5>
             <p className={"text-[18px] m-0 font-bold"}>
-              {`${getMonthStrFromMonthIndex(billDetails.billingPeriod.billingMonth)} ${billDetails.billingPeriod.billingYear}`}
+              {`${getMonthStrFromMonthIndex(billDetails.usagePeriod.month)} ${billDetails.usagePeriod.year}`}
             </p>
           </div>
           <div className={"flex-1 text-center"}>
