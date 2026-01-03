@@ -81,9 +81,7 @@ const handler = async (req: Request): Promise<Response> => {
   for (const propertyId of propertyIds) {
     // 1. Database lookups: Get fees, current balance, and any discounts
     const [fees, currentBalanceInPennies, discount] = await Promise.all([
-      FeeRepository.getUnbilledActiveFeesByYearMonthAndPropertyIds(parseInt(year, 10), parseInt(month, 10), [
-        propertyId
-      ]),
+      FeeRepository.getUnbilledActiveFeesByYearMonthAndPropertyIds(year, month, [propertyId]),
       getPropertyAccountBalanceAtDate(propertyId, endOfCurrentMonth),
       DiscountRepository.getFirstActiveValidOnDateAndPropertyId(propertyId, `${year}-${month}-15`)
     ]);

@@ -22,7 +22,7 @@ export class HomeownerRepository {
    * @param {number} propertyId - The ID of the property to search for.
    * @returns {Promise<Homeowner | null>} A promise that resolves to a single Homeowner record or null.
    */
-  static getHomeownerByPropertyId = async (propertyId: number): Promise<Homeowner> => {
+  static getHomeownerByPropertyId = async (propertyId: number): Promise<Homeowner | null> => {
     const homeowner = await db<Homeowner[]>`
       SELECT h.*
       FROM homeowners h
@@ -30,6 +30,6 @@ export class HomeownerRepository {
       WHERE p.id = ${propertyId}
   `;
 
-    return homeowner[0];
+    return homeowner[0] ?? null;
   };
 }
