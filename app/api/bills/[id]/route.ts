@@ -16,7 +16,6 @@ const handler = async (_req: Request, { params }: { params: Promise<{ id: string
   await validatePermission(username, "VIEW_BILLS");
 
   const { id } = await params;
-  console.log(id);
 
   if (!id) {
     throw new ResourceNotFoundError();

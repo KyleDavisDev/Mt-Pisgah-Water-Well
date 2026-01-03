@@ -27,7 +27,6 @@ const Page = () => {
 
   React.useEffect(() => {
     const fetchInvoiceById = async () => {
-      console.log("am i here?");
       try {
         const response = await fetch(`/api/bills/${params.id}`);
         if (!response.ok) {
