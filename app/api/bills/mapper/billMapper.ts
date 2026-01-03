@@ -59,7 +59,6 @@ export const billDetailsMapper = ({
     }, 0) +
     otherCharges;
 
-  console.log(currentBill.billing_month, currentBill.billing_year);
   return {
     id: currentBill.id,
     createdDate: currentBill.created_at,
