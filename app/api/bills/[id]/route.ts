@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-import { fetchBillDetails, fetchInvoiceDetails, getUsernameFromCookie, validatePermission } from "../../utils/utils";
+import { fetchBillDetails, getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { ResourceNotFoundError } from "../../utils/errors";
 import { withErrorHandler } from "../../utils/handlers";
 import { billDetailsMapper } from "../mapper/billMapper";
@@ -8,7 +8,7 @@ import { billDetailsMapper } from "../mapper/billMapper";
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const handler = async (req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> => {
+const handler = async (_req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> => {
   // Validate user permissions
   const cookieStore = await cookies();
   const jwtCookie = cookieStore.get("jwt");
