@@ -109,7 +109,9 @@ const Page = () => {
               <h3>{homeowner.name}</h3>
               {homeowner.properties.map(property => (
                 <div className={"pt-[5px] pr-0 pb-[15px] pl-0"} key={property.id}>
-                  <div className={"pt-0 pr-0 pb-[5px] pl-0"}>{property.address}</div>
+                  <div className={"pt-0 pr-0 pb-[5px] pl-0"}>
+                    {property.address} (property: {property.id})
+                  </div>
                   {property.invoices && property.invoices.length > 0 ? (
                     <table className={"w-full text-left border-collapse mb-[25px]"}>
                       <thead className={"border-collapse"}>
@@ -117,9 +119,6 @@ const Page = () => {
                           <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                             Month Water Used
                           </th>
-                          {/*<th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>*/}
-                          {/*  Active*/}
-                          {/*</th>*/}
                           <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                             Date Created
                           </th>
@@ -142,9 +141,6 @@ const Page = () => {
                             <td
                               className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}
                             >{`${getMonthStrFromMonthIndex(invoice.month)}, ${invoice.year}`}</td>
-                            {/*<td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>*/}
-                            {/*  {invoice.isActive}*/}
-                            {/*</td>*/}
                             <td className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
                               {formatISODateToUserFriendlyLocal(invoice.dateCreated)}
                             </td>
