@@ -374,7 +374,11 @@ export const fetchBillDetails = async (id: string) => {
   const [homeowner, property, historicalWaterFees, fees] = await Promise.all([
     HomeownerRepository.getHomeownerByPropertyId(bill.property_id),
     PropertyRepository.getPropertyById(bill.property_id),
-    FeeRepository.getBilledWaterFeesByPropertyIdCreatedBeforeMonthAndYearDesc(bill.property_id, 11, endOfCurrentMonth),
+    FeeRepository.getBilledWaterFeesByPropertyIdAndCreatedBeforeOrderedByCreatedAtDesc(
+      bill.property_id,
+      12,
+      endOfCurrentMonth
+    ),
     Promise.resolve(() => 0) // TODO: late fees
   ]);
 
