@@ -3,6 +3,20 @@ import Homeowner from "../models/Homeowners";
 
 export class HomeownerRepository {
   /**
+   * Retrieves all homeowners from the database.
+   *
+   * @returns Promise resolving to an array of Homeowner records
+   */
+  static getAllHomeowners = async (): Promise<Homeowner[]> => {
+    const homeowners = await db<Homeowner[]>`
+    SELECT * FROM homeowners
+    ORDER BY id
+  `;
+
+    return homeowners ?? [];
+  };
+
+  /**
    * Retrieves all active homeowners from the database.
    *
    * @returns Promise resolving to an array of Homeowner records
