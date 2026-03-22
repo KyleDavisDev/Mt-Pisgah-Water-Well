@@ -21,8 +21,18 @@ const defaultGrouping = (homeowners: Homeowner[], properties: Property[], bills:
         property: properties
           .filter(p => p.id === bill.property_id)
           .map(property => {
-            return { ...property };
-          })
+            return {
+              ...property,
+              homeowner: homeowners
+                .filter(h => h.id === property.homeowner_id)
+                .map(h => {
+                  return {
+                    id: h.id.toString(),
+                    name: h.name
+                  };
+                })[0]
+            };
+          })[0]
       };
     })
   });
