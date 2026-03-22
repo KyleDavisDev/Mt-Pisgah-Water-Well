@@ -12,7 +12,6 @@ import Homeowner from "../models/Homeowners";
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-// TODO: Finish this out if/when needed
 const defaultGrouping = (homeowners: Homeowner[], properties: Property[], bills: Bill[]) => {
   return Response.json({
     bills: bills.map(bill => {
@@ -101,14 +100,18 @@ const handler = async (req: Request) => {
   const propertyIds = properties.map(p => p.id);
   const bills = await BillRepository.findAllActiveByPropertyIdInAndTypeAndLimitBy(propertyIds, 6);
 
-  if (groupBy?.length === 1 && groupBy[0].toUpperCase() === "HOMEOWNER") {
-    return homeownerGrouping(homeowners, properties, bills);
-  } else if (groupBy?.length === 1 && groupBy[0] === "SOME_OTHER_SORTING") {
-    return homeownerGrouping(homeowners, properties, bills);
-  } else {
-    // default
+  if (groupBy?.length !== 1) {
     return defaultGrouping(homeowners, properties, bills);
   }
+
+  if (groupBy[0].toUpperCase() === "HOMEOWNER") {
+    return homeownerGrouping(homeowners, properties, bills);
+  } else if (groupBy[0] === "SOME_OTHER_SORTING") {
+    return homeownerGrouping(homeowners, properties, bills);
+  }
+
+  // default
+  return defaultGrouping(homeowners, properties, bills);
 };
 
 export const GET = withErrorHandler(handler);
