@@ -59,8 +59,8 @@ const homeownerGrouping = (homeowners: Homeowner[], properties: Property[], bill
                   .map((u: Bill) => {
                     return {
                       id: u.id.toString(),
-                      month: u.billing_month,
-                      year: u.billing_year,
+                      month: u.metadata.water_usage?.usage_month,
+                      year: u.metadata.water_usage?.usage_year,
                       gallonsUsed: u.metadata.water_usage ? u.metadata.water_usage.gallons_used.toString() : 0,
                       dateCreated: u.created_at,
                       amountInPennies: u.total_in_pennies,
