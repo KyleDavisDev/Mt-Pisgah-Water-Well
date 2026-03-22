@@ -20,7 +20,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
 
-  const fees = createAndInsertWaterUsageFees(
+  const fees = await createAndInsertWaterUsageFees(
     `${year}-${month}-02`,
     properties.map(x => x.id),
     username
