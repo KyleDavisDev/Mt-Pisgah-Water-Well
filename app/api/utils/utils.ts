@@ -158,7 +158,7 @@ export const parseYMD = (date: string): { year: string; month: string; day: stri
  * and the previous month.
  *
  * @param {string} year - The 4-digit year (e.g., '2025').
- * @param {string} month - The 1- or 2-digit month (e.g., '1' or '01'). Will be normalized to '01'–'12'.
+ * @param {string} month - The 1- or 2-digit month (e.g., '1' or '01'). Months should be between 0 and 11.
  * @returns {Object} An object containing:
  *   - startOfPreviousMonth: e.g., '2025-01-01'
  *   - endOfPreviousMonth: e.g., '2025-01-28'
@@ -186,10 +186,12 @@ export const getAdjacentMonthRanges = (
 
   // Normalize and clamp month to range 1–12
   let numericMonth = parseInt(month, 10);
-  if (isNaN(numericMonth) || numericMonth < 1 || numericMonth > 12) {
-    numericMonth = 1;
+  if (isNaN(numericMonth) || numericMonth < 0 || numericMonth > 11) {
+    numericMonth = 0;
   }
-  const formattedMonth = padMonthInteger(numericMonth);
+
+  // The ++ to convert from 0-based to 1-based month
+  const formattedMonth = padMonthInteger(numericMonth++);
 
   // Current month start/end (28-day simplification)
   const startOfCurrentMonth = `${safeYear}-${formattedMonth}-01`;
@@ -198,22 +200,24 @@ export const getAdjacentMonthRanges = (
   // Previous month computation
   let prevMonth = numericMonth - 1;
   let prevYear = numericYear;
-  if (prevMonth < 1) {
-    prevMonth = 12;
+  if (prevMonth < 0) {
+    prevMonth = 11;
     prevYear = numericYear - 1;
   }
-  const paddedPrevMonth = padMonthInteger(prevMonth);
+  // The ++ to convert from 0-based to 1-based month
+  const paddedPrevMonth = padMonthInteger(prevMonth++);
   const startOfPreviousMonth = `${prevYear.toString().padStart(4, "0")}-${paddedPrevMonth}-01`;
   const endOfPreviousMonth = `${prevYear.toString().padStart(4, "0")}-${paddedPrevMonth}-28`;
 
   // Next month computation
   let nextMonth = numericMonth + 1;
   let nextYear = numericYear;
-  if (nextMonth > 12) {
-    nextMonth = 1;
+  if (nextMonth > 11) {
+    nextMonth = 0;
     nextYear += 1;
   }
-  const paddedNextMonth = padMonthInteger(nextMonth);
+  // The ++ to convert from 0-based to 1-based month
+  const paddedNextMonth = padMonthInteger(nextMonth++);
   const startOfNextMonth = `${nextYear.toString().padStart(4, "0")}-${paddedNextMonth}-01`;
   const endOfNextMonth = `${nextYear.toString().padStart(4, "0")}-${paddedNextMonth}-28`;
 
