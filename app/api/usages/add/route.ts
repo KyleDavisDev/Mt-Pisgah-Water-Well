@@ -69,14 +69,6 @@ const handler = async (req: Request) => {
     }
   }
 
-  // TODO: Remove me in favor of user-required action. Do not automatically create a fee.
-  // TODO: Think about partial successes
-  await createAndInsertWaterUsageFees(
-    sqlUsages[0].date_collected,
-    sqlUsages.map(s => s.property_id),
-    username
-  );
-
   return Response.json({ message: "Success!" });
 };
 
