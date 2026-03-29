@@ -78,6 +78,9 @@ const handler = async (req: Request): Promise<Response> => {
 
   let createdBillsCount = 0;
 
+  // TODO: Create missing water fees for each property.
+  // await createAndInsertWaterUsageFees();
+
   for (const propertyId of propertyIds) {
     // 1. Database lookups: Get fees, current balance, and any discounts
     const [fees, currentBalanceInPennies, discount] = await Promise.all([

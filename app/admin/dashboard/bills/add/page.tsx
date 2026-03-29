@@ -7,7 +7,7 @@ import { Badge } from "../../../../components/Badge/Badge";
 import { NotificationDot } from "../../../../components/NotificationDot/NotificationDot";
 import { MONTHS, YEARS } from "../../appConstants";
 import { FlashMessage, FlashMessageProps } from "../../../../components/FlashMessage/FlashMessage";
-import { formatNumberWithCommas } from "../../util";
+import { formatNumberWithCommas, getPrefixedMonthValue } from "../../util";
 import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 interface Property {
@@ -38,24 +38,12 @@ const Page = () => {
     type: undefined
   });
 
-  // Prefixes a "0" to the single-digit month if needed.
-  const getPrefixedMonthValue = (numericMonth: number) => {
-    return numericMonth < 10 ? "0" + (numericMonth + 1).toString() : numericMonth.toString();
-  };
-
   const fetchAmountUsedByMonthAndYear = () => {
     if (loading) return;
 
     let year = parseInt(selectedYear, 10);
     let numericMonth = MONTHS.indexOf(selectedMonth);
-    if (numericMonth === -1) return;
-
-    // Add carryover of one month to account for what the BE expects
-    numericMonth += 1;
-    if (numericMonth > 12) {
-      numericMonth = 1;
-      year += 1;
-    }
+    if (numericMonth < 0 || numericMonth > 11) return;
     const formattedMonth = getPrefixedMonthValue(numericMonth);
 
     setLoading(true);
@@ -74,7 +62,7 @@ const Page = () => {
       });
   };
 
-  const createInvoices = async () => {
+  const createBill = async () => {
     if (loading) return;
 
     let year = parseInt(selectedYear, 10);
@@ -147,7 +135,7 @@ const Page = () => {
 
   return (
     <ArticleHolder>
-      <h3>Create Usage Invoices</h3>
+      <h3>Create Monthly Invoices</h3>
       <div className={"flex flex-col flex-wrap p-6"}>
         {flashMessage.isVisible && (
           <FlashMessage type={flashMessage.type} isVisible={flashMessage.isVisible} onClose={onFlashClose}>
@@ -253,7 +241,7 @@ const Page = () => {
 
         {homeowners.length > 0 && (
           <div style={{ marginTop: "20px", textAlign: "center" }}>
-            <Button onClick={createInvoices} disabled={loading}>
+            <Button onClick={createBill} disabled={loading}>
               {loading ? "Creating..." : "Create Invoices"}
             </Button>
           </div>

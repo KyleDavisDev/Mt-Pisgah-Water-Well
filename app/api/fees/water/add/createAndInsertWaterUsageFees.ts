@@ -67,6 +67,7 @@ export const createAndInsertWaterUsageFees = async (
       category: "WATER_USAGE",
       amount_in_pennies: formula.calculate(gallonsUsed),
       is_active: true,
+      // TODO: Use current UTC datetime here instead
       created_at: addRandomDaysToDate(startOfCurrentMonth, 1, 3)
     };
 

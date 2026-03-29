@@ -41,6 +41,18 @@ export const getMonthStrFromMonthIndex = (index: number): string => {
 };
 
 /**
+ * Converts a zero-based numeric month index to a string with a leading zero if necessary. Note that this method does not do
+ * any validation.
+ *
+ * @param numericMonth - A zero-based month index (0 for January, 11 for December).
+ * @returns A string representing the month number, with a leading zero for months 1-9 (e.g., "00" for January, "11" for December).
+ *
+ */
+export const getPrefixedMonthValue = (numericMonth: number): string => {
+  return numericMonth < 10 ? "0" + numericMonth.toString() : numericMonth.toString();
+};
+
+/**
  * Capitalizes the first letter of the given string.
  *
  * @param {string} word - The input string to modify.
