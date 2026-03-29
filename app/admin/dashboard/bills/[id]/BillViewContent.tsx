@@ -32,7 +32,7 @@ export default function BillViewContent({ billDetails }: BillViewContentProps) {
         </div>
         <div className={"text-right text-[14px]"}>
           <p>Invoice Created On: {formatISODateToUserFriendlyLocal(billDetails.createdDate)}</p>
-          <p className={"mb-[15px]"}>Invoice Number: {billDetails.id}</p>
+          <p className={"mb-[15px]"}>Invoice Number: B{billDetails.id}</p>
           <p>{billDetails.company.address}</p>
           <p>
             {billDetails.company.city}, {billDetails.company.state} {billDetails.company.zip}

@@ -224,7 +224,7 @@ export class FeeRepository {
    * @param {string} createdBefore - Created before datetime
    * @returns {Promise<Fee[]>} A promise that resolves to an array of fees.
    */
-  static getBilledWaterFeesByPropertyIdCreatedBeforeMonthAndYearDesc = async (
+  static getBilledWaterFeesByPropertyIdAndCreatedBeforeOrderedByCreatedAtDesc = async (
     propertyId: number,
     limit: number,
     createdBefore: string

@@ -12,7 +12,6 @@ import Homeowner from "../models/Homeowners";
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-// TODO: Finish this out if/when needed
 const defaultGrouping = (homeowners: Homeowner[], properties: Property[], bills: Bill[]) => {
   return Response.json({
     bills: bills.map(bill => {
@@ -21,8 +20,18 @@ const defaultGrouping = (homeowners: Homeowner[], properties: Property[], bills:
         property: properties
           .filter(p => p.id === bill.property_id)
           .map(property => {
-            return { ...property };
-          })
+            return {
+              ...property,
+              homeowner: homeowners
+                .filter(h => h.id === property.homeowner_id)
+                .map(h => {
+                  return {
+                    id: h.id.toString(),
+                    name: h.name
+                  };
+                })[0]
+            };
+          })[0]
       };
     })
   });
@@ -50,8 +59,8 @@ const homeownerGrouping = (homeowners: Homeowner[], properties: Property[], bill
                   .map((u: Bill) => {
                     return {
                       id: u.id.toString(),
-                      month: u.billing_month,
-                      year: u.billing_year,
+                      month: u.metadata.water_usage?.usage_month,
+                      year: u.metadata.water_usage?.usage_year,
                       gallonsUsed: u.metadata.water_usage ? u.metadata.water_usage.gallons_used.toString() : 0,
                       dateCreated: u.created_at,
                       amountInPennies: u.total_in_pennies,
@@ -91,14 +100,18 @@ const handler = async (req: Request) => {
   const propertyIds = properties.map(p => p.id);
   const bills = await BillRepository.findAllActiveByPropertyIdInAndTypeAndLimitBy(propertyIds, 6);
 
-  if (groupBy?.length === 1 && groupBy[0].toUpperCase() === "HOMEOWNER") {
-    return homeownerGrouping(homeowners, properties, bills);
-  } else if (groupBy?.length === 1 && groupBy[0] === "SOME_OTHER_SORTING") {
-    return homeownerGrouping(homeowners, properties, bills);
-  } else {
-    // default
+  if (groupBy?.length !== 1) {
     return defaultGrouping(homeowners, properties, bills);
   }
+
+  if (groupBy[0].toUpperCase() === "HOMEOWNER") {
+    return homeownerGrouping(homeowners, properties, bills);
+  } else if (groupBy[0] === "SOME_OTHER_SORTING") {
+    return homeownerGrouping(homeowners, properties, bills);
+  }
+
+  // default
+  return defaultGrouping(homeowners, properties, bills);
 };
 
 export const GET = withErrorHandler(handler);
