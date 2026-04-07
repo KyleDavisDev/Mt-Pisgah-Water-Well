@@ -191,7 +191,7 @@ export const getAdjacentMonthRanges = (
   }
 
   // The ++ to convert from 0-based to 1-based month
-  const formattedMonth = padMonthInteger(numericMonth++);
+  const formattedMonth = padMonthInteger(++numericMonth);
 
   // Current month start/end (28-day simplification)
   const startOfCurrentMonth = `${safeYear}-${formattedMonth}-01`;
@@ -205,7 +205,7 @@ export const getAdjacentMonthRanges = (
     prevYear = numericYear - 1;
   }
   // The ++ to convert from 0-based to 1-based month
-  const paddedPrevMonth = padMonthInteger(prevMonth++);
+  const paddedPrevMonth = padMonthInteger(++prevMonth);
   const startOfPreviousMonth = `${prevYear.toString().padStart(4, "0")}-${paddedPrevMonth}-01`;
   const endOfPreviousMonth = `${prevYear.toString().padStart(4, "0")}-${paddedPrevMonth}-28`;
 
@@ -217,7 +217,7 @@ export const getAdjacentMonthRanges = (
     nextYear += 1;
   }
   // The ++ to convert from 0-based to 1-based month
-  const paddedNextMonth = padMonthInteger(nextMonth++);
+  const paddedNextMonth = padMonthInteger(++nextMonth);
   const startOfNextMonth = `${nextYear.toString().padStart(4, "0")}-${paddedNextMonth}-01`;
   const endOfNextMonth = `${nextYear.toString().padStart(4, "0")}-${paddedNextMonth}-28`;
 
