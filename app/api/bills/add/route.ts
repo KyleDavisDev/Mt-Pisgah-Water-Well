@@ -71,7 +71,8 @@ const handler = async (req: Request): Promise<Response> => {
     throw new BadRequestError("Missing month or year");
   }
 
-  const { endOfCurrentMonth } = getAdjacentMonthRanges(year, month);
+  const { startOfCurrentMonth, endOfCurrentMonth } = getAdjacentMonthRanges(year, month);
+  console.log(endOfCurrentMonth);
 
   const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
   const propertyIds = properties.map((p: any) => p.id);
@@ -84,7 +85,9 @@ const handler = async (req: Request): Promise<Response> => {
   for (const propertyId of propertyIds) {
     // 1. Database lookups: Get fees, current balance, and any discounts
     const [fees, currentBalanceInPennies, discount] = await Promise.all([
-      FeeRepository.getUnbilledActiveFeesByYearMonthAndPropertyIds(year, month, [propertyId]),
+      FeeRepository.getUnbilledActiveFeesBetweenDatesAndPropertyIds(startOfCurrentMonth, endOfCurrentMonth, [
+        propertyId
+      ]),
       getPropertyAccountBalanceAtDate(propertyId, endOfCurrentMonth),
       DiscountRepository.getFirstActiveValidOnDateAndPropertyId(propertyId, `${year}-${month}-15`)
     ]);
@@ -92,7 +95,7 @@ const handler = async (req: Request): Promise<Response> => {
     // 2. Sanity checks
     if (fees && fees.length === 0) {
       console.log(
-        `Found zero unbilled fees for propertyId:${propertyId} with year:${year} and month:${month}. Skipping.`
+        `Found zero unbilled fees for propertyId:${propertyId} between ${startOfCurrentMonth} and ${endOfCurrentMonth}. Skipping.`
       );
       continue; // Skip if bill exists
     }

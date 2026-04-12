@@ -75,26 +75,24 @@ export class FeeRepository {
   /**
    * Retrieves all active unbilled fees for a given year, month, and list of property IDs.
    *
-   * @param {number} year - The 4-digit billing year (e.g., 2025).
-   * @param {number} month - The billing month (1–12).
+   * @param {string} lowerBound - The lower range date to search. Inclusive.
+   * @param {string} upperBound - The upper range date to search. Exclusive.
    * @param {number[]} propertyIds - List of property IDs to filter against.
    *
    * @returns {Promise<Fee[]>} A promise that resolves to an array of matching fees.
    */
-  static getUnbilledActiveFeesByYearMonthAndPropertyIds = async (
-    year: string,
-    month: string,
+  static getUnbilledActiveFeesBetweenDatesAndPropertyIds = async (
+    lowerBound: string,
+    upperBound: string,
     propertyIds: number[]
   ): Promise<Fee[]> => {
-    const { startOfCurrentMonth, endOfCurrentMonth } = getAdjacentMonthRanges(year, month);
-
     const fees = await db<Fee[]>`
     SELECT *
     FROM fees
     WHERE is_active = true
       AND property_id IN ${db(propertyIds)}
-      AND created_at >= ${startOfCurrentMonth}
-      AND created_at < ${endOfCurrentMonth}
+      AND created_at >= ${lowerBound}
+      AND created_at < ${upperBound}
       AND bill_id IS NULL
     ORDER BY created_at desc
   `;
