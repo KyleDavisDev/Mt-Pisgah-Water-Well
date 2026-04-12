@@ -44,8 +44,15 @@ const Page = () => {
     let year = parseInt(selectedYear, 10);
     let numericMonth = MONTHS.indexOf(selectedMonth);
     if (numericMonth < 0 || numericMonth > 11) return;
-    const formattedMonth = getPrefixedMonthValue(numericMonth);
 
+    // Add carryover of one month to account for what the BE expects
+    numericMonth += 1;
+    if (numericMonth > 12) {
+      numericMonth = 1;
+      year += 1;
+    }
+
+    const formattedMonth = getPrefixedMonthValue(numericMonth);
     setLoading(true);
     onFlashClose();
 

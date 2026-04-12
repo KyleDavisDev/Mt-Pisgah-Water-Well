@@ -71,7 +71,7 @@ const walkableGrouping = (homeowners: Homeowner[], properties: Property[], usage
     };
   });
 
-  const customOrder = ["5", "6", "7", "1", "2", "3", "9", "10", "11", "16", "8", "12", "4", "13", "14", "15"];
+  const customOrder = ["4", "5", "6", "7", "1", "2", "3", "9", "10", "11", "16", "8", "12", "15", "14", "13"];
 
   const sortedProperties = unsortedProperties.sort((a, b) => {
     const indexA = customOrder.indexOf(a.id);
