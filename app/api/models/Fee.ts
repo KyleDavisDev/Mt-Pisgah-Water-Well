@@ -1,5 +1,3 @@
-import Invoice from "./Invoice";
-
 export type FeeType = "WATER_USAGE" | "ADMINISTRATIVE" | "LATE_FEE" | "SERVICE_FEE" | "CUSTOM";
 
 export default interface Fee {
