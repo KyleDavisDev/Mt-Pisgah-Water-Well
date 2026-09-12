@@ -106,9 +106,8 @@ const Page = () => {
         body: JSON.stringify({ payments: payments.filter(x => !(x.amountInPennies === 0)) })
       });
 
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
-
         setFlashMessage({
           isVisible: true,
           text: data.message,
@@ -116,6 +115,12 @@ const Page = () => {
         });
 
         getAccountBalanceByHomeowner();
+      } else {
+        setFlashMessage({
+          isVisible: true,
+          text: data.error,
+          type: "alert"
+        });
       }
     } catch (err: any) {
       console.log(err);
