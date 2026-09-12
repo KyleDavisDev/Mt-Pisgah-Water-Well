@@ -1,8 +1,6 @@
-import { cookies } from "next/headers";
-import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { PaymentCreate } from "../../models/Payments";
 import { PaymentRepository } from "../../repositories/paymentRepository";
-import { withErrorHandler } from "../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -26,12 +24,7 @@ const toModelAdapter = (payments: any): PaymentCreate[] => {
     .filter(x => x.method === "CHECK" || x.method === "CASH");
 };
 
-const handler = async (req: Request) => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "CREATE_PAYMENT");
-
+const handler = async (req: Request, username: string) => {
   // TODO: Data validation
   const { payments } = await req.json();
   const paymentsToSave = toModelAdapter(payments);
@@ -41,4 +34,4 @@ const handler = async (req: Request) => {
   return Response.json({ message: `Success! Saved ${paymentsToSave.length}` });
 };
 
-export const POST = withErrorHandler(handler);
+export const POST = withErrorHandler(withAuthenticationHandler(handler, ["CREATE_PAYMENT"]));
