@@ -1,13 +1,10 @@
-import { cookies } from "next/headers";
 import {
   addRandomDaysToDate,
   getPropertyAccountBalanceAtDate,
-  getAdjacentMonthRanges,
-  getUsernameFromCookie,
-  validatePermission
+  getAdjacentMonthRanges
 } from "../../utils/utils";
 import { PropertyRepository } from "../../repositories/propertyRepository";
-import { withErrorHandler } from "../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 import { Discount } from "../../models/Discount";
 import { DiscountRepository } from "../../repositories/discountRepository";
 import { BadRequestError } from "../../utils/errors";
@@ -58,12 +55,7 @@ const calculateFinalCostInPennies = (fees: Fee[], discount: Discount | null): nu
   return totalInFees - totalAmountInPenniesToDeduct;
 };
 
-const handler = async (req: Request): Promise<Response> => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "CREATE_INVOICE");
-
+const handler = async (req: Request, _ctx: unknown, username: string): Promise<Response> => {
   // TODO: Data validation
   const { month, year, propertyId } = await req.json();
 
@@ -184,4 +176,4 @@ const handler = async (req: Request): Promise<Response> => {
   return Response.json({ message: `${createdBillsCount} bill(s) created.` });
 };
 
-export const POST = withErrorHandler(handler);
+export const POST = withErrorHandler(withAuthenticationHandler(handler, ["CREATE_INVOICE"]));
