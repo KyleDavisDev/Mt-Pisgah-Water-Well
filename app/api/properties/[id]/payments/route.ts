@@ -1,20 +1,11 @@
-import { cookies } from "next/headers";
-
-import { getUsernameFromCookie, validatePermission } from "../../../utils/utils";
 import { PaymentRepository } from "../../../repositories/paymentRepository";
 import { BadRequestError } from "../../../utils/errors";
-import { withErrorHandler } from "../../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
 const handler = async (_req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> => {
-  // Validate user permissions
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "VIEW_PAYMENT");
-
   const { id } = await params;
 
   // Quick sanitize and validate the property id
@@ -39,4 +30,4 @@ const handler = async (_req: Request, { params }: { params: Promise<{ id: string
   });
 };
 
-export const GET = withErrorHandler(handler);
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["VIEW_PAYMENT"]));
