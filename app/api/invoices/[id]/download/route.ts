@@ -1,10 +1,9 @@
 "use server";
 
-import { cookies } from "next/headers";
 import puppeteer, { Browser } from "puppeteer";
 import { renderBillHtml } from "./renderInvoiceHtml";
-import { withErrorHandler } from "../../../utils/handlers";
-import { fetchInvoiceDetails, getUsernameFromCookie, validatePermission } from "../../../utils/utils";
+import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
+import { fetchInvoiceDetails } from "../../../utils/utils";
 import { ResourceNotFoundError } from "../../../utils/errors";
 import { invoiceDetailsMapper } from "../mapper/mapInvoiceDetails"; // your own data‑fetcher
 
@@ -20,12 +19,6 @@ const getBrowser = async () => {
 };
 
 const handler = async (req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> => {
-  // Validate user permissions
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "VIEW_BILLS");
-
   // 1️⃣ Get the data that `BillView` expects
   const { id } = await params;
   if (!id) {
@@ -66,4 +59,4 @@ const handler = async (req: Request, { params }: { params: Promise<{ id: string 
   return new Response(pdfBuffer, { status: 200, headers });
 };
 
-export const GET = withErrorHandler(handler);
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["VIEW_BILLS"]));
