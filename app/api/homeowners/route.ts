@@ -1,19 +1,10 @@
-import { cookies } from "next/headers";
-import { db } from "../utils/db";
-import Homeowners from "../models/Homeowners";
-import { getUsernameFromCookie, validatePermission } from "../utils/utils";
-import { withErrorHandler } from "../utils/handlers";
 import { HomeownerRepository } from "../repositories/homeownerRepository";
+import { withAuthenticationHandler, withErrorHandler } from "../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const handler = async () => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "VIEW_HOMEOWNERS");
-
+const handler = async (_req: Request, _ctx: unknown) => {
   const homeowners = await HomeownerRepository.getAllHomeowners();
 
   return Response.json({
@@ -32,4 +23,4 @@ const handler = async () => {
   });
 };
 
-export const GET = withErrorHandler(handler);
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["VIEW_HOMEOWNERS"]));
