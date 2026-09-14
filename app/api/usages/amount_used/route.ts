@@ -1,26 +1,15 @@
-import { cookies } from "next/headers";
-import {
-  extractKeyFromRequest,
-  getAdjacentMonthRanges,
-  getUsernameFromCookie,
-  validatePermission
-} from "../../utils/utils";
+import { extractKeyFromRequest, getAdjacentMonthRanges } from "../../utils/utils";
 import { UsageRepository } from "../../repositories/usageRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { InvoiceRepository } from "../../repositories/invoiceRepository";
-import { withErrorHandler } from "../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 import { BadRequestError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const handler = async (req: Request) => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "VIEW_USAGES");
-
+const handler = async (req: Request, _ctx: unknown) => {
   const month = extractKeyFromRequest(req, "month");
   const year = extractKeyFromRequest(req, "year");
 
@@ -90,4 +79,4 @@ const handler = async (req: Request) => {
   });
 };
 
-export const GET = withErrorHandler(handler);
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["VIEW_USAGES"]));
