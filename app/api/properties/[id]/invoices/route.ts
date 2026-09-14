@@ -1,20 +1,12 @@
-import { cookies } from "next/headers";
-
-import { getUsernameFromCookie, validatePermission } from "../../../utils/utils";
 import { BadRequestError, InternalServerError } from "../../../utils/errors";
 import { InvoiceRepository } from "../../../repositories/invoiceRepository";
+import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> {
+const handler = async (req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> => {
   try {
-    // Validate user permissions
-    const cookieStore = await cookies();
-    const jwtCookie = cookieStore.get("jwt");
-    const username = await getUsernameFromCookie(jwtCookie);
-    await validatePermission(username, "VIEW_BILLS");
-
     const { id } = await params;
 
     // Quick sanitize and validate the property id
@@ -41,4 +33,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   } catch (error) {
     throw new InternalServerError("Internal server error");
   }
-}
+};
+
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["VIEW_BILLS"]));
