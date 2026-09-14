@@ -24,7 +24,7 @@ const toModelAdapter = (payments: any): PaymentCreate[] => {
     .filter(x => x.method === "CHECK" || x.method === "CASH");
 };
 
-const handler = async (req: Request, username: string) => {
+const handler = async (req: Request, _ctx: unknown, username: string) => {
   // TODO: Data validation
   const { payments } = await req.json();
   const paymentsToSave = toModelAdapter(payments);
