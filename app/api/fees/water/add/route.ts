@@ -1,16 +1,9 @@
-import { cookies } from "next/headers";
-
-import { getUsernameFromCookie } from "../../../utils/utils";
 import { BadRequestError } from "../../../utils/errors";
-import { withErrorHandler } from "../../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
 import { PropertyRepository } from "../../../repositories/propertyRepository";
 import { createAndInsertWaterUsageFees } from "./createAndInsertWaterUsageFees";
 
-const handler = async (req: Request): Promise<Response> => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-
+const handler = async (req: Request, _ctx: unknown, username: string): Promise<Response> => {
   // TODO: Data validation
   const { month, year, propertyId } = await req.json();
 
@@ -29,4 +22,4 @@ const handler = async (req: Request): Promise<Response> => {
   return Response.json({ message: `${fees} fees(s) created.` });
 };
 
-export const POST = withErrorHandler(handler);
+export const POST = withErrorHandler(withAuthenticationHandler(handler, ["CREATE_FEE"]));

@@ -1,11 +1,7 @@
-import { cookies } from "next/headers";
-
 import { db } from "../../utils/db";
-import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import Usage from "../../models/Usages";
 import { AuditRepository } from "../../repositories/auditRepository";
-import { withErrorHandler } from "../../utils/handlers";
-import { createAndInsertWaterUsageFees } from "../../fees/water/add/createAndInsertWaterUsageFees";
+import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -30,12 +26,7 @@ const toModelAdapter = (usages: any): Usage[] => {
     });
 };
 
-const handler = async (req: Request) => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "ADD_USAGE");
-
+const handler = async (req: Request, _ctx: unknown, username: string) => {
   // TODO: Data validation
   const { usages } = await req.json();
 
@@ -72,4 +63,4 @@ const handler = async (req: Request) => {
   return Response.json({ message: "Success!" });
 };
 
-export const POST = withErrorHandler(handler);
+export const POST = withErrorHandler(withAuthenticationHandler(handler, ["ADD_USAGE"]));

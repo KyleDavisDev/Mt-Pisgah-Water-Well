@@ -1,20 +1,13 @@
-import { cookies } from "next/headers";
 import { db } from "../../utils/db";
-import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { UsageRepository } from "../../repositories/usageRepository";
 import { AuditRepository } from "../../repositories/auditRepository";
-import { withErrorHandler } from "../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 import { BadRequestError, ResourceNotFoundError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const handler = async (req: Request) => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "UPDATE_USAGE");
-
+const handler = async (req: Request, _ctx: unknown, username: string) => {
   const { id, gallons, isActive } = await req.json();
 
   if (!id || !gallons || !isActive) {
@@ -57,4 +50,4 @@ const handler = async (req: Request) => {
   return Response.json({ message: "Success!" });
 };
 
-export const PUT = withErrorHandler(handler);
+export const PUT = withErrorHandler(withAuthenticationHandler(handler, ["UPDATE_USAGE"]));

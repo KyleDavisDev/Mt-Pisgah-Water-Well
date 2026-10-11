@@ -6,7 +6,7 @@ import { Button } from "../Button/Button";
 const variantStyles: Record<string, { bg: string; borderLeft: string; textColor: string; linkColor: string }> = {
   success: { bg: "#dff0d8", borderLeft: "#d0e9c6", textColor: "#3c763d", linkColor: "#2a522a" },
   warning: { bg: "#fcf8e3", borderLeft: "#faf2cc", textColor: "#8a6d3b", linkColor: "#8a6d3b" },
-  default: { bg: "#f2dede", borderLeft: "#ebcccc", textColor: "#a94442", linkColor: "#a94442" }
+  default: { bg: "#f2dede", borderLeft: "#c26666", textColor: "#a94442", linkColor: "#a94442" }
 };
 
 export interface FlashMessageProps {
@@ -29,7 +29,6 @@ const FlashMessage: React.FC<FlashMessageProps> = props => {
   }
 
   const getContainerStyles = (type: FlashMessageProps["type"]) => {
-    console.log(type);
     let backGroundColor = { backgroundColor: variantStyles["default"].bg };
     if (type === "success" || type === "warning") {
       backGroundColor.backgroundColor = variantStyles[type].bg;

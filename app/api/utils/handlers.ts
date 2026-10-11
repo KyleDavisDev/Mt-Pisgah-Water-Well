@@ -1,4 +1,6 @@
+import { cookies } from "next/headers";
 import { HttpError } from "./errors";
+import { getUsernameFromCookie, validatePermission, validatePermissions } from "./utils";
 
 type AsyncHandler = (...args: any[]) => Promise<any>;
 
@@ -25,5 +27,17 @@ export function withErrorHandler(handler: AsyncHandler): AsyncHandler {
         headers: { "Content-Type": "application/json" }
       });
     }
+  };
+}
+
+export function withAuthenticationHandler(handler: AsyncHandler, requiredPermissions: string[]): AsyncHandler {
+  return async (...args) => {
+    const cookieStore = await cookies();
+    const jwtCookie = cookieStore.get("jwt");
+    const username = await getUsernameFromCookie(jwtCookie);
+    await validatePermissions(username, requiredPermissions);
+
+    // Pass everything to the original handler
+    return await handler(...args, username);
   };
 }

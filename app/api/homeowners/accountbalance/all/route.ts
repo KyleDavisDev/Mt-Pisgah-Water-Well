@@ -1,5 +1,3 @@
-import { cookies } from "next/headers";
-import { getUsernameFromCookie, validatePermissions } from "../../../utils/utils";
 import Homeowners from "../../../models/Homeowners";
 import Property from "../../../models/Properties";
 import { HomeownerRepository } from "../../../repositories/homeownerRepository";
@@ -7,23 +5,18 @@ import { PropertyRepository } from "../../../repositories/propertyRepository";
 import { PaymentRepository } from "../../../repositories/paymentRepository";
 import { InvoiceRepository } from "../../../repositories/invoiceRepository";
 import { ForbiddenError, MethodNotAllowedError } from "../../../utils/errors";
-import { withErrorHandler } from "../../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const handler = async (req: Request) => {
+const handler = async (req: Request, _ctx: unknown) => {
   if (req.method !== "GET") {
     // Handle any other HTTP method
     throw new MethodNotAllowedError();
   }
 
   try {
-    const cookieStore = await cookies();
-    const jwtCookie = cookieStore.get("jwt");
-    const username = await getUsernameFromCookie(jwtCookie);
-    await validatePermissions(username, ["READ_PAYMENT", "READ_INVOICE"]);
-
     const homeowners = await HomeownerRepository.getAllActiveHomeowners();
     if (!homeowners || homeowners.length === 0) {
       return Response.json({ homeowners: [] });
@@ -81,4 +74,4 @@ const handler = async (req: Request) => {
   }
 };
 
-export const GET = withErrorHandler(handler);
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["READ_PAYMENT", "READ_INVOICE"]));

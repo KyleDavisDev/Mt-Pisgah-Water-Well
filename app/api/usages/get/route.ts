@@ -1,5 +1,4 @@
-import { cookies } from "next/headers";
-import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../../utils/utils";
+import { extractKeyFromRequest } from "../../utils/utils";
 import Homeowners from "../../models/Homeowners";
 import Property from "../../models/Properties";
 import Usages from "../../models/Usages";
@@ -8,7 +7,7 @@ import { HomeownerRepository } from "../../repositories/homeownerRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import Usage from "../../models/Usages";
 import Homeowner from "../../models/Homeowners";
-import { withErrorHandler } from "../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -116,12 +115,7 @@ const defaultGrouping = (homeowners: Homeowner[], properties: Property[], usages
   });
 };
 
-const handler = async (req: Request) => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "VIEW_USAGES");
-
+const handler = async (req: Request, _ctx: unknown) => {
   const groupBy = extractKeyFromRequest(req, "groupBy");
 
   const homeowners = await HomeownerRepository.getAllActiveHomeowners();
@@ -151,4 +145,4 @@ const handler = async (req: Request) => {
   }
 };
 
-export const GET = withErrorHandler(handler);
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["VIEW_USAGES"]));
