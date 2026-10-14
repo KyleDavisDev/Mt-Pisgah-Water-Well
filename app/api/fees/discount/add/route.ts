@@ -46,7 +46,7 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
     const discountAmountInPennies = calculateDiscountAmountInPennies(fees, discount);
     if (discountAmountInPennies <= 0) continue;
 
-    const newData: FeeCreate = {
+    const newFee: FeeCreate = {
       property_id: property.id,
       bill_id: null,
       amount_in_pennies: -discountAmountInPennies,
@@ -56,7 +56,7 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
       created_at: addRandomDaysToDate(startOfCurrentMonth, 1, 2)
     };
 
-    const fee = await FeeRepository.insertNewFeeAsTransactional(username, newData);
+    const fee = await FeeRepository.insertNewFeeAsTransactional(username, newFee);
     if (fee) createdCount++;
   }
 
