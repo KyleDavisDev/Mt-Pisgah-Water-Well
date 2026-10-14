@@ -6,11 +6,11 @@ import { PricingFormula } from "../water/pricingFormulas/types";
 export const calculateDiscountAmountInPennies = (fees: Fee[], discount: Discount): number => {
   // Flat discount for the whole bill
   if (discount.amount_in_pennies && !discount.gallons_applied_to) {
-    // Do not discount more than cost of all of the fees
     const totalFeeAmountInPennies = fees
       .filter(x => x.category !== "DISCOUNT")
       .reduce((accum: number, curr: Fee) => accum + (curr.amount_in_pennies ?? 0), 0);
 
+    // Do not discount more than cost of all of the fees
     return Math.min(totalFeeAmountInPennies, discount.amount_in_pennies);
   }
 
