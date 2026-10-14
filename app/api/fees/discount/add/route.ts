@@ -22,6 +22,12 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
 
   let createdCount = 0;
   for (const property of properties) {
+    const discount = await DiscountRepository.getFirstActiveValidOnDateAndPropertyId(
+      property.id,
+      `${year}-${month}-15`
+    );
+    if (!discount) continue;
+
     const fees = await FeeRepository.getActiveFeesByYearAndMonthAndPropertyIn(parseInt(year, 10), parseInt(month, 10), [
       property.id
     ]);
@@ -30,19 +36,12 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
     const waterFee = fees.find(fee => fee.category === "WATER_USAGE");
     if (!waterFee) continue;
 
-    // Idempotent: never create a second DISCOUNT fee for the same month/property.
-    let alreadyContainsDiscountFee = fees.some(fee => fee.category === "DISCOUNT");
-    if (alreadyContainsDiscountFee) {
-      // TODO: Should we increment counter here?
+    // Never create a second DISCOUNT fee for the same month/property.
+    const discountFee = fees.find(fee => fee.category === "DISCOUNT");
+    if (discountFee) {
       createdCount++;
       continue;
     }
-
-    const discount = await DiscountRepository.getFirstActiveValidOnDateAndPropertyId(
-      property.id,
-      `${year}-${month}-15`
-    );
-    if (!discount) continue;
 
     const discountAmountInPennies = calculateDiscountAmountInPennies(fees, discount);
     if (discountAmountInPennies <= 0) continue;
