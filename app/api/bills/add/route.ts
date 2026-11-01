@@ -111,6 +111,7 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
             : undefined,
         discount: feesByCategory["DISCOUNT"][0]
           ? {
+              amount_in_pennies: feesByCategory["DISCOUNT"][0].amount_in_pennies,
               name: (feesByCategory["DISCOUNT"][0].metadata as DiscountMetaData).name,
               description: (feesByCategory["DISCOUNT"][0].metadata as DiscountMetaData).description
             }
