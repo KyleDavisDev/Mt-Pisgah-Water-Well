@@ -1,10 +1,8 @@
 import { BadRequestError } from "../../../utils/errors";
 import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
 import { PropertyRepository } from "../../../repositories/propertyRepository";
-import { getAdjacentMonthRanges } from "../../../utils/utils";
 
 import { buildDiscountFees } from "./buildDiscountFees";
-import { DiscountRepository } from "../../../repositories/discountRepository";
 import { FeeRepository } from "../../../repositories/FeeRepository";
 
 // NextJS quirk to make the route dynamic
