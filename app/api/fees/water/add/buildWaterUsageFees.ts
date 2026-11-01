@@ -1,15 +1,15 @@
-import Fee, { FeeCreate, WaterUsageMetaData } from "../../../models/Fee";
+import { FeeCreate, WaterUsageMetaData } from "../../../models/Fee";
 import { addRandomDaysToDate, getAdjacentMonthRanges, parseYMD, validatePermission } from "../../../utils/utils";
 import { UsageRepository } from "../../../repositories/usageRepository";
 import { FeeRepository } from "../../../repositories/FeeRepository";
 import { PricingFormula } from "../pricingFormulas/types";
 import { getWaterPricingFormulaByYearAndMonth } from "../../createFee";
 
-export const createAndInsertWaterUsageFees = async (
+export const buildWaterUsageFees = async (
   dateCollected: string,
   propertyIds: number[],
   username: string
-): Promise<Fee[] | null> => {
+): Promise<FeeCreate[]> => {
   await validatePermission(username, "CREATE_FEE");
   const { year, month } = parseYMD(dateCollected);
 
@@ -29,7 +29,7 @@ export const createAndInsertWaterUsageFees = async (
     propertyIds
   );
 
-  const fees: Fee[] = [];
+  const fees: FeeCreate[] = [];
   for (const propertyId of propertyIds) {
     const startingUsage = startingUsages.find((u: any) => u.property_id === propertyId);
     const endingUsage = endingUsages.find((u: any) => u.property_id === propertyId);
@@ -60,7 +60,7 @@ export const createAndInsertWaterUsageFees = async (
       usage_year: parseInt(prevMonth.year, 10)
     };
 
-    const newData: FeeCreate = {
+    fees.push({
       property_id: propertyId,
       bill_id: null,
       metadata,
@@ -69,11 +69,8 @@ export const createAndInsertWaterUsageFees = async (
       is_active: true,
       // TODO: Use current UTC datetime here instead
       created_at: addRandomDaysToDate(startOfCurrentMonth, 1, 3)
-    };
-
-    const fee = await FeeRepository.insertNewFeeAsTransactional(username, newData);
-    if (fee) fees.push(fee);
+    });
   }
 
-  return fees.length > 0 ? fees : null;
+  return fees;
 };
