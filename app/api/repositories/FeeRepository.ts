@@ -117,6 +117,16 @@ export class FeeRepository {
     return payments ?? [];
   };
 
+  static insertNewFeesAsTransaction = async (user: string, data: FeeCreate[]): Promise<Fee[]> => {
+    const savedFees: Fee[] = [];
+    for (let i = 0; i < data.length; i++) {
+      const fee = await FeeRepository.insertNewFeeAsTransactional(user, data[i]);
+      if (fee) savedFees.push(fee);
+    }
+
+    return savedFees;
+  };
+
   /**
    * Inserts a new fee record into the database within a transactional context.
    *

@@ -1,20 +1,12 @@
-import { cookies } from "next/headers";
-
-import { fetchInvoiceDetails, getUsernameFromCookie, validatePermission } from "../../utils/utils";
+import { fetchInvoiceDetails } from "../../utils/utils";
 import { ResourceNotFoundError } from "../../utils/errors";
-import { withErrorHandler } from "../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 import { invoiceDetailsMapper } from "./mapper/mapInvoiceDetails";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
 const handler = async (req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> => {
-  // Validate user permissions
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "VIEW_BILLS");
-
   const { id } = await params;
 
   if (!id) {
@@ -30,4 +22,4 @@ const handler = async (req: Request, { params }: { params: Promise<{ id: string 
   return Response.json(invoiceDetailsMapper(bill, homeowner, property, historicalInvoices));
 };
 
-export const GET = withErrorHandler(handler);
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["VIEW_BILLS"]));

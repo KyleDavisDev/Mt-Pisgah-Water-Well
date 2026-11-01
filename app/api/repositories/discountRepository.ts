@@ -76,8 +76,8 @@ export class DiscountRepository {
         WHERE pd.property_id = ${propertyId}
           AND d.is_active = true
           AND pd.is_active = true
-        AND pd.valid_from <= ${date}
-        AND pd.valid_to > ${date}
+        AND (pd.valid_from is null OR pd.valid_from <= ${date})
+        AND (pd.valid_to is null OR pd.valid_to > ${date})
         LIMIT 1;
       `;
     return discounts ? discounts[0] : null;

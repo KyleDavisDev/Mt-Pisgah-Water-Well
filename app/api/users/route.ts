@@ -1,17 +1,11 @@
-import { cookies } from "next/headers";
-import { extractKeyFromRequest, getUsernameFromCookie, validatePermission } from "../utils/utils";
+import { extractKeyFromRequest } from "../utils/utils";
 import { UserRepository } from "../repositories/userRepository";
-import { withErrorHandler } from "../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../utils/handlers";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const handler = async (req: Request) => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "VIEW_USERS");
-
+const handler = async (req: Request, _ctx: unknown) => {
   const permissions = extractKeyFromRequest(req, "permissions");
   // TODO: data validation of permissions
 
@@ -26,4 +20,4 @@ const handler = async (req: Request) => {
   });
 };
 
-export const GET = withErrorHandler(handler);
+export const GET = withErrorHandler(withAuthenticationHandler(handler, ["VIEW_USERS"]));

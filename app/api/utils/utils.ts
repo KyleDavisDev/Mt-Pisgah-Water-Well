@@ -50,7 +50,6 @@ export const validatePermission = async (username: string, permission: string): 
   const user = await UserRepository.getActiveUserByPermissionAndUsername(permission, username);
 
   if (user === null) {
-    console.warn(`User not found for ${username}`);
     throw new ForbiddenError("User does not have sufficient privileges.");
   }
 

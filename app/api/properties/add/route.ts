@@ -1,19 +1,12 @@
-import { cookies } from "next/headers";
 import { db } from "../../utils/db";
-import { getUsernameFromCookie, validatePermission } from "../../utils/utils";
 import { AuditRepository } from "../../repositories/auditRepository";
-import { withErrorHandler } from "../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 import { BadRequestError } from "../../utils/errors";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
 
-const handler = async (req: Request) => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-  await validatePermission(username, "ADD_PROPERTY");
-
+const handler = async (req: Request, _ctx: unknown, username: string) => {
   const { address, city, state, zip, description, homeowner } = await req.json();
 
   if (!address || (description !== null && typeof description !== "string") || !homeowner) {
@@ -47,4 +40,4 @@ const handler = async (req: Request) => {
   return Response.json({ message: "Success!" });
 };
 
-export const POST = withErrorHandler(handler);
+export const POST = withErrorHandler(withAuthenticationHandler(handler, ["ADD_PROPERTY"]));

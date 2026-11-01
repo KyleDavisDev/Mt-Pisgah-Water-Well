@@ -1,16 +1,10 @@
-import { cookies } from "next/headers";
-
-import { getUsernameFromCookie } from "../../../utils/utils";
 import { BadRequestError } from "../../../utils/errors";
-import { withErrorHandler } from "../../../utils/handlers";
+import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
 import { PropertyRepository } from "../../../repositories/propertyRepository";
-import { createAndInsertWaterUsageFees } from "./createAndInsertWaterUsageFees";
+import { buildWaterUsageFees } from "./buildWaterUsageFees";
+import { FeeRepository } from "../../../repositories/FeeRepository";
 
-const handler = async (req: Request): Promise<Response> => {
-  const cookieStore = await cookies();
-  const jwtCookie = cookieStore.get("jwt");
-  const username = await getUsernameFromCookie(jwtCookie);
-
+const handler = async (req: Request, _ctx: unknown, username: string): Promise<Response> => {
   // TODO: Data validation
   const { month, year, propertyId } = await req.json();
 
@@ -20,13 +14,15 @@ const handler = async (req: Request): Promise<Response> => {
 
   const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
 
-  const fees = await createAndInsertWaterUsageFees(
+  const fees = await buildWaterUsageFees(
     `${year}-${month}-02`,
     properties.map(x => x.id),
     username
   );
 
-  return Response.json({ message: `${fees} fees(s) created.` });
+  const savedFees = await FeeRepository.insertNewFeesAsTransaction(username, fees);
+
+  return Response.json({ message: `${savedFees?.length} fees(s) created.` });
 };
 
-export const POST = withErrorHandler(handler);
+export const POST = withErrorHandler(withAuthenticationHandler(handler, ["CREATE_FEE"]));

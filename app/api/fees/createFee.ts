@@ -35,7 +35,8 @@ export const splitFeesByCategory = (fees: Fee[]): FeeCategoryMap => {
     ADMINISTRATIVE: [],
     LATE_FEE: [],
     SERVICE_FEE: [],
-    CUSTOM: []
+    CUSTOM: [],
+    DISCOUNT: []
   };
 
   return fees.reduce((acc, fee) => {
