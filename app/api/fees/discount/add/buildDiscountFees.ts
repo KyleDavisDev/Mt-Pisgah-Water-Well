@@ -71,10 +71,6 @@ export const buildDiscountFees = async (
       [propertyId]
     );
 
-    // A discount is only created alongside a water usage fee for the period.
-    const waterFee = alreadyActiveFees.find(fee => fee.category === "WATER_USAGE");
-    if (!waterFee) continue;
-
     const discountFee = alreadyActiveFees.find(fee => fee.category === "DISCOUNT");
     // Never create a second DISCOUNT fee for the same month/property.
     if (discountFee) continue;
