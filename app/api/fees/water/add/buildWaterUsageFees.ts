@@ -41,7 +41,8 @@ export const buildWaterUsageFees = async (
       propertyId
     ]);
 
-    if (existing.length > 0) continue;
+    // If WATER_USAGE fee already exists, go next
+    if (existing.length > 0 && existing.find(x => x.category === "WATER_USAGE" && x.is_active)) continue;
 
     const prevMonth = parseYMD(startOfPreviousMonth);
     const formula: PricingFormula = getWaterPricingFormulaByYearAndMonth(
