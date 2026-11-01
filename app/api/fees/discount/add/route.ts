@@ -4,6 +4,8 @@ import { PropertyRepository } from "../../../repositories/propertyRepository";
 import { getAdjacentMonthRanges } from "../../../utils/utils";
 
 import { buildDiscountFees } from "./buildDiscountFees";
+import { DiscountRepository } from "../../../repositories/discountRepository";
+import { FeeRepository } from "../../../repositories/FeeRepository";
 
 // NextJS quirk to make the route dynamic
 export const dynamic = "force-dynamic";
@@ -14,18 +16,17 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
 
   if (!month || !year) throw new BadRequestError("Missing month or year");
 
-  const { startOfCurrentMonth } = getAdjacentMonthRanges(year, month);
   const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
 
-  const fees = buildDiscountFees(
+  const discounts = await buildDiscountFees(
     `${year}-${month}-02`,
     properties.map(x => x.id),
     username
   );
 
-  let createdCount = 0;
+  const savedDiscounts = await FeeRepository.insertNewFeesAsTransaction(username, discounts);
 
-  return Response.json({ message: `${createdCount} discount fee(s) created.` });
+  return Response.json({ message: `${savedDiscounts.length} discount fee(s) created.` });
 };
 
 export const POST = withErrorHandler(withAuthenticationHandler(handler, ["CREATE_FEE"]));
