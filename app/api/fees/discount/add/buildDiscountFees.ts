@@ -1,8 +1,7 @@
 import Fee, { FeeCreate, DiscountMetaData, WaterUsageMetaData } from "../../../models/Fee";
-import { addRandomDaysToDate, getAdjacentMonthRanges, parseYMD, validatePermission } from "../../../utils/utils";
+import { addRandomDaysToDate, getAdjacentMonthRanges, parseYMD } from "../../../utils/utils";
 import { FeeRepository } from "../../../repositories/FeeRepository";
 import { Discount } from "../../../models/Discount";
-import { PricingFormula } from "../../water/pricingFormulas/types";
 import { getWaterPricingFormulaByName } from "../../createFee";
 import { DiscountRepository } from "../../../repositories/discountRepository";
 
@@ -55,7 +54,6 @@ export const buildDiscountFees = async (
   propertyIds: number[],
   username: string
 ): Promise<FeeCreate[]> => {
-  await validatePermission(username, "CREATE_FEE");
   const { year, month } = parseYMD(dateCollected);
 
   const { startOfCurrentMonth } = getAdjacentMonthRanges(year, month);
