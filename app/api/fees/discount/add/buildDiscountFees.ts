@@ -38,7 +38,7 @@ export const calculateDiscountAmountInPennies = (fees: Fee[], discount: Discount
 
     const gallonsToBeDiscounted = Math.min(gallonsUsed, discount.gallons_applied_to ?? 0);
 
-    const pricingFormula: PricingFormula = getWaterPricingFormulaByName(formulaUsed);
+    const pricingFormula = getWaterPricingFormulaByName(formulaUsed);
     if (!pricingFormula) return 0;
 
     const costOfGallonsToBeDiscounted = pricingFormula.calculate(gallonsToBeDiscounted);
