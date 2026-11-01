@@ -44,7 +44,7 @@ export const calculateDiscountAmountInPennies = (fees: Fee[], discount: Discount
     const costOfGallonsToBeDiscounted = pricingFormula.calculate(gallonsToBeDiscounted);
 
     // Apply percent_off to the discounted water amount to get the final answer
-    return Math.round(costOfGallonsToBeDiscounted * (discount.percent_off ?? 0 / 100));
+    return Math.round(costOfGallonsToBeDiscounted * ((discount.percent_off ?? 0) / 100));
   }
 
   return 0;
@@ -71,12 +71,12 @@ export const buildDiscountFees = async (
       [propertyId]
     );
 
+    // Idempotency check
     const discountFee = alreadyActiveFees.find(fee => fee.category === "DISCOUNT");
-    // Never create a second DISCOUNT fee for the same month/property.
     if (discountFee) continue;
 
+    // Sanity check for negative discount amount
     const discountAmountInPennies = calculateDiscountAmountInPennies(alreadyActiveFees, discount);
-    // Will not create a discount if it's a negative amount
     if (discountAmountInPennies <= 0) continue;
 
     let metadata = { name: discount.name, description: discount.description } as DiscountMetaData;
