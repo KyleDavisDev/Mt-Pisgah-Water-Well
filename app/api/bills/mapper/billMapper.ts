@@ -18,12 +18,12 @@ const WATER_COMPANY_INFO = {
 };
 
 export const billDetailsMapper = ({
-  currentBill,
+  bill,
   homeowner,
   property,
   historicalWaterFees
 }: {
-  currentBill: Bill;
+  bill: Bill;
   homeowner: Homeowner;
   property: Property;
   historicalWaterFees: Fee[];
@@ -32,7 +32,7 @@ export const billDetailsMapper = ({
     (a, b) => new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
   );
 
-  const currentWaterUsage = currentBill.metadata.water_usage;
+  const currentWaterUsage = bill.metadata.water_usage;
   // TODO: Remove this restriction? What if we want an invoice that isn't associated with water usage?
   if (!currentWaterUsage) throw Error("Must have water usage");
 
@@ -44,8 +44,8 @@ export const billDetailsMapper = ({
       ? (currentWaterUsage.gallons_used - formulaUsed.baseGallons) * formulaUsed.usageRateInPennies
       : 0;
   const otherCharges = 0; // TODO: Do we ever have this?
-  const lateFees = currentBill.metadata.late
-    ? currentBill.metadata.late.map(x => {
+  const lateFees = bill.metadata.late
+    ? bill.metadata.late.map(x => {
         return { amountInPennies: x.amount_in_pennies };
       })
     : [{ amountInPennies: 0 }];
@@ -60,15 +60,15 @@ export const billDetailsMapper = ({
     otherCharges;
 
   return {
-    id: currentBill.id,
-    createdDate: currentBill.created_at,
+    id: bill.id,
+    createdDate: bill.created_at,
     billingPeriod: {
-      month: currentBill.billing_month,
-      year: currentBill.billing_year
+      month: bill.billing_month,
+      year: bill.billing_year
     },
     usagePeriod: {
-      month: currentBill.billing_month - 1 === 0 ? 12 : currentBill.billing_month - 1,
-      year: currentBill.billing_month - 1 === 0 ? currentBill.billing_year - 1 : currentBill.billing_year
+      month: bill.billing_month - 1 === 0 ? 12 : bill.billing_month - 1,
+      year: bill.billing_month - 1 === 0 ? bill.billing_year - 1 : bill.billing_year
     },
     company: WATER_COMPANY_INFO,
     homeowner: {
@@ -77,16 +77,16 @@ export const billDetailsMapper = ({
     property: { ...property },
     bill: {
       totalChargeAmountInPennies: totalChargeAmountInPennies,
-      accountBalanceBeforeInPennies: currentBill.metadata.account_balance.balance_in_pennies_start,
-      accountBalanceAfterInPennies: Math.max(currentBill.metadata.account_balance.balance_in_pennies_end, 0),
+      accountBalanceBeforeInPennies: bill.metadata.account_balance.balance_in_pennies_start,
+      accountBalanceAfterInPennies: Math.max(bill.metadata.account_balance.balance_in_pennies_end, 0),
       baseCharge: formulaUsed.baseFeeInPennies,
       excessUsageChargeInPennies: excessUsageChargeInPennies,
       lateFees,
       otherCharges,
       amountOwingInPennies:
-        currentBill.metadata.account_balance.balance_in_pennies_end > 0
+        bill.metadata.account_balance.balance_in_pennies_end > 0
           ? 0
-          : Math.abs(currentBill.metadata.account_balance.balance_in_pennies_end),
+          : Math.abs(bill.metadata.account_balance.balance_in_pennies_end),
       formula: {
         baseFeeInPennies: formulaUsed.baseFeeInPennies,
         baseGallons: formulaUsed.baseGallons,
