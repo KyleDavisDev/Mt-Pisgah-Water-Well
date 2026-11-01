@@ -21,7 +21,7 @@ const handler = async (_req: Request, { params }: { params: Promise<{ id: string
 
   return Response.json(
     billDetailsMapper({
-      currentBill: bill,
+      bill,
       homeowner,
       property,
       historicalWaterFees

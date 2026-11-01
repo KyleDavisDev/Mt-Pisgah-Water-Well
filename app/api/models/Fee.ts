@@ -1,6 +1,4 @@
-import Invoice from "./Invoice";
-
-export type FeeType = "WATER_USAGE" | "ADMINISTRATIVE" | "LATE_FEE" | "SERVICE_FEE" | "CUSTOM";
+export type FeeType = "WATER_USAGE" | "ADMINISTRATIVE" | "LATE_FEE" | "SERVICE_FEE" | "CUSTOM" | "DISCOUNT";
 
 export default interface Fee {
   id: number;
@@ -13,7 +11,13 @@ export default interface Fee {
   is_active: boolean;
 }
 
-export type FeeMetaData = WaterUsageMetaData | AdministrativeMetaData | LateMetaData | ServiceMetaData | CustomMetaData;
+export type FeeMetaData =
+  | WaterUsageMetaData
+  | AdministrativeMetaData
+  | LateMetaData
+  | ServiceMetaData
+  | CustomMetaData
+  | DiscountMetaData;
 
 export type WaterUsageMetaData = {
   gallons_start: number;
@@ -37,6 +41,11 @@ export type ServiceMetaData = {
 };
 
 export type CustomMetaData = {
+  description: string;
+};
+
+export type DiscountMetaData = {
+  name: string;
   description: string;
 };
 
