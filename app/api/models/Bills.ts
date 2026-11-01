@@ -1,4 +1,11 @@
-import { AdministrativeMetaData, CustomMetaData, LateMetaData, ServiceMetaData, WaterUsageMetaData } from "./Fee";
+import {
+  AdministrativeMetaData,
+  CustomMetaData,
+  DiscountMetaData,
+  LateMetaData,
+  ServiceMetaData,
+  WaterUsageMetaData
+} from "./Fee";
 
 export default interface Bill {
   id: number;
@@ -19,7 +26,7 @@ export type BillDiscount = {
 export type BillMetaData = {
   account_balance: AccountMetaData;
   water_usage?: WaterBillMetaData;
-  discount?: BillDiscount;
+  discount?: DiscountBillMetaData;
   administrative?: AdministrativeBillMetaData[];
   late?: LateBillMetaData[];
   services?: ServiceBillMetaData[];
@@ -39,6 +46,7 @@ export type AdministrativeBillMetaData = AdministrativeMetaData & { amount_in_pe
 export type LateBillMetaData = LateMetaData & { amount_in_pennies: number };
 export type ServiceBillMetaData = ServiceMetaData & { amount_in_pennies: number };
 export type CustomBillMetaData = CustomMetaData & { amount_in_pennies: number };
+export type DiscountBillMetaData = DiscountMetaData & { amount_in_pennies: number };
 
 export type BillCreate = Omit<Bill, "id">;
 
