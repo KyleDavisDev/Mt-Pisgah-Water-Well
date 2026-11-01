@@ -18,11 +18,6 @@ export default interface Bill {
   is_active: boolean;
 }
 
-export type BillDiscount = {
-  name: string;
-  description: string;
-};
-
 export type BillMetaData = {
   account_balance: AccountMetaData;
   water_usage?: WaterBillMetaData;
