@@ -1,8 +1,4 @@
-import {
-  addRandomDaysToDate,
-  getPropertyAccountBalanceAtDate,
-  getAdjacentMonthRanges
-} from "../../utils/utils";
+import { addRandomDaysToDate, getPropertyAccountBalanceAtDate, getAdjacentMonthRanges } from "../../utils/utils";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 import { BadRequestError } from "../../utils/errors";
@@ -13,6 +9,7 @@ import { FeeRepository } from "../../repositories/FeeRepository";
 import Fee, {
   AdministrativeMetaData,
   CustomMetaData,
+  DiscountMetaData,
   LateMetaData,
   ServiceMetaData,
   WaterUsageMetaData
@@ -30,7 +27,6 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
   }
 
   const { startOfCurrentMonth, endOfCurrentMonth } = getAdjacentMonthRanges(year, month);
-  console.log(endOfCurrentMonth);
 
   const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
   const propertyIds = properties.map((p: any) => p.id);
@@ -112,7 +108,13 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
                   description: (x.metadata as CustomMetaData).description
                 };
               })
-            : undefined
+            : undefined,
+        discount: feesByCategory["DISCOUNT"][0]
+          ? {
+              name: (feesByCategory["DISCOUNT"][0].metadata as DiscountMetaData).name,
+              description: (feesByCategory["DISCOUNT"][0].metadata as DiscountMetaData).description
+            }
+          : undefined
       },
       total_in_pennies: invoiceCostInPennies,
       billing_month: month,
