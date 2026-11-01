@@ -1,7 +1,8 @@
 import { BadRequestError } from "../../../utils/errors";
 import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
 import { PropertyRepository } from "../../../repositories/propertyRepository";
-import { createAndInsertWaterUsageFees } from "./createAndInsertWaterUsageFees";
+import { buildWaterUsageFees } from "./buildWaterUsageFees";
+import { FeeRepository } from "../../../repositories/FeeRepository";
 
 const handler = async (req: Request, _ctx: unknown, username: string): Promise<Response> => {
   // TODO: Data validation
@@ -13,13 +14,15 @@ const handler = async (req: Request, _ctx: unknown, username: string): Promise<R
 
   const properties = propertyId ? [{ id: propertyId }] : await PropertyRepository.getAllActiveProperties();
 
-  const fees = await createAndInsertWaterUsageFees(
+  const fees = await buildWaterUsageFees(
     `${year}-${month}-02`,
     properties.map(x => x.id),
     username
   );
 
-  return Response.json({ message: `${fees} fees(s) created.` });
+  const savedFees = await FeeRepository.insertNewFeesAsTransaction(username, fees);
+
+  return Response.json({ message: `${savedFees?.length} fees(s) created.` });
 };
 
 export const POST = withErrorHandler(withAuthenticationHandler(handler, ["CREATE_FEE"]));
