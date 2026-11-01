@@ -29,6 +29,8 @@ export const calculateDiscountAmountInPennies = (fees: Fee[], discount: Discount
     return Math.min(totalFeeAmountInPennies, discount.amount_in_pennies ?? 0);
   }
 
+  // TODO: Consider scenarios where `gallons_applied_to < gallonsUsed`.
+  // TODO: For example, 100% off of 1,000 would result in entire `baseFeeInPennies` being discounted.
   if (isPercentageDiscount(discount)) {
     const waterFee = fees.find(fee => fee.category === "WATER_USAGE");
     if (!waterFee) return 0;
