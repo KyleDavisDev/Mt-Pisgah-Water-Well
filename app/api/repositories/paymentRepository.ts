@@ -98,7 +98,7 @@ export class PaymentRepository {
    * Inserts new payment record within a transactional context.
    *
    * @param {String} user - The user who is doing the inserting.
-   * @param {InvoiceCreate} record - The payment data to insert.
+   * @param {PaymentCreate} record - The payment data to insert.
    *
    * @returns {Promise<Payment | null>} Resolves to the newly created payment record.
    */
@@ -148,7 +148,7 @@ export class PaymentRepository {
    * Inserts new payment record within a transactional context.
    *
    * @param {String} user - The user who is doing the inserting.
-   * @param {InvoiceCreate[]} records - The payment data to insert.
+   * @param {PaymentCreate[]} records - The payment data to insert.
    *
    * @returns {Promise<Payment | null>} Resolves to the newly created payment record.
    */
@@ -172,7 +172,7 @@ export class PaymentRepository {
    * @param {Payment} oldData - The old payment.
    * @param {Payment} newData - The new payment.
    *
-   * @returns {Promise<Invoice | null>} Resolves to the newly updated payment record.
+   * @returns {Promise<Payment | null>} Resolves to the newly updated payment record.
    */
   static updateAsTransactional = async (user: string, oldData: Payment, newData: Payment): Promise<Payment | null> => {
     const auditLog = await AuditRepository.addAuditTableRecord({

@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { UserRepository } from "../repositories/userRepository";
 import { BadRequestError, ForbiddenError, ResourceNotFoundError } from "./errors";
 import { PaymentRepository } from "../repositories/paymentRepository";
-import { InvoiceRepository } from "../repositories/invoiceRepository";
 import { HomeownerRepository } from "../repositories/homeownerRepository";
 import { PropertyRepository } from "../repositories/propertyRepository";
 import { BillRepository } from "../repositories/billRepository";
@@ -341,28 +340,6 @@ export async function withRetry<T>(fn: () => Promise<T>, retries: number = 50, d
   }
   throw lastError;
 }
-
-export const fetchInvoiceDetails = async (id: string) => {
-  const bill = await InvoiceRepository.getInvoiceById(id);
-  if (!bill) {
-    throw new ResourceNotFoundError("Bill not found");
-  }
-
-  // Fetch associated homeowner data, property address, historical usages, and late fees in parallel
-  const [homeowner, property, historicalInvoices, lateFees] = await Promise.all([
-    HomeownerRepository.getHomeownerByPropertyId(bill.property_id),
-    PropertyRepository.getPropertyById(bill.property_id),
-    InvoiceRepository.getRecentActiveWaterInvoicesByPropertyBeforeBillingMonthYear(
-      bill.property_id,
-      11,
-      bill.metadata.billing_month,
-      bill.metadata.billing_year
-    ),
-    Promise.resolve(() => 0) // TODO: late fees
-  ]);
-
-  return { bill, homeowner, property, historicalInvoices };
-};
 
 export const fetchBillDetails = async (id: string) => {
   const bill = await BillRepository.getBillById(id);

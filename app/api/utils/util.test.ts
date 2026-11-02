@@ -6,10 +6,6 @@ jest.mock("../repositories/paymentRepository", () => ({
   PaymentRepository: {}
 }));
 
-jest.mock("../repositories/invoiceRepository", () => ({
-  InvoiceRepository: {}
-}));
-
 jest.mock("../repositories/homeownerRepository", () => ({
   HomeownerRepository: {}
 }));
