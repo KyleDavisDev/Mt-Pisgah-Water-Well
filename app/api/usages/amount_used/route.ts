@@ -2,7 +2,7 @@ import { extractKeyFromRequest, getAdjacentMonthRanges } from "../../utils/utils
 import { UsageRepository } from "../../repositories/usageRepository";
 import { PropertyRepository } from "../../repositories/propertyRepository";
 import { HomeownerRepository } from "../../repositories/homeownerRepository";
-import { InvoiceRepository } from "../../repositories/invoiceRepository";
+import { BillRepository } from "../../repositories/billRepository";
 import { withAuthenticationHandler, withErrorHandler } from "../../utils/handlers";
 import { BadRequestError } from "../../utils/errors";
 
@@ -39,7 +39,7 @@ const handler = async (req: Request, _ctx: unknown) => {
     endOfNextMonth,
     propertyIds
   );
-  const alreadyCreatedBills = await InvoiceRepository.getActiveInvoiceByYearAndMonthAndPropertyIn(
+  const alreadyCreatedBills = await BillRepository.getActiveBillByYearAndMonthAndPropertyIn(
     parseInt(year[0], 10),
     parseInt(month[0], 10),
     propertyIds
