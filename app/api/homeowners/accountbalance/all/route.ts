@@ -3,7 +3,7 @@ import Property from "../../../models/Properties";
 import { HomeownerRepository } from "../../../repositories/homeownerRepository";
 import { PropertyRepository } from "../../../repositories/propertyRepository";
 import { PaymentRepository } from "../../../repositories/paymentRepository";
-import { InvoiceRepository } from "../../../repositories/invoiceRepository";
+import { BillRepository } from "../../../repositories/billRepository";
 import { ForbiddenError, MethodNotAllowedError } from "../../../utils/errors";
 import { withAuthenticationHandler, withErrorHandler } from "../../../utils/handlers";
 
@@ -33,9 +33,9 @@ const handler = async (req: Request, _ctx: unknown) => {
 
     // Fetch latest payments for all properties in a single query
     const propertyIds = properties.map(p => p.id);
-    const [payments, invoices] = await Promise.all([
+    const [payments, bills] = await Promise.all([
       PaymentRepository.findActiveTotalByPropertyIds(propertyIds),
-      InvoiceRepository.findActiveTotalByPropertyIds(propertyIds)
+      BillRepository.findActiveTotalByPropertyIds(propertyIds)
     ]);
 
     const returnData = homeowners
@@ -49,8 +49,8 @@ const handler = async (req: Request, _ctx: unknown) => {
           properties: properties
             .filter((p: Property) => p.homeowner_id === homeowner.id)
             .map((p: Property) => {
-              const invoiceTotalRecord = invoices.find(x => x.property_id === p.id);
-              const invoiceTotal = invoiceTotalRecord ? invoiceTotalRecord.amount_in_pennies : 0;
+              const billTotalRecord = bills.find(x => x.property_id === p.id);
+              const billTotal = billTotalRecord ? billTotalRecord.total_in_pennies : 0;
 
               const paymentTotalRecord = payments.find(x => x.property_id === p.id);
               const paymentTotal = paymentTotalRecord ? paymentTotalRecord.amount_in_pennies : 0;
@@ -59,7 +59,7 @@ const handler = async (req: Request, _ctx: unknown) => {
                 id: p.id.toString(),
                 address: p.street,
                 description: p.description,
-                totalInPennies: invoiceTotal - paymentTotal
+                totalInPennies: billTotal - paymentTotal
               };
             })
         };
