@@ -3,7 +3,6 @@
 import React from "react";
 
 import { Button } from "../../../../components/Button/Button";
-import InvoiceEditModal from "./components/InvoiceEditModal/InvoiceEditModal";
 import { invoiceDTO, homeownerData } from "./types";
 import {
   formatISODateToUserFriendlyLocal,
@@ -15,8 +14,6 @@ import { ArticleHolder } from "../../components/ArticleHolder/ArticleHolder";
 
 const Page = () => {
   const [homeowners, setHomeowners] = React.useState<homeownerData[]>([]);
-  const [activeUsage, setActiveUsage] = React.useState<invoiceDTO | null>(null);
-  const [showModal, setShowModal] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const initialized = React.useRef(false);
@@ -51,14 +48,6 @@ const Page = () => {
     }
   }, []);
 
-  const onModalClose = (refreshData: boolean) => {
-    setShowModal(false);
-
-    if (refreshData) {
-      getBillsByHomeowner();
-    }
-  };
-
   const sortInvoicesByDate = (invoices: invoiceDTO[]): invoiceDTO[] => {
     return invoices.sort((a, b) => {
       if (a.year !== b.year) {
@@ -85,19 +74,6 @@ const Page = () => {
       </ArticleHolder>
     );
   }
-
-  const downloadInvoice = (id: string) => {
-    console.log("am ihere?");
-    console.log(id);
-    const url = `/api/bills/${id}/download`;
-    // Create a hidden <a> to force a download without navigation.
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = ""; // forces download in most browsers
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
 
   return (
     <ArticleHolder>
@@ -152,17 +128,6 @@ const Page = () => {
                             </td>
                             <td className={"border border-tableBorder text-center p-[8px] table-cell border-collapse"}>
                               <Button
-                                displayType={"outline"}
-                                disabled
-                                onClick={() => {
-                                  setActiveUsage(invoice);
-                                  setShowModal(true);
-                                }}
-                                style={{ marginRight: "8px" }}
-                              >
-                                Edit
-                              </Button>
-                              <Button
                                 onClick={() => {
                                   window.open(`/admin/dashboard/bills/${invoice.id}`, "_blank");
                                 }}
@@ -185,10 +150,6 @@ const Page = () => {
           ))
         ) : (
           <p>No homeowners found</p>
-        )}
-
-        {showModal && activeUsage && (
-          <InvoiceEditModal showModal={showModal} invoice={{ ...activeUsage }} onModalClose={onModalClose} />
         )}
       </div>
     </ArticleHolder>
