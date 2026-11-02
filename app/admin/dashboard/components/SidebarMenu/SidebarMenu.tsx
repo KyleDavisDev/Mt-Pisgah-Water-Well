@@ -185,7 +185,7 @@ const SidebarMenu = () => {
               }
             >
               <Link href={"/admin/dashboard/bills/all"} onClick={() => handleMobileClick()}>
-                View All Bills
+                View All Invoices
               </Link>
             </div>
             <div

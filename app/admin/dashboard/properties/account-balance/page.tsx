@@ -76,8 +76,8 @@ const Page = () => {
       .finally(() => {});
   };
 
-  const sortPaymentsByDate = (paymentsToSort: paymentVM[]): paymentVM[] => {
-    return [...paymentsToSort].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const sortPaymentsByDate = (): paymentVM[] => {
+    return [...payments].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   };
 
   useEffect(() => {
@@ -130,7 +130,6 @@ const Page = () => {
         </div>
       </div>
       <div className={"w-full flex flex-row"}>
-        {/* Sort payments by date */}
         {selectedProperty && payments.length > 0 ? (
           <table className={"w-full text-left border-collapse mb-[25px]"}>
             <thead className={"border-collapse"}>
@@ -138,14 +137,12 @@ const Page = () => {
                 <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Date</th>
                 <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Type</th>
                 <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Amount</th>
-                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>
-                  Method/Description
-                </th>
+                <th className={"border border-tableBorder text-left p-[8px] table-cell border-collapse"}>Method</th>
               </tr>
             </thead>
             <tbody>
               {/* Render payments */}
-              {sortPaymentsByDate(payments).map(payment => (
+              {sortPaymentsByDate().map(payment => (
                 <tr key={`payment-${payment.id}`}>
                   <td className={"border border-tableBorder p-[8px]"}>
                     {formatISODateToUserFriendlyLocal(payment.createdAt)}

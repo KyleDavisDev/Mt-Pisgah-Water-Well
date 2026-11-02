@@ -77,7 +77,7 @@ const Page = () => {
 
   return (
     <ArticleHolder>
-      <h3>Bills</h3>
+      <h3>Invoices</h3>
       <div className={"flex flex-row flex-wrap p-6 overflow-x-scroll"}>
         {homeowners.length > 0 ? (
           homeowners.map(homeowner => (
