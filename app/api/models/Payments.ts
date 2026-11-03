@@ -9,7 +9,8 @@ export default interface Payment {
   transaction_id?: string | null;
 }
 
-export type PaymentCreate = Omit<Payment, "id">;
+// `created_at` is set by the database default, so callers never provide it.
+export type PaymentCreate = Omit<Payment, "id" | "created_at">;
 
 export interface PaymentTotal {
   property_id: number;
