@@ -38,26 +38,31 @@ export const billDetailsMapper = ({
 
   const formulaUsed = PRICING_FORMULAS[currentWaterUsage.formula_used];
 
-  const baseCharge = PRICING_FORMULAS[currentWaterUsage.formula_used].baseFeeInPennies;
   const excessUsageChargeInPennies =
     currentWaterUsage.gallons_used > formulaUsed.baseGallons
       ? (currentWaterUsage.gallons_used - formulaUsed.baseGallons) * formulaUsed.usageRateInPennies
       : 0;
-  const otherCharges = 0; // TODO: Do we ever have this?
+  const waterChargeAmountInPennies = currentWaterUsage.amount_in_pennies;
+  const otherChargeAmountInPennies = 0; // TODO: Do we ever have this?
   const lateFees = bill.metadata.late
     ? bill.metadata.late.map(x => {
         return { amountInPennies: x.amount_in_pennies };
       })
     : [{ amountInPennies: 0 }];
+  const lateFeesInPennies = lateFees.reduce((accum, val) => {
+    accum += val.amountInPennies;
+    return accum;
+  }, 0);
 
-  const totalChargeAmountInPennies =
-    baseCharge +
-    excessUsageChargeInPennies +
-    lateFees.reduce((accum, val) => {
-      accum += val.amountInPennies;
-      return accum;
-    }, 0) +
-    otherCharges;
+  const discount = bill.metadata.discount
+    ? {
+        name: bill.metadata.discount.name,
+        description: bill.metadata.discount.description,
+        amountInPennies: bill.metadata.discount.amount_in_pennies
+      }
+    : undefined;
+
+  const totalChargeAmountInPennies = waterChargeAmountInPennies + otherChargeAmountInPennies + lateFeesInPennies;
 
   return {
     id: bill.id,
@@ -82,7 +87,8 @@ export const billDetailsMapper = ({
       baseCharge: formulaUsed.baseFeeInPennies,
       excessUsageChargeInPennies: excessUsageChargeInPennies,
       lateFees,
-      otherCharges,
+      discount,
+      otherChargesInPennies: otherChargeAmountInPennies,
       amountOwingInPennies:
         bill.metadata.account_balance.balance_in_pennies_end > 0
           ? 0

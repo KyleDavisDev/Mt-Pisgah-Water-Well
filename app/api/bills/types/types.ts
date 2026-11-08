@@ -4,11 +4,18 @@ export interface BillUsage {
   usage: number;
 }
 
+export interface BillDiscount {
+  name: string;
+  description: string;
+  amountInPennies: number;
+}
+
 export interface BillCharges {
   baseCharge: number;
   excessUsageChargeInPennies: number;
   lateFees: { amountInPennies: number }[];
-  otherCharges: number;
+  discount?: BillDiscount;
+  otherChargesInPennies: number;
   amountOwingInPennies: number;
   totalChargeAmountInPennies: number;
   accountBalanceBeforeInPennies: number;
