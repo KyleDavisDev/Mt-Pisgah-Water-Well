@@ -33,7 +33,7 @@ export const billDetailsMapper = ({
   );
 
   const currentWaterUsage = bill.metadata.water_usage;
-  // TODO: Remove this restriction? What if we want an invoice that isn't associated with water usage?
+  // TODO: Remove this restriction? What if we want a bill that isn't associated with water usage?
   if (!currentWaterUsage) throw Error("Must have water usage");
 
   const formulaUsed = PRICING_FORMULAS[currentWaterUsage.formula_used];
