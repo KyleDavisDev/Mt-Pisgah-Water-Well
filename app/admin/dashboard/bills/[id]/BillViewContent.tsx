@@ -93,7 +93,7 @@ export default function BillViewContent({ billDetails }: BillViewContentProps) {
             })}
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[36px]"}>
               <span>Other Charges:</span>
-              <span>${billDetails.bill.otherCharges.toFixed(2)}</span>
+              <span>${billDetails.bill.otherChargesInPennies.toFixed(2)}</span>
             </div>
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px] border-b border-tableBorder"}>
               <span>Account Balance before:</span>
@@ -103,6 +103,15 @@ export default function BillViewContent({ billDetails }: BillViewContentProps) {
               <span>New Charges this month:</span>
               <span>{formatPenniesToDollars(billDetails.bill.totalChargeAmountInPennies)}</span>
             </div>
+            {billDetails.bill.discount && (
+              <div className={"pt-[8px] pb-[8px] border-b border-tableBorder"}>
+                <div>Discounts:</div>
+                <div className={"flex flex-wrap items-start justify-between pl-[16px] pt-[4px]"}>
+                  <span>{billDetails.bill.discount.name}</span>
+                  <span>{formatPenniesToDollars(billDetails.bill.discount.amountInPennies)}</span>
+                </div>
+              </div>
+            )}
             <div className={"flex flex-wrap items-start justify-between pt-[8px] pb-[8px]"}>
               <span>Account Balance after:</span>
               <span>{formatPenniesToDollars(billDetails.bill.accountBalanceAfterInPennies)}</span>
