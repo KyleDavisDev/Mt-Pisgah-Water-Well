@@ -26,3 +26,17 @@ If a task appears to require credentials or a live connection:
 If a secret is exposed to you by accident, do not repeat it, do not write it anywhere, and immediately tell the user to rotate it.
 
 This rule applies to every agent, subagent, and tool invocation. Pass it down verbatim when delegating.
+
+**Search scope is mandatory.** Never grep, glob, or search from the repo root. Always pass an explicit path that cannot contain secrets (e.g. `app/`, `docs/`, a single file). Exclude `.idea/`, `.env*`, and any credential-bearing directory. A repo-wide search that happens to *match* inside those paths is still a violation.
+
+## Scope discipline: answer the question that was asked
+
+Do not widen the scope of a task on your own. If the user asks about a list, a file, or a tool's output, answer from that source only.
+
+- **Do not investigate to strengthen an answer.** If the requested source answers the question, stop. Do not go verify things in the codebase, git history, PRs, or docs unless the question requires it.
+- **Do not reinterpret vague words into bigger tasks.** "Good", "best", "right" do not authorize you to audit implementation status, correctness, or completeness. Assume the narrow reading.
+- **Ask before widening.** If you believe the source is insufficient, say so in one sentence and ask permission to look elsewhere. Do not act first.
+- **Report, don't fix.** Unless asked to change something, surface findings and stop.
+- **Ambiguity is a question, not a license.** One clarifying question is always cheaper than unrequested work.
+
+Default behavior for "look through X and tell me Y": read X, answer Y, stop.
